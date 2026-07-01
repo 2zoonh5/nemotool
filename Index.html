@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네모의 게임 매니저 OS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="desktop">
+        <div class="icon" data-app="lol">
+            <img src="assets/lol-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/825/825590.png'" alt="LOL">
+            <span class="icon-name">롤모장</span>
+        </div>
+
+        <div class="icon" data-app="pubg">
+            <img src="assets/pubg-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3408/3408506.png'" alt="PUBG">
+            <span class="icon-name">배틀그라운드</span>
+        </div>
+
+        <div class="icon" data-app="sudden">
+            <img src="assets/sudden-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5750/5750226.png'" alt="Sudden Attack">
+            <span class="icon-name">서든어택</span>
+        </div>
+    </div>
+
+    <div class="window-popup" id="appWindow">
+        <div class="window-header">
+            <span class="window-title" id="windowTitle">프로그램</span>
+            <button class="window-close-btn" onclick="closeApp()">×</button>
+        </div>
+        <div class="window-body">
+            <iframe id="appFrame" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
