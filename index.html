@@ -13,7 +13,6 @@
             <span class="menu-item logo" onclick="location.reload()">NEMO OS</span>
             <span class="menu-item">시스템 설정</span>
             <span class="menu-item">배경화면</span>
-            <span class="menu-item">정보</span>
         </div>
         <div class="right-menu">
             <span class="menu-item clock" id="macClock">오전 00:00</span>
@@ -22,60 +21,64 @@
 
     <div class="desktop">
         <div class="icon" data-folder="pubg">
-            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="PUBG Folder">
+            <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG Folder">
             <span class="icon-name">배틀그라운드</span>
         </div>
         <div class="icon" data-folder="lol">
-            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="LOL Folder">
-            <span class="icon-name">리그오브레전드</span>
+            <img src="https://cdn-icons-png.flaticon.com/512/825/825590.png" alt="LoL Folder">
+            <span class="icon-name">롤모장</span>
         </div>
         <div class="icon" data-folder="sudden">
-            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="Sudden Folder">
+            <img src="https://cdn-icons-png.flaticon.com/512/5750/5750226.png" alt="Sudden Folder">
             <span class="icon-name">서든어택</span>
         </div>
     </div>
 
     <div class="window-popup" id="folderWindow">
         <div class="window-header">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="nav-btn forward-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+            <span class="window-title" id="folderTitle">폴더</span>
             <div class="mac-buttons">
                 <button class="window-btn close-btn" onclick="closeFolder()"></button>
                 <button class="window-btn minimize-btn" onclick="minimizeWindow('folderWindow', '폴더 창')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('folderWindow')"></button>
             </div>
-            <span class="window-title" id="folderTitle">폴더</span>
         </div>
         <div class="window-body folder-content" id="folderContent"></div>
     </div>
 
     <div class="window-popup" id="appWindow">
         <div class="window-header">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn" onclick="backToFolder()">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="nav-btn forward-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+            <span class="window-title" id="windowTitle">프로그램</span>
             <div class="mac-buttons">
                 <button class="window-btn close-btn" onclick="closeApp()"></button>
                 <button class="window-btn minimize-btn" onclick="minimizeWindow('appWindow', '프로그램 창')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('appWindow')"></button>
-                <button class="back-btn" onclick="backToFolder()">◀</button>
             </div>
-            <span class="window-title" id="windowTitle">프로그램</span>
         </div>
         <div class="window-body">
             <iframe id="appFrame" src="" frameborder="0"></iframe>
         </div>
     </div>
 
-    <div class="mac-dock-container">
+    <div class="mac-dock-container" id="macDockContainer">
         <div class="mac-dock">
-            <div class="dock-item" onclick="openFolder('lol')">
-                <img src="https://cdn-icons-png.flaticon.com/512/825/825590.png" alt="LoL">
-                <span class="dock-tooltip">리그오브레전드</span>
-            </div>
-            <div class="dock-item" onclick="openFolder('pubg')">
-                <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG">
-                <span class="dock-tooltip">배틀그라운드</span>
-            </div>
-            
-            <div class="dock-divider"></div>
-            
-            <div id="minimizedList" style="display: flex; gap: 10px;"></div>
+            <div id="minimizedList"></div>
         </div>
     </div>
 
