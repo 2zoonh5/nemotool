@@ -1,15 +1,12 @@
 body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow: hidden;
     background: linear-gradient(135deg, #1f1c2c 0%, #3a1c41 35%, #5d2450 70%, #283c86 100%);
     background-size: 400% 400%;
     animation: gradientMove 15s ease infinite;
-    height: 100vh;
-    user-select: none;
+    height: 100vh; user-select: none;
 }
-
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -18,10 +15,8 @@ body {
 
 /* 상단바 */
 .mac-menu-bar {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 24px;
-    background: rgba(255, 255, 255, 0.13);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: fixed; top: 0; left: 0; width: 100%; height: 24px;
+    background: rgba(255, 255, 255, 0.13); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     display: flex; justify-content: space-between; align-items: center;
     padding: 0 18px; box-sizing: border-box; z-index: 10005;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -35,45 +30,45 @@ body {
 .menu-item.logo { font-weight: 700; margin-right: 8px; }
 .menu-item.clock { cursor: default; }
 
-/* 바탕화면 공간 */
+/* 바탕화면 */
 .desktop {
-    padding: 50px 30px 30px 30px;
+    padding: 50px 30px 100px 30px; /* 독 바 자리 확보를 위해 하단 여백 늘림 */
     display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
-    height: calc(100vh - 80px); align-content: flex-start;
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box;
-    z-index: 1;
+    height: calc(100vh - 100px); align-content: flex-start;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; z-index: 1;
 }
 
-/* 정갈한 바탕화면용 아이콘 */
+/* 아이콘 */
 .icon {
-    width: 85px; height: 95px; /* 높이를 명확히 지정해서 늘어짐 방지 */
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; text-align: center; border: 1.5px solid transparent;
-    padding: 5px; border-radius: 12px; box-sizing: border-box;
+    width: 85px; height: 95px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; text-align: center; border: 1.5px solid transparent; padding: 5px; border-radius: 12px; box-sizing: border-box;
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .icon:hover {
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.15); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); transform: translateY(-3px);
 }
 .icon img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
 .icon .icon-name {
-    color: #ffffff; font-size: 12px; font-weight: 500;
-    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
+    color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
     line-height: 1.2; max-height: 28px; overflow: hidden;
 }
 
-/* 가상 윈도우 창 공용 */
+/* 윈도우 창 기본 스타일 */
 .window-popup {
     display: none; position: fixed;
-    top: 15vh; left: 20vw; width: 60vw; height: 55vh;
-    background: #ffffff; border-radius: 12px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    flex-direction: column; overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.15);
-    z-index: 10; /* 바탕화면보다 위에 뜨게 설정 */
+    top: 12vh; left: 20vw; width: 60vw; height: 55vh;
+    background: #ffffff; border-radius: 12px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.15); z-index: 10;
+    transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease, border-radius 0.25s ease;
 }
+
+/* 초록색 버튼으로 작동할 전체 화면 모드 전용 클래스 */
+.window-popup.maximized {
+    top: 24px !important; left: 0 !important;
+    width: 100vw !important; height: calc(100vh - 24px) !important;
+    border-radius: 0px !important;
+}
+
 .window-header {
     background: #ebebeb; color: #333333; padding: 12px 16px;
     display: flex; justify-content: space-between; align-items: center;
@@ -84,40 +79,77 @@ body {
     position: absolute; left: 50%; transform: translateX(-50%);
 }
 
-/* MacOS 닫기 버튼 */
-.window-close-btn {
-    background: #ff5f56; border: 1px solid #e0443e; color: transparent;
+/* Mac OS 신호등 버튼 */
+.mac-buttons { display: flex; align-items: center; gap: 8px; z-index: 12; }
+.window-btn {
     width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
-    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: bold; line-height: 1; z-index: 12;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: bold; border: none; transition: background 0.15s;
+    color: transparent; line-height: 1; padding: 0;
 }
-.window-close-btn:hover { background: #ff3b30; color: #4c0002; }
-.window-close-btn:hover::before { content: "×"; }
+.close-btn { background: #ff5f56; border: 1px solid #e0443e; }
+.close-btn:hover { background: #ff3b30; color: #4c0002; }
+.close-btn:hover::before { content: "×"; }
+
+.minimize-btn { background: #ffbd2e; border: 1px solid #de9e1e; }
+.minimize-btn:hover { background: #ffb115; color: #5d3e00; }
+.minimize-btn:hover::before { content: "−"; }
+
+/* 초록색 (최대화/전체화면) 고증 반영 */
+.maximize-btn { background: #27c93f; border: 1px solid #1aaa2c; }
+.maximize-btn:hover { background: #25b737; color: #024d00; }
+.maximize-btn:hover::before { content: "+"; }
+
+.back-btn {
+    background: none; border: none; color: #666666; font-size: 13px; cursor: pointer; margin-left: 8px;
+    padding: 2px 6px; border-radius: 4px; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+}
+.back-btn:hover { background: rgba(0,0,0,0.08); color: #111111; }
 
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
+/* 폴더 내부 전용 스타일 */
 .folder-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: row; /* 세로가 아닌 가로로 아이콘 나열 */
-    flex-wrap: wrap;
-    gap: 15px;
-    background: #f5f5f7;
-    height: 100%;
-    box-sizing: border-box;
-    align-content: flex-start;
+    padding: 20px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;
+    background: #f5f5f7; height: 100%; box-sizing: border-box; align-content: flex-start;
 }
-/* 폴더 내부용 아이콘 별도 분리 */
-.folder-content .icon {
-    height: 90px; /* 고정 높이 제공으로 늘어남 해결 */
+.folder-content .icon { height: 90px; }
+.folder-content .icon .icon-name { color: #333333; text-shadow: none; }
+.folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; }
+
+
+/* ★★★ 진짜보다 더 진짜 같은 Mac OS DOCK BAR 스타일 디자인 */
+.mac-dock-container {
+    position: fixed; bottom: 10px; left: 50%;
+    transform: translateX(-50%); z-index: 10010;
 }
-.folder-content .icon .icon-name {
-    color: #333333;
-    text-shadow: none;
+.mac-dock {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    padding: 8px 12px; border-radius: 20px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
-.folder-content .icon:hover {
-    background: rgba(0, 0, 0, 0.06);
-    box-shadow: none;
-    transform: none; /* 폴더 내부에서는 붕 뜨는 효과 제외하여 깔끔함 유지 */
+.dock-item {
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
+.dock-item:hover {
+    transform: scale(1.2) translateY(-6px); /* 마우스 올리면 맥북처럼 통통 커지는 애니메이션 */
+}
+.dock-item img { width: 100%; height: 100%; object-fit: contain; }
+
+/* 독 바 구분선 */
+.dock-divider {
+    width: 1px; height: 35px; background: rgba(255, 255, 255, 0.3);
+}
+
+/* 마우스 올렸을 때 상단에 뜨는 앱 이름 말풍선 */
+.dock-tooltip {
+    display: none; position: absolute; top: -40px; background: rgba(0, 0, 0, 0.75);
+    color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px; white-space: nowrap;
+    pointer-events: none; text-shadow: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.dock-item:hover .dock-tooltip { display: block; }
