@@ -4,22 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>네모의 게임 매니저 OS</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <!-- 프리텐다드 고품질 서체 웹폰트 로드 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn-icons-png.flaticon.com/512/3103/3103446.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- 🖥️ 고도화된 Mac OS 스타일 실감형 상단바 -->
     <div class="mac-menu-bar">
         <div class="left-menu">
-            <span class="menu-item logo" onclick="location.reload()">NEMO OS</span>
-            <span class="menu-item">시스템 설정</span>
-            <span class="menu-item">배경화면</span>
+            <!-- 네모툴 시그니처 정사가형 큐브 엠블럼 아이콘 -->
+            <div class="nemo-logo-box" onclick="location.reload()">
+                <div class="cube-dot"></div>
+            </div>
+            <span class="menu-item logo-text" onclick="location.reload()">NEMO TOOL</span>
+            
+            <div class="menu-wrapper">
+                <span class="menu-item" onclick="toggleDropdown(event, 'settingsMenu')">시스템 설정</span>
+                <div class="mac-dropdown" id="settingsMenu">
+                    <div class="dropdown-item" onclick="alert('NEMO TOOL OS v1.0.0\nDeveloper: NEMO')">이 프로그램 정보</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="location.reload()">시스템 재시동</div>
+                </div>
+            </div>
+
+            <div class="menu-wrapper">
+                <span class="menu-item" onclick="toggleDropdown(event, 'wallpaperMenu')">배경화면</span>
+                <div class="mac-dropdown" id="wallpaperMenu">
+                    <div class="dropdown-item" onclick="changeBg('aurora')">기본 오로라 퍼플</div>
+                    <div class="dropdown-item" onclick="changeBg('sunset')">미드나잇 선셋 로즈</div>
+                    <div class="dropdown-item" onclick="changeBg('cyber')">매트릭스 사이버 그린</div>
+                </div>
+            </div>
         </div>
+        
         <div class="right-menu">
-            <span class="menu-item clock" id="macClock">오전 00:00</span>
+            <!-- 실제 Mac 고증 상태창 아이콘 세트 -->
+            <div class="status-icons">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" alt="wifi">
+                <img src="https://cdn-icons-png.flaticon.com/512/3103/3103446.png" alt="sound">
+                <img src="https://cdn-icons-png.flaticon.com/512/3103/3103306.png" alt="battery">
+            </div>
+            <!-- 가독성을 올리고 실제 맥북 스타일로 변모한 고해상도 시계 -->
+            <span class="menu-item clock" id="macClock">7월 2일 (목) 오전 11:01</span>
         </div>
     </div>
 
+    <!-- 바탕화면 -->
     <div class="desktop">
         <div class="icon" data-folder="pubg">
             <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG Folder">
@@ -35,6 +67,7 @@
         </div>
     </div>
 
+    <!-- 폴더 창 -->
     <div class="window-popup" id="folderWindow">
         <div class="window-header">
             <div class="nav-buttons">
@@ -55,6 +88,7 @@
         <div class="window-body folder-content" id="folderContent"></div>
     </div>
 
+    <!-- 프로그램 창 -->
     <div class="window-popup" id="appWindow">
         <div class="window-header">
             <div class="nav-buttons">
@@ -77,6 +111,7 @@
         </div>
     </div>
 
+    <!-- 독 바 -->
     <div class="mac-dock-container" id="macDockContainer">
         <div class="mac-dock">
             <div id="minimizedList"></div>
