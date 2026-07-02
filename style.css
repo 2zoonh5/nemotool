@@ -1,6 +1,7 @@
 body {
     margin: 0; padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* 최우선 순위로 프리텐다드 서체 적용 (맥북의 San Francisco 서체와 완벽 싱크로율) */
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     overflow: hidden;
     background: linear-gradient(135deg, #1f1c2c 0%, #3a1c41 35%, #5d2450 70%, #283c86 100%);
     background-size: 400% 400%;
@@ -23,7 +24,7 @@ body {
 }
 .left-menu, .right-menu { display: flex; align-items: center; gap: 4px; }
 .menu-item {
-    color: rgba(255, 255, 255, 0.9); font-size: 12.5px; font-weight: 500;
+    color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500;
     padding: 2px 10px; cursor: pointer; border-radius: 4px; transition: background 0.1s;
 }
 .menu-item:hover { background: rgba(255, 255, 255, 0.2); }
@@ -50,12 +51,13 @@ body {
     color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
 }
 
-/* 윈도우 팝업 */
+/* 윈도우 팝업 (실제 맥북 Finder처럼 연한 테두리와 깊이감 있는 입체 그림자 반영) */
 .window-popup {
     display: none; position: fixed;
     top: 15vh; left: 20vw; width: 60vw; height: 55vh;
-    background: #ffffff; border-radius: 12px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.15); z-index: 10;
+    background: #ffffff; border-radius: 14px; /* 조금 더 둥글고 정갈하게 변경 */
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45); /* 그림자를 더 깊고 부드럽게 고도화 */
+    flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
 .window-popup.maximized {
@@ -71,7 +73,7 @@ body {
     height: 42px; box-sizing: border-box;
 }
 .window-title {
-    font-size: 13.5px; font-weight: 600; color: #3a3a3c;
+    font-size: 13px; font-weight: 600; color: #2c2c2e;
     position: absolute; left: 50%; transform: translateX(-50%);
 }
 
@@ -87,7 +89,7 @@ body {
 .nav-btn.disabled { cursor: default; opacity: 0.15; }
 .nav-btn.disabled svg { fill: #8e8e93; }
 
-/* 삼색 삼형제 색상 정의 및 기호 매핑 */
+/* 삼색 버튼 배치 구조 */
 .mac-buttons { display: flex; align-items: center; gap: 9px; z-index: 12; }
 .window-btn {
     width: 14px; height: 14px; border-radius: 50%; cursor: pointer;
@@ -110,14 +112,33 @@ body {
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* 폴더 내부 */
+/* ★ [디테일 전면 보완] 플랫함을 지워버린 세련된 폴더 내부 콘텐츠 스페이스 */
 .folder-content {
-    padding: 20px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;
-    background: #f5f5f7; height: 100%; box-sizing: border-box; align-content: flex-start;
+    padding: 25px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 20px;
+    background: #f2f2f7; /* 애플 공인 시스템 라이트 그레이 틴트 */
+    height: 100%; box-sizing: border-box; align-content: flex-start;
 }
-.folder-content .icon { height: 90px; }
-.folder-content .icon .icon-name { color: #333333; text-shadow: none; }
-.folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; }
+/* 폴더 내부용 아이콘 카드화 (둥근 테두리와 은은한 그림자로 입체감 반영) */
+.folder-content .icon { 
+    height: 100px; 
+    width: 90px;
+    background: #ffffff; /* 순백색 카드 형태 보정 */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 12px; /* 세련된 라운딩 수치 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* 단순 플랫함을 완전히 지우는 미니멀 그림자 */
+}
+.folder-content .icon .icon-name { 
+    color: #1c1c1e; 
+    font-weight: 500;
+    text-shadow: none; 
+}
+/* 내부 카드 마우스 호버 시 자연스럽게 떠오르는 미세 인터랙션 */
+.folder-content .icon:hover { 
+    background: #ffffff; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09); 
+    border-color: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
 
 /* 독 바 */
 .mac-dock-container {
