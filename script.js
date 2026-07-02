@@ -9,7 +9,10 @@ let lastClosedApp = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-folder]").forEach(folder => {
-        folder.addEventListener("dblclick", (e) => { e.stopPropagation(); openFolder(folder.getAttribute("data-folder")); });
+        folder.addEventListener("dblclick", (e) => { 
+            e.stopPropagation(); 
+            openFolder(folder.getAttribute("data-folder")); 
+        });
     });
     startMacClock();
 });
@@ -20,6 +23,9 @@ function openFolder(type) {
     if (!data) return;
 
     folderWindow.setAttribute("data-current-folder", type);
+    // [보완] 폴더 창이 열릴 때 기본 폴더 노란색 아이콘을 기억하게 세팅
+    folderWindow.setAttribute("data-icon", "https://cdn-icons-png.flaticon.com/512/3767/3767084.png");
+    
     document.getElementById("folderTitle").innerText = data.title;
     const content = document.getElementById("folderContent");
     content.innerHTML = ""; 
@@ -28,31 +34,37 @@ function openFolder(type) {
         const iconDiv = document.createElement("div");
         iconDiv.className = "icon";
         iconDiv.innerHTML = `<img src="${app.icon}"> <span class="icon-name">${app.name}</span>`;
-        iconDiv.addEventListener("dblclick", (e) => { e.stopPropagation(); openApp(app.url, app.name); });
+        // [보완] 실행 시 고유 앱 아이콘 주소까지 함께 전달하도록 수정
+        iconDiv.addEventListener("dblclick", (e) => { 
+            e.stopPropagation(); 
+            openApp(app.url, app.name, app.icon); 
+        });
         content.appendChild(iconDiv);
     });
     folderWindow.style.display = "flex";
     updateForwardButtonState();
 }
 
-// 🟡 최소화 함수: 창의 제목을 DOM에서 직접 가져와 툴팁으로 사용
+// 🟡 보완된 최소화 함수: 제목과 개별 아이콘을 동적으로 정확하게 추출
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
-    // [수정 포인트] 현재 창의 .window-title 텍스트를 정확히 추출
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     
+    // [완벽 동기화] 창에 세팅된 개별 아이콘 이미지 주소를 완벽하게 읽어옴
+    const useIcon = targetWindow.getAttribute("data-icon") || "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+
     targetWindow.style.display = "none";
     
     if (minimizedWindows[windowId]) return;
     minimizedWindows[windowId] = true;
     
     const minimizedList = document.getElementById("minimizedList");
-    const useIcon = (windowId === 'folderWindow') ? "https://cdn-icons-png.flaticon.com/512/3767/3767084.png" : "https://cdn-icons-png.flaticon.com/512/2893/2893051.png";
 
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
     dockItem.id = `dock-slot-${windowId}`;
-    // [수정 포인트] 추출한 제목을 툴팁에 바로 적용
+    
+    // 알맞은 전용 아이콘과 타이틀 주입
     dockItem.innerHTML = `
         <img src="${useIcon}">
         <span class="dock-tooltip">${actualTitle}</span>
@@ -89,11 +101,16 @@ function closeFolder() {
     updateForwardButtonState();
 }
 
-function openApp(url, name) {
+// [보완] 앱이 켜질 때 해당 프로그램의 전용 아이콘 주소를 캐싱하도록 인자 추가
+function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
+    
+    // 창 자체가 현재 실행된 앱의 아이콘 주소를 저장하도록 설계
+    windowPopup.setAttribute("data-icon", icon);
+    
     document.getElementById("appFrame").src = url;
-    document.getElementById("windowTitle").innerText = name; // 여기서 타이틀이 고정됨
+    document.getElementById("windowTitle").innerText = name; 
     windowPopup.style.display = "flex";
 }
 
@@ -109,7 +126,11 @@ function closeApp() {
 function backToFolder() {
     const windowPopup = document.getElementById("appWindow");
     if (windowPopup.style.display !== "none") {
-        lastClosedApp = { url: document.getElementById("appFrame").src, name: document.getElementById("windowTitle").innerText };
+        lastClosedApp = { 
+            url: document.getElementById("appFrame").src, 
+            name: document.getElementById("windowTitle").innerText,
+            icon: windowPopup.getAttribute("data-icon") // 아이콘 상태 보존
+        };
         windowPopup.style.display = "none";
     }
     removeFromDock("appWindow");
@@ -119,7 +140,7 @@ function backToFolder() {
 
 function forwardToApp() {
     if (!lastClosedApp) return;
-    openApp(lastClosedApp.url, lastClosedApp.name);
+    openApp(lastClosedApp.url, lastClosedApp.name, lastClosedApp.icon);
     lastClosedApp = null; 
     updateForwardButtonState();
 }
