@@ -1,41 +1,47 @@
-// [데이터 정의] 각 게임 폴더를 더블클릭했을 때 생성될 세부 기능 리스트
 const folderData = {
     pubg: {
-        title: "배틀그라운드 매니저 폴더",
+        title: "배틀그라운드 매니저",
         apps: [
             { id: "pubg-stat", name: "전적 검색", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-stat.html" },
             { id: "pubg-map", name: "자기장 타이머", icon: "https://cdn-icons-png.flaticon.com/512/854/854878.png", url: "pubg-timer.html" }
         ]
     },
     lol: {
-        title: "리그오브레전드 매니저 폴더",
+        title: "리그오브레전드 매니저",
         apps: [
-            { id: "lol-memo", name: "롤모장 (맞밸)", icon: "https://cdn-icons-png.flaticon.com/512/825/825590.png", url: "lol-memo.html" },
-            { id: "lol-tier", name: "티어 예측기", icon: "https://cdn-icons-png.flaticon.com/512/3112/3112946.png", url: "lol-tier.html" }
+            { id: "lol-memo", name: "롤모장 (맞밸)", icon: "https://cdn-icons-png.flaticon.com/512/825/825590.png", url: "lol-memo.html" }
         ]
     },
     sudden: {
-        title: "서든어택 매니저 폴더",
+        title: "서든어택 매니저",
         apps: [
-            { id: "sudden-crosshair", name: "에임 조준선 설정", icon: "https://cdn-icons-png.flaticon.com/512/5750/5750226.png", url: "sudden-aim.html" }
+            { id: "sudden-aim", name: "에임 조준선", icon: "https://cdn-icons-png.flaticon.com/512/5750/5750226.png", url: "sudden-aim.html" }
         ]
     }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 바탕화면에 있는 메인 폴더 아이콘들 이벤트 바인딩
     const folders = document.querySelectorAll("[data-folder]");
     folders.forEach(folder => {
-        folder.addEventListener("dblclick", () => {
+        folder.addEventListener("dblclick", (e) => {
+            e.stopPropagation(); // 바탕화면 클릭 이벤트로 번지는 것 차단
             const folderType = folder.getAttribute("data-folder");
             openFolder(folderType);
         });
     });
 
+    // ★ 바탕화면 클릭 시 폴더 창 닫기 기능 추가
+    const desktop = document.querySelector(".desktop");
+    desktop.addEventListener("click", (e) => {
+        // 클릭한 대상이 아이콘이 아니라 순수 바탕화면일 때만 폴더를 닫음
+        if (e.target === desktop) {
+            closeFolder();
+        }
+    });
+
     startMacClock();
 });
 
-// [1] 폴더 창 열기
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
     const folderTitle = document.getElementById("folderTitle");
@@ -45,9 +51,8 @@ function openFolder(type) {
     if (!data) return;
 
     folderTitle.innerText = data.title;
-    folderContent.innerHTML = ""; // 기존 내부 아이콘 초기화
+    folderContent.innerHTML = ""; 
 
-    // 폴더 데이터에 등록된 앱 아이콘들을 화면에 동적 생성
     data.apps.forEach(app => {
         const iconDiv = document.createElement("div");
         iconDiv.className = "icon";
@@ -55,8 +60,8 @@ function openFolder(type) {
             <img src="${app.icon}" alt="${app.name}">
             <span class="icon-name">${app.name}</span>
         `;
-        // 폴더 내부의 기능을 더블클릭하면 진짜 프로그램 창이 뜸
-        iconDiv.addEventListener("dblclick", () => {
+        iconDiv.addEventListener("dblclick", (e) => {
+            e.stopPropagation(); // 더블클릭 이벤트 버블링 방지
             openApp(app.url, app.name);
         });
         folderContent.appendChild(iconDiv);
@@ -66,10 +71,9 @@ function openFolder(type) {
 }
 
 function closeFolder() {
-    document.getElementById("folderWindow").style.display = "none";
+    document.getElementById("folderWindow").style.style.display = "none";
 }
 
-// [2] 진짜 프로그램(iframe) 실행 창 열기
 function openApp(url, name) {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -87,7 +91,6 @@ function closeApp() {
     appFrame.src = "";
 }
 
-// Mac OS 스타일 실시간 시계
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
