@@ -16,7 +16,7 @@
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); color: #636366; border: 1px solid rgba(226, 180, 189, 0.2); border-radius: 50%; cursor: pointer; font-size: 14px; transition: all 0.3s ease; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: rgba(226, 180, 189, 0.8); color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.3); }
 
-    /* 📊 좌측 컨트롤 패널 (구글 시트 레이아웃 완벽 고증 및 Mac化) */
+    /* 좌측 수동 제어판 (구글 스프레드시트 구조 미러링) */
     .sheet-control-panel {
       width: 480px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -46,7 +46,7 @@
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 등록 Grid 테이블 */
+    /* 참가자 로우 데이터 테이블 구조 */
     .participant-table { display: flex; flex-direction: column; gap: 8px; }
     .table-header { display: grid; grid-template-columns: 1.2fr 2fr 0.8fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
     .table-row {
@@ -61,7 +61,6 @@
     }
     .table-row input[type="text"]:focus { border-bottom-color: #007aff; }
     
-    /* 빨주노초파보 커스텀 색상 피커 */
     .color-picker-group { display: flex; gap: 5px; justify-content: space-between; }
     .color-dot-label {
       width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
@@ -70,16 +69,13 @@
     .color-dot-label:hover { transform: scale(1.15); }
     .color-dot-label input[type="radio"] { display: none; }
     .color-dot-label input[type="radio"]:checked + .dot-core { transform: scale(0.6); border: 2px solid #fff; }
-    .dot-core {
-      position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 50%;
-      background: var(--picker-color); transition: transform 0.15s;
-    }
+    .dot-core { position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 50%; background: var(--picker-color); transition: transform 0.15s; }
 
     .result-score { font-family: 'Space Mono'; font-size: 15px; font-weight: 700; text-align: center; color: #8e8e93; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 우측 가챠 머신 프레임 */
+    /* 우측 슬롯 기기 디자인 컨테이너 */
     .gacha-machine-panel { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
     .header-box { text-align: center; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 34px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 4px; }
@@ -102,7 +98,6 @@
   </style>
 </head>
 <body>
-  <audio id="gachaAudio" src=""></audio>
   <canvas id="jackpotCanvas"></canvas>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
@@ -125,7 +120,6 @@
         <center>지정 색상 (C열)</center>
         <center>결과값 (D열)</center>
       </div>
-      
       <div id="tableRowsContainer"></div>
     </div>
   </div>
@@ -160,7 +154,6 @@
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
 
-    // 6개의 열 빌드
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
@@ -240,7 +233,6 @@
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
 
-      // 유효 참가자 데이터 스캔
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
@@ -259,7 +251,6 @@
       skipBtn.style.display = "block";
       reel.innerHTML = "";
       
-      // 난수 스코어 풀 생성
       var scorePool = [];
       for (var i = 0; i <= maxVal; i++) scorePool.push(i === 0 ? 0 : -i);
       for (var i = scorePool.length - 1; i > 0; i--) {
@@ -279,7 +270,6 @@
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
         
-        // 탐색 행 하이라이트 집중
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
