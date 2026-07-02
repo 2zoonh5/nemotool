@@ -8,7 +8,7 @@
     
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
-      display: flex; gap: 30px; align-items: center; justify-content: center;
+      display: flex; gap: 40px; align-items: center; justify-content: center;
       height: 100vh; margin: 0; padding: 20px; overflow: hidden; position: relative;
       box-sizing: border-box; user-select: none;
     }
@@ -16,11 +16,11 @@
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); color: #636366; border: 1px solid rgba(226, 180, 189, 0.2); border-radius: 50%; cursor: pointer; font-size: 14px; transition: all 0.3s ease; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: rgba(226, 180, 189, 0.8); color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.3); }
 
-    /* 좌측 수동 제어판 (구글 스프레드시트 구조 미러링) */
+    /* 📊 좌측 컨트롤 패널 (Mac OS 환경에 맞춘 완전 정돈 규격) */
     .sheet-control-panel {
-      width: 480px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      display: flex; flex-direction: column; gap: 18px; z-index: 10;
+      width: 500px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 22px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+      display: flex; flex-direction: column; gap: 20px; z-index: 10;
     }
     .sheet-top-row { display: flex; gap: 12px; }
     .sheet-box { 
@@ -33,10 +33,10 @@
       font-size: 18px; font-weight: 700; text-align: center; outline: none;
     }
     .btn-reset {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-      font-size: 12px; padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff;
+      font-size: 12px; padding: 5px 14px; border-radius: 6px; cursor: pointer; transition: background 0.2s;
     }
-    .btn-reset:hover { background: rgba(255,255,255,0.15); }
+    .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
     
     .btn-click {
       flex: 1.5; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 8px;
@@ -46,36 +46,45 @@
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 로우 데이터 테이블 구조 */
-    .participant-table { display: flex; flex-direction: column; gap: 8px; }
-    .table-header { display: grid; grid-template-columns: 1.2fr 2fr 0.8fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    /* 참가자 등록 Grid 테이블 */
+    .participant-table { display: flex; flex-direction: column; gap: 10px; }
+    .table-header { display: grid; grid-template-columns: 1.5fr 2fr 0.8fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    
     .table-row {
-      display: grid; grid-template-columns: 1.2fr 2fr 0.8fr; gap: 10px; align-items: center;
-      background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05);
-      padding: 8px; border-radius: 8px; transition: all 0.3s ease;
+      display: grid; grid-template-columns: 1.5fr 2fr 0.8fr; gap: 14px; align-items: center;
+      background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05);
+      padding: 10px; border-radius: 10px; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
-    .table-row.active { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
+    .table-row.active { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
+    
     .table-row input[type="text"] {
       background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #fff; font-size: 13px; padding: 2px 4px; outline: none; width: 100%; box-sizing: border-box;
+      color: #fff; font-size: 13px; padding: 4px; outline: none; width: 100%; box-sizing: border-box;
     }
     .table-row input[type="text"]:focus { border-bottom-color: #007aff; }
     
-    .color-picker-group { display: flex; gap: 5px; justify-content: space-between; }
-    .color-dot-label {
-      width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
-      border: 2px solid transparent; display: block; position: relative; transition: transform 0.15s;
+    /* 🔄 [개선 구역] 난잡한 도트를 지우고 맥북 환경설정처럼 세련되게 바꾼 드롭다운 토글 타일 */
+    .mac-select-wrapper { position: relative; width: 100%; }
+    .mac-select-color {
+      width: 100%; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: #e5e5ea; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 6px;
+      outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+      box-sizing: border-box; transition: background 0.2s, border-color 0.2s;
     }
-    .color-dot-label:hover { transform: scale(1.15); }
-    .color-dot-label input[type="radio"] { display: none; }
-    .color-dot-label input[type="radio"]:checked + .dot-core { transform: scale(0.6); border: 2px solid #fff; }
-    .dot-core { position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 50%; background: var(--picker-color); transition: transform 0.15s; }
+    .mac-select-color:focus { background: rgba(255, 255, 255, 0.1); border-color: #007aff; }
+    /* 우측 내림 화살표 콤보 박스 고증 기믹 */
+    .mac-select-wrapper::after {
+      content: ""; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+      border-top: 5px solid #8e8e93; pointer-events: none;
+    }
+    .mac-select-color option { background: #1c1c1e; color: #fff; }
 
-    .result-score { font-family: 'Space Mono'; font-size: 15px; font-weight: 700; text-align: center; color: #8e8e93; }
+    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #8e8e93; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 우측 슬롯 기기 디자인 컨테이너 */
+    /* 🎰 우측 가챠 머신 프레임 */
     .gacha-machine-panel { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
     .header-box { text-align: center; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 34px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 4px; }
@@ -91,7 +100,6 @@
     .number { height: 80px; line-height: 80px; font-size: 48px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
     .final-hit { color: #ff3b30 !important; }
     .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
-    @keyframes softPulse { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.05); } }
 
     .btn-finish { display: none; padding: 12px 40px; background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.2s; }
     .btn-finish:hover { background: #ffffff; color: #1c1c1e; }
@@ -117,7 +125,7 @@
     <div class="participant-table">
       <div class="table-header">
         <span>참가자 이름 (B열)</span>
-        <center>지정 색상 (C열)</center>
+        <span>지정 색상 (C열)</span>
         <center>결과값 (D열)</center>
       </div>
       <div id="tableRowsContainer"></div>
@@ -154,22 +162,23 @@
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
 
+    // 6개의 깔끔한 드롭다운 그리드 빌드
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
       row.className = "table-row";
       row.id = `row-${i}`;
       
-      let pickerHtml = colorList.map(color => `
-        <label class="color-dot-label" style="--picker-color: ${colorHexMap[color]};">
-          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
-          <div class="dot-core"></div>
-        </label>
-      `).join('');
+      let optionsHtml = colorList.map(color => `<option value="${color}">${color}</option>`).join('');
 
       row.innerHTML = `
         <input type="text" id="name-${i}" placeholder="이름 입력" oninput="activateRow(${i})">
-        <div class="color-picker-group">${pickerHtml}</div>
+        <div class="mac-select-wrapper">
+          <select class="mac-select-color" id="color-${i}" onchange="activateRow(${i})">
+            <option value="" disabled selected>색상 선택안함</option>
+            ${optionsHtml}
+          </select>
+        </div>
         <div class="result-score" id="score-${i}">--</div>
       `;
       container.appendChild(row);
@@ -177,9 +186,9 @@
 
     function activateRow(idx) {
       var name = document.getElementById(`name-${idx}`).value;
-      var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
+      var selectedColor = document.getElementById(`color-${idx}`).value;
       var row = document.getElementById(`row-${idx}`);
-      if (name.trim() !== "" && checkedColor) {
+      if (name.trim() !== "" && selectedColor !== "") {
         row.classList.add("active");
       } else {
         row.classList.remove("active");
@@ -190,33 +199,27 @@
       if(isRunning) return;
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
-        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-        if(checked) checked.checked = false;
+        document.getElementById(`color-${i}`).value = "";
         document.getElementById(`score-${i}`).innerText = "--";
-        var row = document.getElementById(`row-${i}`);
-        row.className = "table-row";
+        document.getElementById(`row-${i}`).className = "table-row";
       }
-      reel.innerHTML = "";
-      reel.style.transform = "none";
-      finishBtn.style.display = "none";
-      clickBtn.disabled = false;
+      reel.innerHTML = ""; reel.style.transform = "none";
+      finishBtn.style.display = "none"; clickBtn.disabled = false;
     }
 
-    function createNumberElement(maxVal, excludeValue) {
-      var div = document.createElement('div');
-      div.className = 'number';
+    function createNumberElement(max, excludeValue) {
+      var div = document.createElement('div'); div.className = 'number';
       var val;
       do {
-        var tmp = Math.floor(Math.random() * (maxVal + 1));
+        var tmp = Math.floor(Math.random() * (max + 1));
         val = (tmp === 0 ? 0 : -tmp);
       } while (excludeValue !== undefined && Math.abs(val - excludeValue) < 2);
-      div.innerText = val;
-      return div;
+      div.innerText = val; return div;
     }
 
-    function appendRandomNumbers(maxVal, count) {
+    function appendRandomNumbers(max, count) {
       var fragment = document.createDocumentFragment();
-      for(var j=0; j < count; j++) { fragment.appendChild(createNumberElement(maxVal)); }
+      for(var j=0; j < count; j++) { fragment.appendChild(createNumberElement(max)); }
       reel.appendChild(fragment);
     }
 
@@ -229,28 +232,26 @@
       });
     }
 
+    // 🎰 [로직 유지 고수] 원본 스프레드시트 셔플 및 색상별 스코어 연동 알고리즘
     async function runGachaMachine() {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
-        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
-        if (name.trim() !== "" && checkedColor) {
-          activeParticipants.push({ id: i, color: checkedColor.value });
+        var selectedColor = document.getElementById(`color-${i}`).value;
+        if (name.trim() !== "" && selectedColor !== "") {
+          activeParticipants.push({ id: i, name: name, color: selectedColor, score: null });
         }
       }
 
       if (activeParticipants.length === 0) {
-        alert("이름과 색상이 모두 선택된 유효한 참가자가 없습니다.");
-        return;
+        alert("이름과 색상이 모두 지정된 참가자가 없습니다."); return;
       }
 
-      isRunning = true;
-      clickBtn.disabled = true;
-      skipBtn.style.display = "block";
-      reel.innerHTML = "";
+      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; reel.innerHTML = "";
       
+      // 1. 최대값 기반 고유 스코어 풀 생성 및 피셔-예이츠 셔플 알고리즘
       var scorePool = [];
       for (var i = 0; i <= maxVal; i++) scorePool.push(i === 0 ? 0 : -i);
       for (var i = scorePool.length - 1; i > 0; i--) {
@@ -258,18 +259,25 @@
         var temp = scorePool[i]; scorePool[i] = scorePool[j]; scorePool[j] = temp;
       }
 
-      activeParticipants.forEach((p, idx) => {
-        p.score = scorePool[idx % scorePool.length];
+      // 2. 6가지 마스터 색상 리스트에 무작위 점수를 1:1 선행 할당 (중복 색상값 완벽 공유 보장)
+      var colorScoreMap = {};
+      colorList.forEach((color, idx) => {
+        colorScoreMap[color] = scorePool[idx % scorePool.length];
       });
 
-      var spacer = document.createElement('div');
-      spacer.className = 'number'; reel.appendChild(spacer); 
+      // 3. 참가자들은 자신이 지정한 색상의 맵 데이터를 최종 참조 고수
+      activeParticipants.forEach(p => {
+        p.score = colorScoreMap[p.color];
+      });
+
+      var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
 
       for (var i = 0; i < activeParticipants.length; i++) {
         if (isSkipped) break;
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
         
+        // 탐색 행 타겟 컬러 테두리 주입 인터랙션
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
@@ -278,10 +286,7 @@
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
 
-        var f = document.createElement('div'); 
-        f.className = 'number'; f.id = 'target-' + i;
-        f.innerText = p.score; reel.appendChild(f); 
-        
+        var f = document.createElement('div'); f.className = 'number'; f.id = 'target-' + i; f.innerText = p.score; reel.appendChild(f); 
         var finalTargetIndex = startIndex + spinCount;
         reel.appendChild(createNumberElement(maxVal, p.score));
         appendRandomNumbers(maxVal, 2);
@@ -299,17 +304,14 @@
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
-          reel.className = 'reel ' + snapClass;
-          reel.style.transform = 'translateY(-' + targetY + 'px)';
+          reel.className = 'reel ' + snapClass; reel.style.transform = 'translateY(-' + targetY + 'px)';
           await wait(400); 
 
           var targetEl = document.getElementById('target-' + i);
           rowEl.classList.add("done");
           
           if (p.score === 0) {
-            targetEl.className = 'number jackpot-hit';
-            rowEl.classList.add('jackpot-row');
-            triggerJackpotBurst();
+            targetEl.className = 'number jackpot-hit'; rowEl.classList.add('jackpot-row'); triggerJackpotBurst();
           } else {
             targetEl.className = 'number final-hit';
           }
@@ -320,44 +322,33 @@
       showFinalGachaState(activeParticipants);
     }
 
-    function skipAll() { isSkipped = true; }
-
     function showFinalGachaState(activeParticipants) {
       var canvas = document.getElementById('jackpotCanvas');
-      if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); }
+      if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       reel.style.transition = 'none';
-      
       activeParticipants.forEach((p) => {
         var rowEl = document.getElementById(`row-${p.id}`);
         document.getElementById(`score-${p.id}`).innerText = p.score;
         rowEl.classList.add("done");
         if (p.score === 0) rowEl.classList.add('jackpot-row');
       });
-      
       document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
-      skipBtn.style.display = 'none';
-      finishBtn.style.display = 'block';
-      isRunning = false;
+      skipBtn.style.display = 'none'; finishBtn.style.display = 'block'; isRunning = false;
     }
 
     function triggerJackpotBurst() {
-      var canvas = document.getElementById('jackpotCanvas');
-      var ctx = canvas.getContext('2d');
+      var canvas = document.getElementById('jackpotCanvas'); var ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       var particles = [];
       for(var i=0; i<80; i++) {
         particles.push({ x: canvas.width/2 + 100, y: canvas.height/2.2, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
       }
       function animate() {
-        if (isSkipped) return; 
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        var alive = false;
+        if (isSkipped) return; ctx.clearRect(0,0,canvas.width, canvas.height); var alive = false;
         particles.forEach(p => {
           if(p.life > 0) {
             p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life -= 0.02;
-            ctx.save(); ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.w, 0, Math.PI*2); ctx.fill(); ctx.restore();
-            alive = true;
+            ctx.save(); ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.w, 0, Math.PI*2); ctx.fill(); ctx.restore(); alive = true;
           }
         });
         if(alive) requestAnimationFrame(animate);
@@ -366,9 +357,7 @@
     }
 
     function closeGachaApp() {
-      if(window.parent && window.parent.closeApp) {
-        window.parent.closeApp();
-      }
+      if(window.parent && window.parent.closeApp) window.parent.closeApp();
     }
   </script>
 </body>
