@@ -1,12 +1,13 @@
 body {
     margin: 0; padding: 0;
-    /* 폰트는 세련된 프리텐다드로 유지 */
     font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     overflow: hidden;
+    /* 기본 배경화면 (오로라 퍼플) */
     background: linear-gradient(135deg, #1f1c2c 0%, #3a1c41 35%, #5d2450 70%, #283c86 100%);
     background-size: 400% 400%;
     animation: gradientMove 15s ease infinite;
     height: 100vh; user-select: none;
+    transition: background 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
@@ -14,23 +15,68 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* 상단바 */
-.mac-menu-bar {
-    position: fixed; top: 0; left: 0; width: 100%; height: 24px;
-    background: rgba(255, 255, 255, 0.13); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 18px; box-sizing: border-box; z-index: 10005;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+/* 실시간 동적 배경 스위칭 테마 모듈 */
+body.bg-sunset {
+    background: linear-gradient(135deg, #4b1248 0%, #f0c27b 100%) !important; animation: none;
 }
-.left-menu, .right-menu { display: flex; align-items: center; gap: 4px; }
+body.bg-cyber {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important; animation: none;
+}
+
+/* 💻 초정밀 고급 상단바 스페이스 */
+.mac-menu-bar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 26px;
+    background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 16px; box-sizing: border-box; z-index: 10005;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.left-menu, .right-menu { display: flex; align-items: center; }
+
+/* 네모툴 고유 정사가형 큐브 로고 아이덴티티 */
+.nemo-logo-box {
+    width: 14px; height: 14px; border: 1.8px solid #ffffff; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; margin-right: 6px; box-sizing: border-box; transition: transform 0.2s;
+}
+.nemo-logo-box:hover { transform: scale(1.1); background: rgba(255,255,255,0.15); }
+.cube-dot { width: 3px; height: 3px; background: #ffffff; border-radius: 50%; }
+
+.menu-wrapper { position: relative; display: inline-block; }
+
 .menu-item {
-    color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500;
+    color: rgba(255, 255, 255, 0.95); font-size: 13px; font-weight: 500;
     padding: 2px 10px; cursor: pointer; border-radius: 4px; transition: background 0.1s;
 }
 .menu-item:hover { background: rgba(255, 255, 255, 0.2); }
-.menu-item.logo { font-weight: 700; margin-right: 8px; }
+.menu-item.logo-text { font-weight: 800; padding-left: 2px; margin-right: 10px; font-size: 13px; letter-spacing: -0.3px; }
 
-/* 바탕화면 */
+/* 🌟 시계 가독성 전폭 향상 (글자 크기 UP, 굵기감 업그레이드) */
+.menu-item.clock {
+    font-size: 13px; font-weight: 600; cursor: default; padding-right: 4px; padding-left: 6px;
+}
+.menu-item.clock:hover { background: none; }
+
+/* 우측 상태바 시스템 가상 아이콘 고증 정렬 */
+.status-icons { display: flex; align-items: center; gap: 11px; margin-right: 8px; }
+.status-icons img { width: 14px; height: 14px; filter: invert(1); opacity: 0.9; }
+
+/* ⬇️ 드롭다운 가상 메뉴바 레이아웃 */
+.mac-dropdown {
+    display: none; position: absolute; top: 24px; left: 4px;
+    background: rgba(40, 40, 40, 0.65); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px;
+    padding: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 10020; min-width: 150px;
+}
+.dropdown-item {
+    color: #ffffff; font-size: 12.5px; padding: 6px 14px; border-radius: 5px;
+    cursor: pointer; white-space: nowrap; font-weight: 500; transition: background 0.1s;
+}
+.dropdown-item:hover { background: #007aff; } /* 애플 기본 블루 하이라이트 진입 */
+.dropdown-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 6px; }
+
+/* 바탕화면 공간 */
 .desktop {
     padding: 50px 30px 100px 30px;
     display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
@@ -51,7 +97,7 @@ body {
     color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
 }
 
-/* 윈도우 팝업 (외부 테두리와 고급스러운 그림자는 세련되게 유지) */
+/* 윈도우 팝업 */
 .window-popup {
     display: none; position: fixed;
     top: 15vh; left: 20vw; width: 60vw; height: 55vh;
@@ -112,31 +158,16 @@ body {
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* ↩️ [원상복구] 기존 피드백 반영: 깔끔하고 자연스러웠던 기존 폴더 내부 스타일로 롤백 */
+/* 폴더 내부 */
 .folder-content {
     padding: 20px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;
     background: #f5f5f7; height: 100%; box-sizing: border-box; align-content: flex-start;
 }
-/* 기존의 플랫하고 이쁜 아이콘 스타일로 완벽 롤백 */
 .folder-content .icon { 
-    height: 90px; 
-    width: 85px;
-    background: transparent;
-    border: 1.5px solid transparent;
-    border-radius: 12px;
-    box-shadow: none;
+    height: 90px; width: 85px; background: transparent; border: 1.5px solid transparent; border-radius: 12px; box-shadow: none;
 }
-.folder-content .icon .icon-name { 
-    color: #333333; 
-    text-shadow: none; 
-}
-/* 호버 시에도 이전처럼 가볍게 배경만 생기도록 롤백 */
-.folder-content .icon:hover { 
-    background: rgba(0, 0, 0, 0.06); 
-    box-shadow: none; 
-    transform: none;
-    border-color: transparent;
-}
+.folder-content .icon .icon-name { color: #333333; text-shadow: none; }
+.folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; border-color: transparent; }
 
 /* 독 바 */
 .mac-dock-container {
