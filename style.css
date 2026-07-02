@@ -4,7 +4,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow: hidden;
     
-    /* Mac OS 특유의 고급스러운 다크 오로라 그라데이션 (이미지 불필요) */
+    /* Mac OS 특유의 고급스러운 다크 오로라 그라데이션 */
     background: linear-gradient(135deg, #1f1c2c 0%, #3a1c41 35%, #5d2450 70%, #283c86 100%);
     background-size: 400% 400%;
     animation: gradientMove 15s ease infinite;
@@ -20,39 +20,71 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Mac OS 상단 메뉴 바 추가 (더욱 맥북 같은 느낌을 줍니다) */
-body::before {
-    content: "  Finder  파일  편집  보기  이동  윈도우  도움말";
+/* 진짜 Mac OS 스타일 상단 메뉴 바 */
+.mac-menu-bar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 24px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.13);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 12px;
-    line-height: 24px;
-    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
     box-sizing: border-box;
     z-index: 10000;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 바탕화면 공간 정렬 */
+.left-menu, .right-menu {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.menu-item {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 2px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.1s;
+    letter-spacing: -0.2px;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-item.logo {
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.menu-item.clock {
+    cursor: default;
+    font-weight: 500;
+}
+.menu-item.clock:hover {
+    background: transparent;
+}
+
+/* 바탕화면 아이콘 공간 정렬 */
 .desktop {
-    padding: 50px 30px 30px 30px; /* 상단 바 자리 확보 */
+    padding: 45px 25px 25px 25px; /* 상단 바 두께만큼 여백 */
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     gap: 20px;
-    height: calc(100vh - 80px);
-    align-content: flex-start;
+    height: calc(100vh - 70px);
+    align-content: flex-start; /* 세로로 차곡차곡 쌓임 */
 }
 
-/* Mac OS 스타일 정갈한 아이콘 */
+/* 정갈한 아이콘 스타일 */
 .icon {
     width: 80px;
     display: flex;
@@ -62,11 +94,10 @@ body::before {
     text-align: center;
     border: 1.5px solid transparent;
     padding: 10px 4px;
-    border-radius: 12px; /* 조금 더 둥글게 */
+    border-radius: 12px;
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* 마우스 올렸을 때 살짝 뜨는 맥북 감성 */
 .icon:hover {
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -78,7 +109,6 @@ body::before {
     height: 52px;
     object-fit: contain;
     margin-bottom: 6px;
-    /* 앱 아이콘 그림자 처리 */
     filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
 }
 
@@ -91,7 +121,7 @@ body::before {
     word-break: keep-all;
 }
 
-/* 가상 프로그램 실행 창 (Mac OS 윈도우 스타일) */
+/* 가상 프로그램 실행 창 */
 .window-popup {
     display: none;
     position: fixed;
@@ -100,7 +130,7 @@ body::before {
     width: 80vw;
     height: 82vh;
     background: #ffffff;
-    border-radius: 12px; /* 맥 특유의 둥근 모서리 */
+    border-radius: 12px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     z-index: 9999;
     flex-direction: column;
@@ -108,11 +138,11 @@ body::before {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 깔끔한 미니멀 화이트 헤더 바 */
+/* 미니멀 화이트 헤더 바 */
 .window-header {
     background: #ebebeb;
     color: #333333;
-    padding: 10px 16px;
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -120,7 +150,6 @@ body::before {
     position: relative;
 }
 
-/* 제목을 가운데 정렬하여 맥 스타일 완성 */
 .window-title {
     font-size: 13px;
     font-weight: 600;
@@ -130,7 +159,7 @@ body::before {
     transform: translateX(-50%);
 }
 
-/* 왼쪽 배치된 빨간색 닫기 버튼 (Mac OS 시그니처 버튼) */
+/* Mac OS 시그니처 닫기 버튼 */
 .window-close-btn {
     background: #ff5f56;
     border: 1px solid #e0443e;
@@ -146,13 +175,12 @@ body::before {
     font-size: 9px;
     font-weight: bold;
     line-height: 1;
+    z-index: 10;
 }
 .window-close-btn:hover {
     background: #ff3b30;
-    color: #4c0002; /* 호버하면 x 마크가 슬쩍 보임 */
-    content: "×";
+    color: #4c0002;
 }
-/* 호버 시 텍스트 얹기용 */
 .window-close-btn:hover::before {
     content: "×";
 }
