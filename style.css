@@ -3,10 +3,49 @@ body {
     padding: 0;
     font-family: 'Malgun Gothic', sans-serif;
     overflow: hidden;
-    /* 고화질 배경이미지가 있다면 assets/bg.jpg로 교체하세요 */
-    background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070') no-repeat center center/cover;
+    background: url('https://image.pollinations.ai/prompt/An%20epic%20and%20intense%20gaming%20desktop%20wallpaper%20with%20a%20dark%20neon%20cyberpunk%20aesthetic,%20completely%20blank%20with%20NO%20text,%20NO%20letters,%20NO%20words.%20The%20background%20vibrantlly%20blends%20elements%20from%20League%20of%20Legends%20(a%20glowing%20magical%20fantasy%20sword),%20PUBG%20(a%20military%20airdrop%20supply%20crate%20with%20thick%20red%20smoke),%20and%20Sudden%20Attack%20(tactical%20laser%20crosshairs%20and%20sparks%20flying).%20High-tech%20digital%20UI%20lines,%20dramatic%20volumetric%20lighting,%20deep%20blue,%20purple,%20and%20glowing%20red%20accents,%204k%20resolution,%20cinematic%20gaming%20station%20vibe?width=1920&height=1080&nologo=true') no-repeat center center/cover;
     height: 100vh;
     user-select: none;
+}
+
+/* 바탕화면 정중앙 간지 타이틀 스타일 */
+.main-os-title {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 58px;
+    font-weight: 900;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 4px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    /* 미래지향적 네온 글씨 효과 */
+    text-shadow: 0 0 10px rgba(255,255,255,0.5), 
+                 0 0 20px #ff0055, 
+                 0 0 40px #ff0055, 
+                 0 0 70px #00d2ff;
+    pointer-events: none; /* 아이콘 클릭 방해 금지 */
+    animation: neonPulse 2s infinite alternate;
+}
+
+.main-os-title .emoticon {
+    color: #00d2ff;
+    font-size: 48px;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+/* 미세하게 빛이 깜빡이는 애니메이션 */
+@keyframes neonPulse {
+    from {
+        opacity: 0.93;
+        filter: brightness(1);
+    }
+    to {
+        opacity: 1;
+        filter: brightness(1.2);
+    }
 }
 
 /* 바탕화면 그리드 */
