@@ -6,7 +6,7 @@ body {
     background-size: 400% 400%;
     animation: gradientMove 15s ease infinite;
     height: 100vh; user-select: none;
-    transition: background 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: background 0.8s, opacity 0.2s ease;
 }
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
@@ -17,7 +17,7 @@ body {
 body.bg-sunset { background: linear-gradient(135deg, #4b1248 0%, #f0c27b 100%) !important; animation: none; }
 body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important; animation: none; }
 
-/* 🖥️ 상단바: 텍스트 투명도를 제어해 감성 한 스푼 추가 */
+/* 상단바 */
 .mac-menu-bar {
     position: fixed; top: 0; left: 0; width: 100%; height: 25px;
     background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -44,38 +44,66 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .menu-item:hover { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
 .menu-item.logo-text { font-weight: 800; padding-left: 2px; margin-right: 10px; font-size: 13px; letter-spacing: -0.3px; }
 
-/* 🌟 시계 가독성 및 시인성 전격 상향 조정 */
+/* 🌟 Mac OS 스타일 초선명 정밀 시계 레이아웃 */
 .menu-item.clock {
     font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.95);
-    cursor: default; padding-right: 2px; padding-left: 8px;
+    cursor: default; padding-right: 2px; padding-left: 10px;
 }
 .menu-item.clock:hover { background: none; }
 
-/* 고밀도 SVG 상태바 전용 아이콘 세팅 */
-.status-icons { display: flex; align-items: center; gap: 13px; margin-right: 6px; }
-.bar-svg { width: 15px; height: 15px; fill: rgba(255, 255, 255, 0.85); cursor: pointer; transition: fill 0.15s; }
-.bar-svg:hover { fill: #ffffff; }
+.status-icons { display: flex; align-items: center; gap: 14px; margin-right: 6px; }
+.bar-svg { width: 15px; height: 15px; fill: rgba(255, 255, 255, 0.85); cursor: pointer; transition: fill 0.15s, transform 0.1s; }
+.bar-svg:hover { fill: #ffffff; transform: scale(1.05); }
 
-/* 드롭다운 */
+/* 드롭다운 메뉴 */
 .mac-dropdown {
     display: none; position: absolute; top: 24px; left: 4px;
-    background: rgba(35, 35, 35, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    background: rgba(30, 30, 30, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
     border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px;
     padding: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 10020; min-width: 160px;
 }
-.dropdown-item {
-    color: #ffffff; font-size: 12.5px; padding: 6px 14px; border-radius: 5px;
-    cursor: pointer; white-space: nowrap; font-weight: 500; transition: background 0.1s;
-}
+.dropdown-item { color: #ffffff; font-size: 12.5px; padding: 6px 14px; border-radius: 5px; cursor: pointer; white-space: nowrap; font-weight: 500; transition: background 0.1s; }
 .dropdown-item:hover { background: #007aff; }
 .dropdown-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 6px; }
 
+/* 🔍 [신규] 부드럽게 매칭되는 Spotlight 슬라이드 패널 디자인 */
+.mac-spotlight-window {
+    display: none; position: fixed; top: 35px; right: 80px; width: 280px;
+    background: rgba(35, 35, 35, 0.7); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+    padding: 8px 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); z-index: 10015;
+    align-items: center; gap: 10px;
+}
+.mac-spotlight-window svg { width: 16px; height: 16px; fill: rgba(255,255,255,0.5); }
+.mac-spotlight-window input {
+    flex: 1; background: transparent; border: none; color: #fff; font-size: 13px; outline: none;
+}
+
+/* 🎛️ [신규] 진짜 맥북 UI 모듈 제어 센터 슬라이드 패널 디자인 */
+.mac-control-center {
+    display: none; position: fixed; top: 35px; right: 15px; width: 260px;
+    background: rgba(35, 35, 35, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 14px;
+    padding: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); z-index: 10015;
+    flex-direction: column; gap: 12px; color: #fff;
+}
+.cc-row { display: flex; gap: 10px; }
+.cc-tile {
+    flex: 1; background: rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 10px;
+    display: flex; align-items: center; gap: 8px; cursor: pointer; transition: background 0.2s;
+}
+.cc-tile.active { background: #007aff; }
+.cc-icon { font-size: 16px; }
+.cc-text { display: flex; flex-direction: column; line-height: 1.2; }
+.cc-title { font-size: 12px; font-weight: 600; }
+.cc-sub { font-size: 10px; opacity: 0.7; }
+.cc-slider-box { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; font-weight: 500; opacity: 0.9; }
+.cc-slider-box input[type="range"] { width: 100%; accent-color: #007aff; cursor: pointer; height: 4px; }
+
 /* 바탕화면 */
 .desktop {
-    padding: 50px 30px 100px 30px;
-    display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
-    height: calc(100vh - 100px); align-content: flex-start;
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; z-index: 1;
+    padding: 50px 30px 100px 30px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
+    height: calc(100vh - 100px); align-content: flex-start; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; z-index: 1;
 }
 
 .icon {
@@ -89,21 +117,14 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 
 /* 윈도우 팝업 */
 .window-popup {
-    display: none; position: fixed;
-    top: 15vh; left: 20vw; width: 60vw; height: 55vh;
-    background: #ffffff; border-radius: 14px;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+    display: none; position: fixed; top: 15vh; left: 20vw; width: 60vw; height: 55vh;
+    background: #ffffff; border-radius: 14px; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
 .window-popup.maximized { top: 24px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 24px) !important; border-radius: 0px !important; }
 
-.window-header {
-    background: #f0f0f2; color: #333333; padding: 10px 18px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #d1d1d6; position: relative;
-    height: 42px; box-sizing: border-box;
-}
+.window-header { background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box; }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); }
 
 .nav-buttons { display: flex; align-items: center; gap: 14px; z-index: 12; }
@@ -135,40 +156,33 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; border-color: transparent; }
 
-/* ⚓ 완벽한 고해상도 구현: 하단 독 바 스타일 */
+/* ⚓ [고증 극대화] 허전함을 지운 풍성한 Mac OS 진짜 DOCK 스타일 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    z-index: 10010; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transform: translateX(-50%); z-index: 10010;
 }
-.mac-dock-container.active { transform: translateX(-50%) translateY(0); }
 .mac-dock {
     background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    padding: 6px 12px 3px 12px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    padding: 6px 14px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex; gap: 14px; align-items: center;
 }
-#minimizedList { display: flex; gap: 14px; align-items: flex-start; }
+#minimizedList { display: flex; gap: 14px; align-items: center; }
 
-/* 🟢 하단바에 들어갈 개별 앱 구조와 활성화 닷(Indicator Dot) 디자인 */
-.dock-wrapper {
-    display: flex; flex-direction: column; align-items: center; position: relative; gap: 3px;
-}
 .dock-item {
-    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: transform 0.2s ease;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .dock-item:hover { transform: scale(1.18) translateY(-4px); }
 .dock-item img { width: 100%; height: 100%; object-fit: contain; }
 
-/* 찐 맥북 고증: 현재 켜져있는 프로그램 하단에 찍히는 영롱한 백색 인디케이터 점 */
-.dock-indicator {
-    width: 4px; height: 4px; background: #ffffff; border-radius: 50%;
-    opacity: 0.9; box-shadow: 0 1px 3px rgba(255,255,255,0.6);
-}
-
+/* 🛑 점(Dot)을 영구 삭제하고 순정 툴팁만 남긴 깔끔 레이아웃 */
 .dock-tooltip {
-    display: none; position: absolute; top: -38px; background: rgba(0, 0, 0, 0.8);
+    display: none; position: absolute; top: -38px; background: rgba(0, 0, 0, 0.82);
     color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 5px; white-space: nowrap;
     pointer-events: none; z-index: 10020;
 }
-.dock-item:hover + .dock-tooltip { display: block; }
+.dock-item:hover .dock-tooltip { display: block; }
+
+/* DOCK 전용 분할 구분선 */
+.dock-divider { width: 1px; height: 32px; background: rgba(255, 255, 255, 0.25); }
