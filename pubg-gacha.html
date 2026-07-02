@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Space+Mono:wght@400;700&family=Inter:wght@300;600&display=swap');
+    
+    body { 
+      background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
+      display: flex; flex-direction: column; align-items: center; 
+      height: 100vh; margin: 0; padding: 20px 0; overflow: hidden; position: relative;
+      box-sizing: border-box; user-select: none;
+    }
+    #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+    .header-box { text-align: center; margin-bottom: 20px; z-index: 10; }
+    .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 5px; text-transform: uppercase; }
+    .header-sub { font-size: 10px; color: #636366; letter-spacing: 4px; margin-top: 6px; font-weight: 300; }
+    .btn-skip { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); color: #636366; border: 1px solid rgba(226, 180, 189, 0.2); border-radius: 50%; cursor: pointer; font-size: 14px; transition: all 0.3s ease; z-index: 100; backdrop-filter: blur(10px); }
+    .btn-skip:hover { background: rgba(226, 180, 189, 0.8); color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.3); }
+    .machine-frame { background: #1c1c1e; padding: 12px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative; z-index: 10; width: 260px; }
+    .slot-display { width: 220px; height: 220px; border-radius: 30px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
+    .curve-shadow { position: absolute; left: 0; width: 100%; height: 90px; z-index: 15; pointer-events: none; }
+    .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
+    .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
+    .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
+    .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+    .spinning { transition: transform 7.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .number { height: 80px; line-height: 80px; font-size: 52px; font-family: 'Space Mono', monospace; color: #3a3a3c; }
+    .final-hit { color: #ff3b30 !important; font-weight: 700 !important; }
+    .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.6s infinite alternate; }
+    @keyframes softPulse { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.05); } }
+    .info-panel { margin-top: 25px; width: 380px; z-index: 10; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px 12px; text-align: left; opacity: 0.15; transition: all 0.5s ease; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
+    .card.active { opacity: 1; background: rgba(255,255,255,0.05); }
+    .color-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--bar-color); }
+    .card .color-name { font-size: 11px; color: #8e8e93; font-weight: 600; margin-left: 5px; }
+    .card .score { font-size: 18px; font-family: 'Space Mono'; color: #f2f2f7; }
+    .card.done.jackpot-card .score { color: #e2b4bd; }
+    .card.done:not(.jackpot-card) .score { color: #ff3b30; }
+    .btn-finish { display: none; margin-top: 25px; padding: 12px 50px; background: #e2b4bd; color: #1c1c1e; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+    .btn-finish:hover { background: #f2f2f7; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <audio id="gachaAudio" src=""></audio>
+  <canvas id="jackpotCanvas"></canvas>
+  <button class="btn-skip" id="skipBtn" onclick="skipAll()">»</button>
+  
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <div class="header-box">
+      <h1 class="header-main">NEMO GACHA</h1>
+      <div class="header-sub">STANDALONE CLIENT ARCHIVE</div>
+    </div>
+
+    <div class="machine-frame">
+      <div class="slot-display">
+        <div class="top-shadow curve-shadow"></div>
+        <div class="bottom-shadow curve-shadow"></div>
+        <div class="center-line"></div>
+        <div id="reel" class="reel"></div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <div id="history" class="grid"></div>
+      <center><button id="finishBtn" class="btn-finish" onclick="finishGacha()">SAVE RESULT</button></center>
+    </div>
+  </div>
+
+  <script>
+    // 스프레드시트 잔해 제거: 내부 가상 로컬 정밀 데이터 구조 설계 변경
+    var maxVal = 10; // 기존 B3 셀 역할 대체 변수
+    var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
+    var participants = colorList.map((color, i) => ({ color: color, score: null }));
+
+    var reel = document.getElementById('reel');
+    var history = document.getElementById('history');
+    var finishBtn = document.getElementById('finishBtn');
+    var skipBtn = document.getElementById('skipBtn');
+    var isSkipped = false;
+    var isRunning = false;
+    var ITEM_HEIGHT = 80;
+    var DISPLAY_HEIGHT = 220;
+    var CENTER_OFFSET = (DISPLAY_HEIGHT / 2) - (ITEM_HEIGHT / 2); 
+    var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
+
+    // 셔플 및 점수 맵 매핑 알고리즘 구동
+    function setupScores() {
+      var scorePool = [];
+      for (var i = 0; i <= maxVal; i++) {
+        scorePool.push(i === 0 ? 0 : -i);
+      }
+      for (var i = scorePool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = scorePool[i]; scorePool[i] = scorePool[j]; scorePool[j] = temp;
+      }
+      participants.forEach((p, idx) => {
+        p.score = scorePool[idx % scorePool.length];
+      });
+    }
+
+    function initLayout() {
+      setupScores();
+      participants.forEach((p, i) => {
+        var card = document.createElement('div');
+        card.className = 'card'; card.id = 'card-' + i;
+        card.style.setProperty('--bar-color', colorHexMap[p.color] || '#444');
+        card.innerHTML = `<div class="color-bar"></div><span class="color-name">${p.color}</span><span class="score" id="score-${i}">--</span>`;
+        history.appendChild(card);
+      });
+      startSequence();
+    }
+
+    function createNumberElement(excludeValue) {
+      var div = document.createElement('div');
+      div.className = 'number';
+      var val;
+      do {
+        var tmp = Math.floor(Math.random() * (maxVal + 1));
+        val = (tmp === 0 ? 0 : -tmp);
+      } while (excludeValue !== undefined && Math.abs(val - excludeValue) < 2);
+      div.innerText = val;
+      return div;
+    }
+
+    function appendRandomNumbers(count) {
+      var fragment = document.createDocumentFragment();
+      for(var j=0; j < count; j++) { fragment.appendChild(createNumberElement()); }
+      reel.appendChild(fragment);
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => {
+        var start = Date.now();
+        var timer = setInterval(() => {
+          if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
+        }, 50);
+      });
+    }
+
+    async function startSequence() {
+      if (isRunning) return;
+      isRunning = true;
+      var spacer = document.createElement('div');
+      spacer.className = 'number'; reel.appendChild(spacer); 
+
+      for (var i = 0; i < participants.length; i++) {
+        if (isSkipped) break;
+        var p = participants[i];
+        var card = document.getElementById('card-' + i);
+        card.classList.add('active');
+
+        var spinCount = 35; 
+        var startIndex = reel.children.length;
+        appendRandomNumbers(spinCount - 1);
+        reel.appendChild(createNumberElement(p.score));
+
+        var f = document.createElement('div'); 
+        f.className = 'number'; f.id = 'target-' + i;
+        f.innerText = p.score; reel.appendChild(f); 
+        
+        var finalTargetIndex = startIndex + spinCount;
+        reel.appendChild(createNumberElement(p.score));
+        appendRandomNumbers(2);
+        
+        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 50)));
+        var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
+        var rand = Math.random();
+        var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
+
+        reel.className = 'reel spinning';
+        var stopOffset = mode === 'B' ? -40 : (mode === 'C' ? 40 : 0);
+        reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
+        
+        await wait(7500); 
+
+        if(!isSkipped) {
+          var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
+          reel.className = 'reel ' + snapClass;
+          reel.style.transform = 'translateY(-' + targetY + 'px)';
+          await wait(400); 
+
+          var targetEl = document.getElementById('target-' + i);
+          if (p.score === 0) {
+            targetEl.className = 'number jackpot-hit';
+            card.classList.add('jackpot-card');
+            triggerJackpot();
+          } else {
+            targetEl.className = 'number final-hit';
+          }
+          document.getElementById('score-' + i).innerText = p.score;
+          card.classList.add('done');
+          await wait(1000);
+        }
+      }
+      showFinalState();
+    }
+
+    function skipAll() { isSkipped = true; showFinalState(); }
+
+    function showFinalState() {
+      var canvas = document.getElementById('jackpotCanvas');
+      if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); }
+      reel.style.transition = 'none';
+      participants.forEach((p, i) => {
+        var card = document.getElementById('card-' + i);
+        var scoreEl = document.getElementById('score-' + i);
+        if(scoreEl) scoreEl.innerText = p.score;
+        card.className = p.score === 0 ? 'card active done jackpot-card' : 'card active done';
+      });
+      skipBtn.style.display = 'none';
+      finishBtn.style.display = 'block';
+    }
+
+    function triggerJackpot() {
+      var canvas = document.getElementById('jackpotCanvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      var particles = [];
+      for(var i=0; i<80; i++) {
+        particles.push({ x: canvas.width/2, y: canvas.height/2.5, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
+      }
+      function animate() {
+        if (isSkipped) return; 
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        var alive = false;
+        particles.forEach(p => {
+          if(p.life > 0) {
+            p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life -= 0.02;
+            ctx.save(); ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.w, 0, Math.PI*2); ctx.fill(); ctx.restore();
+            alive = true;
+          }
+        });
+        if(alive) requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // SAVE RESULT 클릭 시 상위 클라이언트 모듈의 종료 파괴 트리거를 자동 하이재킹하여 안전 종료
+    function finishGacha() {
+      alert("가챠 시뮬레이션 결과가 로컬 클라이언트에 성공적으로 세이브되었습니다!");
+      if(window.parent && window.parent.closeApp) {
+        window.parent.closeApp();
+      }
+    }
+
+    window.onload = initLayout;
+  </script>
+</body>
+</html>
