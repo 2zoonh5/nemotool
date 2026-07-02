@@ -14,8 +14,47 @@ document.addEventListener("DOMContentLoaded", () => {
             openFolder(folder.getAttribute("data-folder")); 
         });
     });
+
+    // 바탕화면이나 빈 공간 누르면 활성화된 모든 드롭다운 메뉴 및 윈도우 파괴 소거
+    document.addEventListener("click", () => {
+        closeAllDropdowns();
+    });
+
+    const desktop = document.querySelector(".desktop");
+    desktop.addEventListener("click", () => {
+        closeFolder();
+        closeApp();
+    });
+
     startMacClock();
 });
+
+/* ⬇️ 상단바 드롭다운 전용 스크립트 모듈 */
+function toggleDropdown(event, id) {
+    event.stopPropagation(); // 바탕화면 클릭으로 인식되어 꺼지는 버그 예방
+    const target = document.getElementById(id);
+    const isOpen = target.style.display === "block";
+    
+    closeAllDropdowns(); // 다른 열린 드롭다운 먼저 리셋
+    if (!isOpen) {
+        target.style.display = "block";
+    }
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll(".mac-dropdown").forEach(menu => {
+        menu.style.display = "none";
+    });
+}
+
+// 드롭다운 메뉴 내 배경화면 스위칭 연동
+function changeBg(theme) {
+    const body = document.body;
+    body.className = ""; // 클래스 초기화
+    if (theme === 'sunset') body.classList.add("bg-sunset");
+    if (theme === 'cyber') body.classList.add("bg-cyber");
+    closeAllDropdowns();
+}
 
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
@@ -145,14 +184,25 @@ function toggleMaximize(windowId) {
     document.getElementById(windowId).classList.toggle("maximized");
 }
 
+/* 🕒 4번 요구사항 반영: 가독성을 올린 정교한 Mac OS 고증 시계 메커니즘 */
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
         const now = new Date();
-        const ampm = now.getHours() >= 12 ? '오후' : '오전';
-        const hours = now.getHours() % 12 || 12;
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+        const dayOfWeek = weekDays[now.getDay()];
+        
+        let hours = now.getHours();
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        clockElement.innerText = `${now.getMonth() + 1}월 ${now.getDate()}일 ${ampm} ${hours}:${minutes}`;
+        const ampm = hours >= 12 ? '오후' : '오전';
+        hours = hours % 12 || 12;
+        
+        if (clockElement) {
+            // 실제 Mac OS 표기 규격과 100% 동일하게 레이아웃 보정
+            clockElement.innerText = `${month}월 ${date}일 (${dayOfWeek}) ${ampm} ${hours}:${minutes}`;
+        }
     }
     updateClock();
     setInterval(updateClock, 1000);
