@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- 🖥️ Mac OS 스타일 상단바 -->
     <div class="mac-menu-bar">
         <div class="left-menu">
             <div class="nemo-logo-box" onclick="location.reload()">
@@ -20,7 +19,7 @@
             <div class="menu-wrapper">
                 <span class="menu-item" onclick="toggleDropdown(event, 'settingsMenu')">시스템 설정</span>
                 <div class="mac-dropdown" id="settingsMenu">
-                    <div class="dropdown-item" onclick="alert('NEMO TOOL OS v1.8.0\nInteractive Desktop Search & Auto Docking')">이 프로그램 정보</div>
+                    <div class="dropdown-item" onclick="alert('NEMO TOOL OS v2.0.0\nFully Integrated Client Architecture')">이 프로그램 정보</div>
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item" onclick="location.reload()">시스템 재시동</div>
                 </div>
@@ -38,26 +37,21 @@
         
         <div class="right-menu">
             <div class="status-icons">
-                <!-- 🔍 Spotlight 검색 버튼 -->
                 <svg class="bar-svg" viewBox="0 0 24 24" onclick="toggleSystemPanel(event, 'spotlightPanel')"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                <!-- 🎛️ 제어 센터 버튼 -->
                 <svg class="bar-svg" viewBox="0 0 24 24" onclick="toggleSystemPanel(event, 'controlPanel')"><path d="M12 9.17L16.83 14H7.17L12 9.17M12 5L4 13h16l-8-8z"/></svg>
             </div>
-            <!-- h:mm a 서식 시계 -->
             <span class="menu-item clock" id="macClock">11:24 AM</span>
         </div>
     </div>
 
-    <!-- 🔍 실시간 데스크탑 검색 연동형 Spotlight 검색창 -->
     <div class="mac-spotlight-window" id="spotlightPanel">
         <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         <input type="text" placeholder="앱 또는 폴더 검색" id="spotlightInput" oninput="searchDesktop(this.value)">
     </div>
 
-    <!-- 🎛️ 실속형 제어 센터 패널 (장식용 타일 제거) -->
     <div class="mac-control-center" id="controlPanel">
         <div class="cc-slider-box">
-            <div class="cc-label-row"><span>🖥️ 디스플레이 투명도</span><span id="brightnessVal">90%</span></div>
+            <div class="cc-label-row"><span>🖥️ 디스플레이 투명도</span><span id="brightnessVal">100%</span></div>
             <input type="range" min="30" max="100" value="100" oninput="document.body.style.opacity = this.value/100; document.getElementById('brightnessVal').innerText = this.value + '%'">
         </div>
         <div class="cc-slider-box">
@@ -66,7 +60,6 @@
         </div>
     </div>
 
-    <!-- 바탕화면 -->
     <div class="desktop" id="desktopContainer">
         <div class="icon" data-folder="pubg">
             <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG Folder">
@@ -82,7 +75,6 @@
         </div>
     </div>
 
-    <!-- 폴더 창 -->
     <div class="window-popup" id="folderWindow">
         <div class="window-header">
             <div class="nav-buttons">
@@ -103,7 +95,6 @@
         <div class="window-body folder-content" id="folderContent"></div>
     </div>
 
-    <!-- 프로그램 창 -->
     <div class="window-popup" id="appWindow">
         <div class="window-header">
             <div class="nav-buttons">
@@ -126,15 +117,10 @@
         </div>
     </div>
 
-    <!-- ⚓ 크기가 커지고 바탕화면을 자동 미러링하는 스마트 DOCK 바 -->
     <div class="mac-dock-container active">
         <div class="mac-dock">
-            <!-- 스크립트에 의해 바탕화면 순서대로 고정 앱이 자동 빌드되는 구역 -->
             <div id="fixedDockList" style="display: flex; gap: 14px;"></div>
-            
             <div class="dock-divider"></div>
-            
-            <!-- 최소화된 동적 창 아이콘 구역 -->
             <div id="minimizedList" style="display: flex; gap: 14px;"></div>
         </div>
     </div>
