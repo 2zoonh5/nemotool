@@ -3,8 +3,11 @@ body {
     padding: 0;
     font-family: 'Malgun Gothic', -apple-system, sans-serif;
     overflow: hidden;
-    /* 새로 생성된 깔끔한 기본 배경화면 적용 */
-    background: url('https://image.pollinations.ai/prompt/Minimalist%20and%20clean%20computer%20desktop%20wallpaper,%20modern%20tech%20and%20gaming%20vibe.%20Smooth%20abstract%20dark%20blue%20and%20deep%20charcoal%20gradation%20with%20subtle%20glowing%20geometric%20lines.%20Absolutely%20NO%20text,%20NO%20letters,%20NO%20logos,%20NO%20characters.%20Very%20clean,%20sleek,%20high-end%20PC%20OS%20background,%204k%20resolution?width=1920&height=1080&nologo=true') no-repeat center center/cover;
+    /* 특수문자 충돌을 방지하기 위해 URL을 안전하게 수정했습니다 */
+    background-image: url("https://image.pollinations.ai/prompt/Minimalist%20and%20clean%20computer%20desktop%20wallpaper%2C%20modern%20tech%20and%20gaming%20vibe.%20Smooth%20abstract%20dark%20blue%20and%20deep%20charcoal%20gradation%20with%20subtle%20glowing%20geometric%20lines.%20Absolutely%20NO%20text%2C%20NO%20letters%2C%20NO%20logos%2C%20NO%20characters.%20Very%20clean%2C%20sleek%2C%20high-end%20PC%20OS%20background%2C%204k%20resolution?width=1920&height=1080&nologo=true");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     height: 100vh;
     user-select: none;
 }
