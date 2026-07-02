@@ -146,7 +146,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; border-color: transparent; }
 
-/* ⚓ [크기 확장 및 정밀 밸런스 조정] 세련된 대형 3D Glassmorphism 독 바 */
+/* 대형 3D Glassmorphism 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
     transform: translateX(-50%); z-index: 10010;
@@ -158,7 +158,6 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     display: flex; gap: 14px; align-items: center;
 }
 
-/* 요구하신 대로 시원하게 52px 보정 업그레이드 */
 .dock-item {
     width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
     cursor: pointer; position: relative; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
