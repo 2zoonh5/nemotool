@@ -28,17 +28,15 @@ body {
 }
 .menu-item:hover { background: rgba(255, 255, 255, 0.2); }
 .menu-item.logo { font-weight: 700; margin-right: 8px; }
-.menu-item.clock { cursor: default; }
 
 /* 바탕화면 */
 .desktop {
-    padding: 50px 30px 100px 30px; /* 독 바 자리 확보를 위해 하단 여백 늘림 */
+    padding: 50px 30px 100px 30px;
     display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
     height: calc(100vh - 100px); align-content: flex-start;
     position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; z-index: 1;
 }
 
-/* 아이콘 */
 .icon {
     width: 85px; height: 95px; display: flex; flex-direction: column; align-items: center; justify-content: center;
     cursor: pointer; text-align: center; border: 1.5px solid transparent; padding: 5px; border-radius: 12px; box-sizing: border-box;
@@ -50,36 +48,47 @@ body {
 .icon img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
 .icon .icon-name {
     color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
-    line-height: 1.2; max-height: 28px; overflow: hidden;
 }
 
-/* 윈도우 창 기본 스타일 */
+/* 윈도우 팝업 공용 */
 .window-popup {
     display: none; position: fixed;
-    top: 12vh; left: 20vw; width: 60vw; height: 55vh;
+    top: 15vh; left: 20vw; width: 60vw; height: 55vh;
     background: #ffffff; border-radius: 12px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.15); z-index: 10;
-    transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease, border-radius 0.25s ease;
+    transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
-
-/* 초록색 버튼으로 작동할 전체 화면 모드 전용 클래스 */
 .window-popup.maximized {
     top: 24px !important; left: 0 !important;
     width: 100vw !important; height: calc(100vh - 24px) !important;
     border-radius: 0px !important;
 }
 
+/* 헤더 레이아웃 균형 조정 */
 .window-header {
-    background: #ebebeb; color: #333333; padding: 12px 16px;
+    background: #f0f0f2; color: #333333; padding: 10px 16px;
     display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #dcdcdc; position: relative;
+    border-bottom: 1px solid #d1d1d6; position: relative;
+    height: 38px; box-sizing: border-box;
 }
 .window-title {
-    font-size: 13px; font-weight: 600; color: #444444;
+    font-size: 13px; font-weight: 600; color: #3a3a3c;
     position: absolute; left: 50%; transform: translateX(-50%);
 }
 
-/* Mac OS 신호등 버튼 */
+/* ★ 고급형 탐색 화살표 버튼 (좌측 배치) */
+.nav-buttons { display: flex; align-items: center; gap: 12px; z-index: 12; }
+.nav-btn {
+    background: none; border: none; width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0; border-radius: 4px; transition: background 0.15s;
+}
+.nav-btn:not(.disabled):hover { background: rgba(0, 0, 0, 0.08); }
+.nav-btn svg { width: 18px; height: 18px; fill: #555559; }
+.nav-btn.disabled { cursor: default; opacity: 0.25; }
+.nav-btn.disabled svg { fill: #8e8e93; }
+
+/* ★ Mac OS 신호등 삼색 버튼 (우측 전면 배치) */
 .mac-buttons { display: flex; align-items: center; gap: 8px; z-index: 12; }
 .window-btn {
     width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
@@ -95,21 +104,14 @@ body {
 .minimize-btn:hover { background: #ffb115; color: #5d3e00; }
 .minimize-btn:hover::before { content: "−"; }
 
-/* 초록색 (최대화/전체화면) 고증 반영 */
 .maximize-btn { background: #27c93f; border: 1px solid #1aaa2c; }
 .maximize-btn:hover { background: #25b737; color: #024d00; }
 .maximize-btn:hover::before { content: "+"; }
 
-.back-btn {
-    background: none; border: none; color: #666666; font-size: 13px; cursor: pointer; margin-left: 8px;
-    padding: 2px 6px; border-radius: 4px; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
-}
-.back-btn:hover { background: rgba(0,0,0,0.08); color: #111111; }
-
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* 폴더 내부 전용 스타일 */
+/* 폴더 내부 스타일 */
 .folder-content {
     padding: 20px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;
     background: #f5f5f7; height: 100%; box-sizing: border-box; align-content: flex-start;
@@ -118,38 +120,35 @@ body {
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; }
 
-
-/* ★★★ 진짜보다 더 진짜 같은 Mac OS DOCK BAR 스타일 디자인 */
+/* ★ 실시간 유동형 Mac OS DOCK BAR */
 .mac-dock-container {
-    position: fixed; bottom: 10px; left: 50%;
-    transform: translateX(-50%); z-index: 10010;
+    position: fixed; bottom: 12px; left: 50%;
+    transform: translateX(-50%) translateY(100px); /* 초기엔 화면 밑으로 완전히 숨김 */
+    z-index: 10010; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+/* 최소화된 아이콘이 생겼을 때 활성화되는 클래스 */
+.mac-dock-container.active {
+    transform: translateX(-50%) translateY(0);
 }
 .mac-dock {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.22);
     backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    padding: 8px 12px; border-radius: 20px;
-    display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 6px 10px; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
+#minimizedList { display: flex; gap: 10px; align-items: center; }
+
 .dock-item {
-    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; position: relative; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; transition: transform 0.2s ease;
 }
-.dock-item:hover {
-    transform: scale(1.2) translateY(-6px); /* 마우스 올리면 맥북처럼 통통 커지는 애니메이션 */
-}
+.dock-item:hover { transform: scale(1.18) translateY(-4px); }
 .dock-item img { width: 100%; height: 100%; object-fit: contain; }
 
-/* 독 바 구분선 */
-.dock-divider {
-    width: 1px; height: 35px; background: rgba(255, 255, 255, 0.3);
-}
-
-/* 마우스 올렸을 때 상단에 뜨는 앱 이름 말풍선 */
 .dock-tooltip {
-    display: none; position: absolute; top: -40px; background: rgba(0, 0, 0, 0.75);
-    color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px; white-space: nowrap;
-    pointer-events: none; text-shadow: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: none; position: absolute; top: -38px; background: rgba(0, 0, 0, 0.8);
+    color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 5px; white-space: nowrap;
+    pointer-events: none;
 }
 .dock-item:hover .dock-tooltip { display: block; }
