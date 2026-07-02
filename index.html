@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>네모의 게임 매니저 OS</title>
-    <!-- 프리텐다드 고품질 서체 웹폰트 로드 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn-icons-png.flaticon.com/512/3103/3103446.png" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <!-- 프리텐다드 고품질 서체 및 전체적인 반응형 세팅 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 🖥️ 고도화된 Mac OS 스타일 실감형 상단바 -->
+    <!-- 🖥️ MacOS 개발자 관점으로 재설계된 초정밀 상단바 -->
     <div class="mac-menu-bar">
         <div class="left-menu">
-            <!-- 네모툴 시그니처 정사가형 큐브 엠블럼 아이콘 -->
             <div class="nemo-logo-box" onclick="location.reload()">
                 <div class="cube-dot"></div>
             </div>
@@ -23,7 +21,7 @@
             <div class="menu-wrapper">
                 <span class="menu-item" onclick="toggleDropdown(event, 'settingsMenu')">시스템 설정</span>
                 <div class="mac-dropdown" id="settingsMenu">
-                    <div class="dropdown-item" onclick="alert('NEMO TOOL OS v1.0.0\nDeveloper: NEMO')">이 프로그램 정보</div>
+                    <div class="dropdown-item" onclick="alert('NEMO TOOL OS v1.2.0\nMacOS Style Game Architecture')">이 프로그램 정보</div>
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item" onclick="location.reload()">시스템 재시동</div>
                 </div>
@@ -40,14 +38,17 @@
         </div>
         
         <div class="right-menu">
-            <!-- 실제 Mac 고증 상태창 아이콘 세트 -->
+            <!-- PC 환경 고증: 쓸모없는 와이파이/배터리 대신 돋보기(검색), 제어센터, 알림센터 아이콘 배치 -->
             <div class="status-icons">
-                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" alt="wifi">
-                <img src="https://cdn-icons-png.flaticon.com/512/3103/3103446.png" alt="sound">
-                <img src="https://cdn-icons-png.flaticon.com/512/3103/3103306.png" alt="battery">
+                <!-- Spotlight 검색 아이콘 -->
+                <svg class="bar-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <!-- 제어 센터 토글 아이콘 -->
+                <svg class="bar-svg" viewBox="0 0 24 24"><path d="M12 9.17L16.83 14H7.17L12 9.17M12 5L4 13h16l-8-8z"/></svg>
+                <!-- 알림 센터 아이콘 -->
+                <svg class="bar-svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
             </div>
-            <!-- 가독성을 올리고 실제 맥북 스타일로 변모한 고해상도 시계 -->
-            <span class="menu-item clock" id="macClock">7월 2일 (목) 오전 11:01</span>
+            <!-- 완벽하게 복원 및 고해상도 가독성을 챙긴 MacOS 기본 시계 -->
+            <span class="menu-item clock" id="macClock">7월 2일 (목) 오전 11:05</span>
         </div>
     </div>
 
@@ -80,7 +81,7 @@
             </div>
             <span class="window-title" id="folderTitle">폴더</span>
             <div class="mac-buttons">
-                <button class="window-btn minimize-btn" onclick="minimizeWindow('folderWindow', '폴더 창')"></button>
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('folderWindow')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('folderWindow')"></button>
                 <button class="window-btn close-btn" onclick="closeFolder()"></button>
             </div>
@@ -101,7 +102,7 @@
             </div>
             <span class="window-title" id="windowTitle">프로그램</span>
             <div class="mac-buttons">
-                <button class="window-btn minimize-btn" onclick="minimizeWindow('appWindow', '프로그램 창')"></button>
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('appWindow')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('appWindow')"></button>
                 <button class="window-btn close-btn" onclick="closeApp()"></button>
             </div>
@@ -111,7 +112,7 @@
         </div>
     </div>
 
-    <!-- 독 바 -->
+    <!-- ⚓ MacOS 핵심 기믹: 켜진 앱 밑에 하얀 점이 찍히는 실감형 독 바 캐리어 -->
     <div class="mac-dock-container" id="macDockContainer">
         <div class="mac-dock">
             <div id="minimizedList"></div>
