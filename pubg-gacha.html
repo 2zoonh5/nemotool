@@ -16,9 +16,9 @@
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); color: #636366; border: 1px solid rgba(226, 180, 189, 0.2); border-radius: 50%; cursor: pointer; font-size: 14px; transition: all 0.3s ease; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: rgba(226, 180, 189, 0.8); color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.3); }
 
-    /* 📊 좌측 컨트롤 패널 (Mac OS 환경에 맞춘 완전 정돈 규격) */
+    /* 📊 좌측 컨트롤 패널 (Mac OS 환경 규격 정렬) */
     .sheet-control-panel {
-      width: 500px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
+      width: 530px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px; padding: 22px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
       display: flex; flex-direction: column; gap: 20px; z-index: 10;
     }
@@ -46,12 +46,12 @@
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 등록 Grid 테이블 */
+    /* 참가자 등록 테이블 */
     .participant-table { display: flex; flex-direction: column; gap: 10px; }
-    .table-header { display: grid; grid-template-columns: 1.5fr 2fr 0.8fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
     
     .table-row {
-      display: grid; grid-template-columns: 1.5fr 2fr 0.8fr; gap: 14px; align-items: center;
+      display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; gap: 14px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05);
       padding: 10px; border-radius: 10px; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
@@ -63,22 +63,24 @@
     }
     .table-row input[type="text"]:focus { border-bottom-color: #007aff; }
     
-    /* 🔄 [개선 구역] 난잡한 도트를 지우고 맥북 환경설정처럼 세련되게 바꾼 드롭다운 토글 타일 */
-    .mac-select-wrapper { position: relative; width: 100%; }
-    .mac-select-color {
-      width: 100%; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1);
-      color: #e5e5ea; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 6px;
-      outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
-      box-sizing: border-box; transition: background 0.2s, border-color 0.2s;
+    /* 💊 [전면 보완] MacOS 정석 스타일 가로 미니 캡슐 바 (Segmented Control) */
+    .mac-capsule-control {
+      display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 8px;
+      padding: 2px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between;
     }
-    .mac-select-color:focus { background: rgba(255, 255, 255, 0.1); border-color: #007aff; }
-    /* 우측 내림 화살표 콤보 박스 고증 기믹 */
-    .mac-select-wrapper::after {
-      content: ""; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
-      border-top: 5px solid #8e8e93; pointer-events: none;
+    .capsule-chip-label {
+      flex: 1; text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0;
+      border-radius: 6px; cursor: pointer; color: #8e8e93; position: relative;
+      transition: color 0.15s, background 0.15s;
     }
-    .mac-select-color option { background: #1c1c1e; color: #fff; }
+    .capsule-chip-label input[type="radio"] { display: none; }
+    .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
+    
+    /* 체크되었을 때 활성화되는 정밀 맥북 스타일 캡슐 칩 */
+    .capsule-chip-label:has(input[type="radio"]:checked) {
+      color: #fff; background: var(--theme-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
 
     .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #8e8e93; }
     .table-row.done .result-score { color: #ff3b30; }
@@ -125,7 +127,7 @@
     <div class="participant-table">
       <div class="table-header">
         <span>참가자 이름 (B열)</span>
-        <span>지정 색상 (C열)</span>
+        <center>지정 색상 (C열)</center>
         <center>결과값 (D열)</center>
       </div>
       <div id="tableRowsContainer"></div>
@@ -161,23 +163,26 @@
     
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
+    var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
 
-    // 6개의 깔끔한 드롭다운 그리드 빌드
+    // 가로 미니 캡슐 세그먼트 형태로 그리드 렌더링
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
       row.className = "table-row";
       row.id = `row-${i}`;
       
-      let optionsHtml = colorList.map(color => `<option value="${color}">${color}</option>`).join('');
+      let segmentsHtml = colorList.map(color => `
+        <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
+          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
+          <span>${colorShortMap[color]}</span>
+        </label>
+      `).join('');
 
       row.innerHTML = `
         <input type="text" id="name-${i}" placeholder="이름 입력" oninput="activateRow(${i})">
-        <div class="mac-select-wrapper">
-          <select class="mac-select-color" id="color-${i}" onchange="activateRow(${i})">
-            <option value="" disabled selected>색상 선택안함</option>
-            ${optionsHtml}
-          </select>
+        <div class="mac-capsule-control">
+          ${segmentsHtml}
         </div>
         <div class="result-score" id="score-${i}">--</div>
       `;
@@ -186,9 +191,9 @@
 
     function activateRow(idx) {
       var name = document.getElementById(`name-${idx}`).value;
-      var selectedColor = document.getElementById(`color-${idx}`).value;
+      var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
       var row = document.getElementById(`row-${idx}`);
-      if (name.trim() !== "" && selectedColor !== "") {
+      if (name.trim() !== "" && checkedColor) {
         row.classList.add("active");
       } else {
         row.classList.remove("active");
@@ -199,7 +204,8 @@
       if(isRunning) return;
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
-        document.getElementById(`color-${i}`).value = "";
+        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
+        if(checked) checked.checked = false;
         document.getElementById(`score-${i}`).innerText = "--";
         document.getElementById(`row-${i}`).className = "table-row";
       }
@@ -232,26 +238,24 @@
       });
     }
 
-    // 🎰 [로직 유지 고수] 원본 스프레드시트 셔플 및 색상별 스코어 연동 알고리즘
     async function runGachaMachine() {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
-        var selectedColor = document.getElementById(`color-${i}`).value;
-        if (name.trim() !== "" && selectedColor !== "") {
-          activeParticipants.push({ id: i, name: name, color: selectedColor, score: null });
+        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
+        if (name.trim() !== "" && checkedColor) {
+          activeParticipants.push({ id: i, name: name, color: checkedColor.value, score: null });
         }
       }
 
       if (activeParticipants.length === 0) {
-        alert("이름과 색상이 모두 지정된 참가자가 없습니다."); return;
+        alert("이름과 색상이 지정된 참가자가 없습니다."); return;
       }
 
       isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; reel.innerHTML = "";
       
-      // 1. 최대값 기반 고유 스코어 풀 생성 및 피셔-예이츠 셔플 알고리즘
       var scorePool = [];
       for (var i = 0; i <= maxVal; i++) scorePool.push(i === 0 ? 0 : -i);
       for (var i = scorePool.length - 1; i > 0; i--) {
@@ -259,13 +263,11 @@
         var temp = scorePool[i]; scorePool[i] = scorePool[j]; scorePool[j] = temp;
       }
 
-      // 2. 6가지 마스터 색상 리스트에 무작위 점수를 1:1 선행 할당 (중복 색상값 완벽 공유 보장)
       var colorScoreMap = {};
       colorList.forEach((color, idx) => {
         colorScoreMap[color] = scorePool[idx % scorePool.length];
       });
 
-      // 3. 참가자들은 자신이 지정한 색상의 맵 데이터를 최종 참조 고수
       activeParticipants.forEach(p => {
         p.score = colorScoreMap[p.color];
       });
@@ -277,7 +279,6 @@
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
         
-        // 탐색 행 타겟 컬러 테두리 주입 인터랙션
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
