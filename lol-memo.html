@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>롤모장 - 맞밸런스 매니저</title>
+    <style>
+        :root {
+            --primary: #5B5757;
+            --header-bg: #FEE29A;
+            --border-color: #5B5757;
+            --light-border: #CCCCCC;
+            --bg-main: #f0f8ff;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Malgun Gothic', Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: var(--bg-main);
+            color: #333;
+            transition: margin-right 0.3s ease;
+        }
+        body.sidebar-open {
+            margin-right: var(--sidebar-width);
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        .btn-sidebar-toggle {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 5px;
+            font-size: 24px;
+        }
+        .copyright {
+            font-size: 11px;
+            text-align: center;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        /* 메인 레이아웃: 좌측 명단 입력, 우측 세트 결과 */
+        .app-content {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* 좌측 설정 및 맞밸런스 입력 창 */
+        .setup-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        /* 맞밸런스 매칭 테이블 UI (스크린샷 재현) */
+        .input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+        }
+        .input-table th {
+            background: #f1f3f4;
+            border: 1px solid var(--light-border);
+            padding: 6px;
+            font-size: 12px;
+            color: #555;
+        }
+        .input-table td {
+            border: 1px solid var(--light-border);
+            padding: 6px;
+            text-align: center;
+        }
+        .input-table td.lane-label {
+            background: #f8f9fa;
+            font-weight: bold;
+            font-size: 13px;
+            width: 60px;
+        }
+        .input-table input {
+            width: 90%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .input-table input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        .vs-label {
+            font-weight: bold;
+            color: #888;
+            font-size: 11px;
+        }
+
+        .btn-container {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-assign { background-color: #4CAF50; color: white; }
+        .btn-reset { background-color: #f44336; color: white; }
+
+        /* 우측 결과 영역 가로 스크롤 레이아웃 */
+        .result-container {
+            background: var(--bg-main);
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 380px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            align-items: flex-start;
+        }
+        .no-result {
+            color: #666;
+            margin: auto;
+            text-align: center;
+        }
+
+        /* 세트별 결과 테이블 (시트 테두리 및 서식 완벽 동기화) */
+        .set-table {
+            border-collapse: collapse;
+            background: #fff;
+            border: 2px solid var(--border-color);
+            min-width: 220px;
+        }
+        .set-table th.set-title {
+            background-color: var(--header-bg);
+            border-bottom: 2px solid var(--border-color);
+            padding: 8px;
+            font-size: 14px;
+            font-weight: normal;
+            text-align: center;
+        }
+        .set-table th.sub-hdr {
+            font-size: 11px;
+            font-weight: normal;
+            padding: 6px;
+            border-bottom: 1px solid var(--light-border);
+            border-right: 1px dashed var(--light-border);
+        }
+        .set-table td {
+            padding: 8px;
+            text-align: center;
+            font-size: 15px;
+            height: 30px;
+            border-bottom: 1px solid var(--light-border);
+            border-right: 1px dashed var(--light-border);
+            font-weight: normal;
+        }
+        .set-table td.lane-cell {
+            background: #F8F9FA;
+            font-size: 11px;
+            width: 45px;
+            border-right: 1px dashed var(--light-border);
+        }
+        .set-table th:last-child, .set-table td:last-child {
+            border-right: none;
+        }
+
+        /* 사이드바 UI */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: calc(-1 * var(--sidebar-width));
+            width: var(--sidebar-width);
+            height: 100%;
+            background: #fff;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            box-sizing: border-box;
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 1px solid #ddd;
+        }
+        body.sidebar-open .sidebar {
+            right: 0;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            font-size: 16px;
+            color: var(--primary);
+        }
+        .sidebar-section {
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <button class="btn-sidebar-toggle" onclick="toggleSidebar()">📋 사이드바 토글</button>
+    </div>
+
+    <h1>🔒 롤모장 시스템 (서폿고정)</h1>
+    <div class="copyright">Copyright © 2026 네모. All rights reserved.</div>
+
+    <div class="app-content">
+        <div class="setup-box">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>게임 모드 선택</label>
+                    <select id="gameMode">
+                        <option value="Bo1">Bo1</option>
+                        <option value="Bo3">Bo3</option>
+                        <option value="Bo5">Bo5</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="input-table">
+                <thead>
+                    <tr>
+                        <th>1팀 후보</th>
+                        <th>VS</th>
+                        <th>2팀 후보</th>
+                    </tr>
+                </thead>
+                <tbody id="matchInputBody">
+                    <tr>
+                        <td><input type="text" id="p1_0" placeholder="선수 A1"></td>
+                        <td class="lane-label">1번쌍</td>
+                        <td><input type="text" id="p2_0" placeholder="선수 B1"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="p1_1" placeholder="선수 A2"></td>
+                        <td class="lane-label">2번쌍</td>
+                        <td><input type="text" id="p2_1" placeholder="선수 B2"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="p1_2" placeholder="선수 A3"></td>
+                        <td class="lane-label">3번쌍</td>
+                        <td><input type="text" id="p2_2" placeholder="선수 B3"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="p1_3" placeholder="선수 A4"></td>
+                        <td class="lane-label">4번쌍</td>
+                        <td><input type="text" id="p2_3" placeholder="선수 B4"></td>
+                    </tr>
+                    <tr style="background: #fff3cd;">
+                        <td><input type="text" id="p1_4" placeholder="서폿 A"></td>
+                        <td class="lane-label" style="color: #b7791f;">서폿고정</td>
+                        <td><input type="text" id="p2_4" placeholder="서폿 B"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="btn-container">
+                <button class="btn btn-assign" onclick="runRollmojangAssignment()">팀 배정 (E3)</button>
+                <button class="btn btn-reset" onclick="resetRollmojangForm()">초기화 (E2)</button>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="no-result" id="noResultGrid">
+                <h3 style="font-weight: normal; margin: 120px 0;">배정 결과가 여기에 세트별로 표시됩니다.</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <h3>📢 롤모장 안내사항</h3>
+    <div class="sidebar-section">
+        <h4>[맞밸런스 로직 설명]</h4>
+        <p>좌우 대칭 구조로 입력된 라이벌들이 무작위 라인 스위칭을 거쳐 대칭 배정됩니다. 단, 5번째 행(서폿고정)은 라인 스위칭 대상에서 제외되어 무조건 서폿으로 직행합니다.</p>
+    </div>
+    <div class="sidebar-section">
+        <h4>[진영 반전 기능]</h4>
+        <p>각 세트마다 블루팀과 레드팀의 시각적 배경 스위칭 연산이 자동 처리되어 공정한 매칭을 돕습니다.</p>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.body.classList.toggle("sidebar-open");
+    }
+
+    function resetRollmojangForm() {
+        for(let i=0; i<5; i++) {
+            document.getElementById(`p1_${i}`).value = "";
+            document.getElementById(`p2_${i}`).value = "";
+        }
+        const container = document.getElementById("resultContainer");
+        container.innerHTML = `
+            <div class="no-result" id="noResultGrid">
+                <h3 style="font-weight: normal; margin: 120px 0;">배정 결과가 여기에 세트별로 표시됩니다.</h3>
+            </div>`;
+    }
+
+    function customShuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 롤모장 전용 메인 알고리즘 마이그레이션 함수
+    function runRollmojangAssignment() {
+        // 인원 체크 안전장치
+        for (let i = 0; i < 5; i++) {
+            const p1 = document.getElementById(`p1_${i}`).value.trim();
+            const p2 = document.getElementById(`p2_${i}`).value.trim();
+            if (!p1 || !p2) {
+                alert("오류: 참가자가 모두 입력되지 않았습니다.");
+                return;
+            }
+        }
+
+        const gameMode = document.getElementById("gameMode").value;
+        let totalSets = 1;
+        if (gameMode === "Bo3") totalSets = 3;
+        if (gameMode === "Bo5") totalSets = 5;
+
+        // 원본 배열 추출 데이터 구성
+        const rawData = [];
+        for (let i = 0; i < 5; i++) {
+            rawData.push([
+                document.getElementById(`p1_${i}`).value.trim(),
+                "",
+                document.getElementById(`p2_${i}`).value.trim()
+            ]);
+        }
+
+        // 1세트: 기준이 되는 첫 팀 구성 및 라이벌 쌍 결정
+        let fixedPositions = Array(5).fill(null);
+        let flexiblePairs = [];
+
+        for (let i = 0; i < rawData.length; i++) {
+            let pairInfo = { p1: rawData[i][0], p2: rawData[i][2] };
+            if (i === 4) {
+                fixedPositions[i] = pairInfo; // 5행 서폿고정
+            } else {
+                flexiblePairs.push(pairInfo); // 나머지 유동쌍
+            }
+        }
+
+        customShuffleArray(flexiblePairs);
+
+        let firstSetPairs = [];
+        let flexIndex = 0;
+        for (let j = 0; j < 5; j++) {
+            if (fixedPositions[j] !== null) {
+                firstSetPairs.push(fixedPositions[j]);
+            } else {
+                firstSetPairs.push(flexiblePairs[flexIndex]);
+                flexIndex++;
+            }
+        }
+
+        // 1세트 블루/레드 팀 초기 난수 스위칭 및 히스토리 트래킹 객체 생성
+        let establishedMatchups = [];
+        for (let k = 0; k < firstSetPairs.length; k++) {
+            let isLineFixed = (k === 4);
+            let bPlayer = firstSetPairs[k].p1;
+            let rPlayer = firstSetPairs[k].p2;
+
+            if (Math.random() < 0.5) {
+                establishedMatchups.push({ id: k, blue: bPlayer, red: rPlayer, isFixed: isLineFixed, history: [] });
+            } else {
+                establishedMatchups.push({ id: k, blue: rPlayer, red: bPlayer, isFixed: isLineFixed, history: [] });
+            }
+        }
+
+        const resultContainer = document.getElementById("resultContainer");
+        resultContainer.innerHTML = ""; // 기존 결과 청소
+
+        // 세트별 스위칭 및 중복 최소화 루프 가동
+        for (let set = 0; set < totalSets; set++) {
+            let blueResult = Array(5).fill(null);
+            let redResult = Array(5).fill(null);
+
+            if (set === 0) {
+                for (let m = 0; m < 5; m++) {
+                    blueResult[m] = establishedMatchups[m].blue;
+                    redResult[m] = establishedMatchups[m].red;
+                    establishedMatchups[m].history.push(m);
+                }
+            } else {
+                let flexMatchups = [];
+                let flexLineIndices = [];
+
+                for (let m = 0; m < 5; m++) {
+                    if (establishedMatchups[m].isFixed) {
+                        blueResult[m] = establishedMatchups[m].blue;
+                        redResult[m] = establishedMatchups[m].red;
+                        establishedMatchups[m].history.push(m);
+                    } else {
+                        flexMatchups.push(establishedMatchups[m]);
+                        flexLineIndices.push(m);
+                    }
+                }
+
+                // 중복 최소화 매칭 검증 알고리즘
+                let matchSuccess = false;
+                for (let attempt = 0; attempt < 100; attempt++) {
+                    customShuffleArray(flexMatchups);
+                    let hasOverlap = false;
+
+                    for (let idx = 0; idx < flexMatchups.length; idx++) {
+                        let currentLine = flexLineIndices[idx];
+                        let currentGroup = flexMatchups[idx];
+
+                        if (currentGroup.history.indexOf(currentLine) !== -1) {
+                            hasOverlap = true;
+                            break;
+                        }
+                    }
+                    if (!hasOverlap) {
+                        matchSuccess = true;
+                        break;
+                    }
+                }
+
+                for (let idx = 0; idx < flexMatchups.length; idx++) {
+                    let targetLine = flexLineIndices[idx];
+                    let finalGroup = flexMatchups[idx];
+
+                    blueResult[targetLine] = finalGroup.blue;
+                    redResult[targetLine] = finalGroup.red;
+                    finalGroup.history.push(targetLine);
+                }
+            }
+
+            // 🎨 세트 스위칭 디자인 배경색 결정 연산 (.gs 원본 컬러 코드 추출 반영)
+            let blueBg = (set % 2 === 0) ? "#D2E3FC" : "#FAD2CF"; 
+            let redBg = (set % 2 === 0) ? "#FAD2CF" : "#D2E3FC";  
+            let blueDataBg = (set % 2 === 0) ? "#E8F0FE" : "#FCE8E6"; 
+            let redDataBg = (set % 2 === 0) ? "#FCE8E6" : "#E8F0FE";  
+
+            // 테이블 돔 객체 동적 구현
+            const table = document.createElement("table");
+            table.className = "set-table";
+
+            let laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
+            
+            let htmlPayload = `
+                <thead>
+                    <tr>
+                        <th colspan="3" class="set-title">${set + 1}세트</th>
+                    </tr>
+                    <tr>
+                        <th class="sub-hdr" style="background:#F1F3F4; width:45px;">라인</th>
+                        <th class="sub-hdr" style="background:${blueBg}; width:90px;">1팀</th>
+                        <th class="sub-hdr" style="background:${redBg}; width:90px;">2팀</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            for(let r=0; r<5; r++) {
+                htmlPayload += `
+                    <tr>
+                        <td class="lane-cell">${laneNames[r]}</td>
+                        <td style="background:${blueDataBg};">${blueResult[r]}</td>
+                        <td style="background:${redDataBg};">${redResult[r]}</td>
+                    </tr>
+                `;
+            }
+            htmlPayload += `</tbody>`;
+            table.innerHTML = htmlPayload;
+            resultContainer.appendChild(table);
+        }
+    }
+</script>
+</body>
+</html>
