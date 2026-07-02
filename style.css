@@ -1,122 +1,165 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Malgun Gothic', -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow: hidden;
-    /* 특수문자 충돌을 방지하기 위해 URL을 안전하게 수정했습니다 */
-    background-image: url("https://image.pollinations.ai/prompt/Minimalist%20and%20clean%20computer%20desktop%20wallpaper%2C%20modern%20tech%20and%20gaming%20vibe.%20Smooth%20abstract%20dark%20blue%20and%20deep%20charcoal%20gradation%20with%20subtle%20glowing%20geometric%20lines.%20Absolutely%20NO%20text%2C%20NO%20letters%2C%20NO%20logos%2C%20NO%20characters.%20Very%20clean%2C%20sleek%2C%20high-end%20PC%20OS%20background%2C%204k%20resolution?width=1920&height=1080&nologo=true");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+    
+    /* Mac OS 특유의 고급스러운 다크 오로라 그라데이션 (이미지 불필요) */
+    background: linear-gradient(135deg, #1f1c2c 0%, #3a1c41 35%, #5d2450 70%, #283c86 100%);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    
     height: 100vh;
     user-select: none;
 }
 
-/* 바탕화면 공간 (실제 PC처럼 정렬) */
+/* 은은하게 움직이는 배경 효과 */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Mac OS 상단 메뉴 바 추가 (더욱 맥북 같은 느낌을 줍니다) */
+body::before {
+    content: "  Finder  파일  편집  보기  이동  윈도우  도움말";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    line-height: 24px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    z-index: 10000;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 바탕화면 공간 정렬 */
 .desktop {
-    padding: 30px;
+    padding: 50px 30px 30px 30px; /* 상단 바 자리 확보 */
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: 25px;
-    height: calc(100vh - 60px);
-    align-content: flex-start; /* 아이콘이 왼쪽부터 세로로 차곡차곡 쌓임 */
+    gap: 20px;
+    height: calc(100vh - 80px);
+    align-content: flex-start;
 }
 
-/* 컴퓨터 바탕화면 아이콘 정밀 스타일 */
+/* Mac OS 스타일 정갈한 아이콘 */
 .icon {
-    width: 85px;
+    width: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
     text-align: center;
-    border: 1px solid transparent;
-    padding: 10px 5px;
-    border-radius: 6px;
-    transition: all 0.15s ease-in-out;
+    border: 1.5px solid transparent;
+    padding: 10px 4px;
+    border-radius: 12px; /* 조금 더 둥글게 */
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* 윈도우 바탕화면 아이콘 선택/마우스 오버 감성 */
+/* 마우스 올렸을 때 살짝 뜨는 맥북 감성 */
 .icon:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
 }
 
 .icon img {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    /* 앱 아이콘 그림자 처리 */
+    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .icon .icon-name {
     color: #ffffff;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: -0.3px;
-    /* 글자가 흐릿한 배경에서도 잘 보이도록 얇은 그림자 처리 */
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0,0,0,0.5);
+    letter-spacing: -0.1px;
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
     word-break: keep-all;
 }
 
-/* 가상 프로그램 실행 창 (팝업 윈도우) */
+/* 가상 프로그램 실행 창 (Mac OS 윈도우 스타일) */
 .window-popup {
     display: none;
     position: fixed;
-    top: 5vh;
+    top: 7vh;
     left: 10vw;
     width: 80vw;
-    height: 85vh;
+    height: 82vh;
     background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    border-radius: 12px; /* 맥 특유의 둥근 모서리 */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     z-index: 9999;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 세련된 창 헤더 바 */
+/* 깔끔한 미니멀 화이트 헤더 바 */
 .window-header {
-    background: #1e1e24;
-    color: #ffffff;
-    padding: 12px 20px;
+    background: #ebebeb;
+    color: #333333;
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #dcdcdc;
+    position: relative;
 }
 
+/* 제목을 가운데 정렬하여 맥 스타일 완성 */
 .window-title {
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: -0.2px;
+    color: #444444;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
+/* 왼쪽 배치된 빨간색 닫기 버튼 (Mac OS 시그니처 버튼) */
 .window-close-btn {
     background: #ff5f56;
-    border: none;
+    border: 1px solid #e0443e;
     color: transparent;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     cursor: pointer;
-    transition: background 0.2s;
-}
-.window-close-btn:hover {
-    background: #ff3b30;
-    color: #fff; /* 호버 시에만 X자 살짝 보이게 윈도우/맥 감성 구현 */
-    font-size: 10px;
+    transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 9px;
+    font-weight: bold;
     line-height: 1;
+}
+.window-close-btn:hover {
+    background: #ff3b30;
+    color: #4c0002; /* 호버하면 x 마크가 슬쩍 보임 */
+    content: "×";
+}
+/* 호버 시 텍스트 얹기용 */
+.window-close-btn:hover::before {
+    content: "×";
 }
 
 .window-body {
     flex: 1;
-    background: #f8f9fa;
+    background: #ffffff;
 }
 
 .window-body iframe {
