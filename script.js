@@ -24,29 +24,43 @@ const folderData = {
 document.addEventListener("DOMContentLoaded", () => {
     const folders = document.querySelectorAll("[data-folder]");
     
-    // 메인 바탕화면 폴더 아이콘 더블클릭
+    // 1. 메인 바탕화면 폴더 아이콘 더블클릭
     folders.forEach(folder => {
         folder.addEventListener("dblclick", (e) => {
-            e.stopPropagation(); // 바탕화면 클릭으로 퍼지는 것 방지
+            e.stopPropagation(); // 바탕화면 클릭 이벤트가 발동되는 것을 차단
             const folderType = folder.getAttribute("data-folder");
             openFolder(folderType);
         });
+        
+        // 싱글 클릭 시 바탕화면 클릭 이벤트로 이어져서 창이 닫히는 버그 방지
+        folder.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
     });
 
-    // ★ 바탕화면 클릭 시 폴더 닫기 (정확하게 타겟 감지)
+    // 2. 창 내부(폴더창, 프로그램창)를 클릭했을 때는 바탕화면 클릭으로 인식하지 않도록 보호막 설정
+    const popups = document.querySelectorAll(".window-popup");
+    popups.forEach(popup => {
+        popup.addEventListener("click", (e) => {
+            e.stopPropagation(); // 창 안쪽을 누를 때는 바탕화면 클릭 기능 발동 안 됨
+        });
+        popup.addEventListener("dblclick", (e) => {
+            e.stopPropagation();
+        });
+    });
+
+    // 3. [요구사항 1 적용] 순수 바탕화면 영역을 클릭하면 어떤 창이 켜져 있든 싹 다 종료하고 나감
     const desktop = document.querySelector(".desktop");
-    desktop.addEventListener("click", (e) => {
-        // 클릭한 곳이 순수 바탕화면('.desktop')일 때만 폴더를 닫음
-        if (e.target === desktop) {
-            closeFolder();
-        }
+    desktop.addEventListener("click", () => {
+        closeFolder();
+        closeApp();
     });
 
     // 실시간 시계 작동
     startMacClock();
 });
 
-// [1] 폴더 창 열기
+// [폴더 창 열기]
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
     const folderTitle = document.getElementById("folderTitle");
@@ -65,7 +79,13 @@ function openFolder(type) {
             <img src="${app.icon}" alt="${app.name}">
             <span class="icon-name">${app.name}</span>
         `;
-        // 폴더 안의 아이콘 더블클릭 시 앱(프로그램) 실행
+        
+        // 폴더 내부 아이콘 클릭 시 버블링 방지
+        iconDiv.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+
+        // 폴더 안의 아이콘 더블클릭 시 진짜 프로그램 창 실행
         iconDiv.addEventListener("dblclick", (e) => {
             e.stopPropagation(); 
             openApp(app.url, app.name);
@@ -76,7 +96,7 @@ function openFolder(type) {
     folderWindow.style.display = "flex";
 }
 
-// [1-2] 폴더 창 닫기 (오타 수정 완료!)
+// [요구사항 2 적용] 폴더 창의 빨간 버튼 클릭 시 뒤로가기 없이 칼같이 창 종료
 function closeFolder() {
     const folderWindow = document.getElementById("folderWindow");
     if (folderWindow) {
@@ -84,7 +104,7 @@ function closeFolder() {
     }
 }
 
-// [2] 진짜 프로그램(iframe) 실행 창 열기
+// [진짜 프로그램(iframe) 실행 창 열기]
 function openApp(url, name) {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -95,13 +115,13 @@ function openApp(url, name) {
     windowPopup.style.display = "flex";
 }
 
-// [2-2] 프로그램 창 닫기
+// [요구사항 2 적용] 프로그램 창의 빨간 버튼 클릭 시 칼같이 창 종료 및 데이터 초기화
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
     if (windowPopup) {
         windowPopup.style.display = "none";
-        appFrame.src = ""; // 메모리 초기화
+        appFrame.src = ""; // 깔끔하게 비우기
     }
 }
 
