@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 바탕화면이나 빈 공간 누르면 활성화된 모든 드롭다운 메뉴 및 윈도우 파괴 소거
+    // 드롭다운 안전 해제기
     document.addEventListener("click", () => {
         closeAllDropdowns();
     });
@@ -29,13 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-/* ⬇️ 상단바 드롭다운 전용 스크립트 모듈 */
 function toggleDropdown(event, id) {
-    event.stopPropagation(); // 바탕화면 클릭으로 인식되어 꺼지는 버그 예방
+    event.stopPropagation(); 
     const target = document.getElementById(id);
     const isOpen = target.style.display === "block";
     
-    closeAllDropdowns(); // 다른 열린 드롭다운 먼저 리셋
+    closeAllDropdowns(); 
     if (!isOpen) {
         target.style.display = "block";
     }
@@ -47,10 +46,9 @@ function closeAllDropdowns() {
     });
 }
 
-// 드롭다운 메뉴 내 배경화면 스위칭 연동
 function changeBg(theme) {
     const body = document.body;
-    body.className = ""; // 클래스 초기화
+    body.className = ""; 
     if (theme === 'sunset') body.classList.add("bg-sunset");
     if (theme === 'cyber') body.classList.add("bg-cyber");
     closeAllDropdowns();
@@ -82,6 +80,7 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
+// 🟡 최소화 함수: 활성 표시 점(Dot)을 포함한 캐리어 래퍼 노드 렌더링 시스템 빌드
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
@@ -93,17 +92,27 @@ function minimizeWindow(windowId) {
     minimizedWindows[windowId] = true;
     
     const minimizedList = document.getElementById("minimizedList");
-    const dockItem = document.createElement("div");
-    dockItem.className = "dock-item";
-    dockItem.id = `dock-slot-${windowId}`;
+
+    // 앱 밑에 하얀 점(.dock-indicator)을 생성하도록 상위 래퍼 구조 추가
+    const dockWrapper = document.createElement("div");
+    dockWrapper.className = "dock-wrapper";
+    dockWrapper.id = `dock-slot-${windowId}`;
     
-    dockItem.innerHTML = `
-        <img src="${useIcon}">
+    dockWrapper.innerHTML = `
+        <div class="dock-item">
+            <img src="${useIcon}">
+        </div>
         <span class="dock-tooltip">${actualTitle}</span>
+        <div class="dock-indicator"></div>
     `;
     
-    dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
-    minimizedList.appendChild(dockItem);
+    // 클릭 시 원상 복구 인터랙션
+    dockWrapper.querySelector('.dock-item').addEventListener("click", (e) => { 
+        e.stopPropagation(); 
+        restoreWindow(windowId); 
+    });
+    
+    minimizedList.appendChild(dockWrapper);
     updateDockVisibility();
 }
 
@@ -184,7 +193,6 @@ function toggleMaximize(windowId) {
     document.getElementById(windowId).classList.toggle("maximized");
 }
 
-/* 🕒 4번 요구사항 반영: 가독성을 올린 정교한 Mac OS 고증 시계 메커니즘 */
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
@@ -200,7 +208,6 @@ function startMacClock() {
         hours = hours % 12 || 12;
         
         if (clockElement) {
-            // 실제 Mac OS 표기 규격과 100% 동일하게 레이아웃 보정
             clockElement.innerText = `${month}월 ${date}일 (${dayOfWeek}) ${ampm} ${hours}:${minutes}`;
         }
     }
