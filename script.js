@@ -1,4 +1,3 @@
-// [데이터 정의] 각 게임 폴더를 더블클릭했을 때 생성될 세부 기능 리스트
 const folderData = {
     pubg: {
         title: "배틀그라운드 매니저",
@@ -21,46 +20,38 @@ const folderData = {
     }
 };
 
+// 최소화 상태를 관리하는 객체
+let minimizedWindows = {};
+
 document.addEventListener("DOMContentLoaded", () => {
     const folders = document.querySelectorAll("[data-folder]");
     
-    // 1. 메인 바탕화면 폴더 아이콘 더블클릭
     folders.forEach(folder => {
         folder.addEventListener("dblclick", (e) => {
-            e.stopPropagation(); // 바탕화면 클릭 이벤트가 발동되는 것을 차단
+            e.stopPropagation(); 
             const folderType = folder.getAttribute("data-folder");
             openFolder(folderType);
         });
-        
-        // 싱글 클릭 시 바탕화면 클릭 이벤트로 이어져서 창이 닫히는 버그 방지
-        folder.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
+        folder.addEventListener("click", (e) => { e.stopPropagation(); });
     });
 
-    // 2. 창 내부(폴더창, 프로그램창)를 클릭했을 때는 바탕화면 클릭으로 인식하지 않도록 보호막 설정
     const popups = document.querySelectorAll(".window-popup");
     popups.forEach(popup => {
-        popup.addEventListener("click", (e) => {
-            e.stopPropagation(); // 창 안쪽을 누를 때는 바탕화면 클릭 기능 발동 안 됨
-        });
-        popup.addEventListener("dblclick", (e) => {
-            e.stopPropagation();
-        });
+        popup.addEventListener("click", (e) => { e.stopPropagation(); });
+        popup.addEventListener("dblclick", (e) => { e.stopPropagation(); });
     });
 
-    // 3. [요구사항 1 적용] 순수 바탕화면 영역을 클릭하면 어떤 창이 켜져 있든 싹 다 종료하고 나감
+    // 바탕화면 클릭 시 (단, 최소화된 것이 아닐 때만) 열려있는 모든 것 완전 종료
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         closeFolder();
         closeApp();
     });
 
-    // 실시간 시계 작동
     startMacClock();
 });
 
-// [폴더 창 열기]
+// 폴더 창 열기
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
     const folderTitle = document.getElementById("folderTitle");
@@ -69,6 +60,7 @@ function openFolder(type) {
     const data = folderData[type];
     if (!data) return;
 
+    folderWindow.setAttribute("data-current-folder", type);
     folderTitle.innerText = data.title;
     folderContent.innerHTML = ""; 
 
@@ -79,13 +71,7 @@ function openFolder(type) {
             <img src="${app.icon}" alt="${app.name}">
             <span class="icon-name">${app.name}</span>
         `;
-        
-        // 폴더 내부 아이콘 클릭 시 버블링 방지
-        iconDiv.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
-
-        // 폴더 안의 아이콘 더블클릭 시 진짜 프로그램 창 실행
+        iconDiv.addEventListener("click", (e) => { e.stopPropagation(); });
         iconDiv.addEventListener("dblclick", (e) => {
             e.stopPropagation(); 
             openApp(app.url, app.name);
@@ -93,18 +79,18 @@ function openFolder(type) {
         folderContent.appendChild(iconDiv);
     });
 
+    // 최소화되어있던 상태라면 초기화
     folderWindow.style.display = "flex";
 }
 
-// [요구사항 2 적용] 폴더 창의 빨간 버튼 클릭 시 뒤로가기 없이 칼같이 창 종료
+// 🔴 빨간 버튼: 폴더 창 완전 종료 및 독 리스트에서 제외
 function closeFolder() {
-    const folderWindow = document.getElementById("folderWindow");
-    if (folderWindow) {
-        folderWindow.style.display = "none";
-    }
+    document.getElementById("folderWindow").style.display = "none";
+    document.getElementById("folderWindow").classList.remove("maximized");
+    removeFromDock("folderWindow");
 }
 
-// [진짜 프로그램(iframe) 실행 창 열기]
+// 프로그램 창 열기
 function openApp(url, name) {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -115,17 +101,92 @@ function openApp(url, name) {
     windowPopup.style.display = "flex";
 }
 
-// [요구사항 2 적용] 프로그램 창의 빨간 버튼 클릭 시 칼같이 창 종료 및 데이터 초기화
+// 🔴 빨간 버튼: 프로그램 창 완전 종료 및 독 리스트에서 제거
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
     if (windowPopup) {
         windowPopup.style.display = "none";
-        appFrame.src = ""; // 깔끔하게 비우기
+        windowPopup.classList.remove("maximized");
+        appFrame.src = ""; 
+    }
+    removeFromDock("appWindow");
+    closeFolder(); 
+}
+
+function backToFolder() {
+    const windowPopup = document.getElementById("appWindow");
+    const appFrame = document.getElementById("appFrame");
+    if (windowPopup) {
+        windowPopup.style.display = "none";
+        windowPopup.classList.remove("maximized");
+        appFrame.src = "";
+    }
+    removeFromDock("appWindow");
+}
+
+// 🟡 노란색 버튼: 창을 숨기고 하단 Dock 바 오른쪽에 축소 아이콘 생성
+function minimizeWindow(windowId, displayName) {
+    const targetWindow = document.getElementById(windowId);
+    targetWindow.style.display = "none"; // 창 숨김
+    
+    // 이미 독바에 등록되어 있다면 중복 생성 금지
+    if (minimizedWindows[windowId]) return;
+
+    minimizedWindows[windowId] = true;
+    
+    // 독 리스트 영역 가져오기
+    const minimizedList = document.getElementById("minimizedList");
+    
+    // 임시 슬롯 생성 (실제 가상 폴더인지 아이콘인지 매핑 이미지 분기)
+    const folderIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+    const appIcon = "https://cdn-icons-png.flaticon.com/512/2893/2893051.png";
+    const useIcon = (windowId === 'folderWindow') ? folderIcon : appIcon;
+
+    const dockItem = document.createElement("div");
+    dockItem.className = "dock-item";
+    dockItem.id = `dock-slot-${windowId}`;
+    dockItem.innerHTML = `
+        <img src="${useIcon}" alt="minimized">
+        <span class="dock-tooltip">${displayName} (최소화됨)</span>
+    `;
+    
+    // 클릭하면 다시 창 복원시키고 독바에서 제거
+    dockItem.addEventListener("click", (e) => {
+        e.stopPropagation();
+        restoreWindow(windowId);
+    });
+
+    minimizedList.appendChild(dockItem);
+}
+
+// 최소화 해제 복원 기능
+function restoreWindow(windowId) {
+    const targetWindow = document.getElementById(windowId);
+    if (targetWindow) {
+        targetWindow.style.display = "flex"; // 복원
+    }
+    removeFromDock(windowId);
+}
+
+// 독 바에서 끄기 전용 클리너 
+function removeFromDock(windowId) {
+    delete minimizedWindows[windowId];
+    const slot = document.getElementById(`dock-slot-${windowId}`);
+    if (slot) {
+        slot.remove();
     }
 }
 
-// Mac OS 스타일 실시간 시계 로직
+// 🟢 초록색 버튼: 실제 맥북처럼 전체화면 토글 시스템 구동
+function toggleMaximize(windowId) {
+    const targetWindow = document.getElementById(windowId);
+    if (targetWindow) {
+        targetWindow.classList.toggle("maximized");
+    }
+}
+
+// Mac OS 실시간 시계
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
@@ -134,12 +195,10 @@ function startMacClock() {
         const date = now.getDate();
         const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
         const dayOfWeek = weekDays[now.getDay()];
-        
         let hours = now.getHours();
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const ampm = hours >= 12 ? '오후' : '오전';
         hours = hours % 12 || 12;
-        
         if (clockElement) {
             clockElement.innerText = `${month}월 ${date}일 (${dayOfWeek}) ${ampm} ${hours}:${minutes}`;
         }
