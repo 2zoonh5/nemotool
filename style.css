@@ -50,7 +50,7 @@ body {
     color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
 }
 
-/* 윈도우 팝업 공용 */
+/* 윈도우 팝업 */
 .window-popup {
     display: none; position: fixed;
     top: 15vh; left: 20vw; width: 60vw; height: 55vh;
@@ -64,42 +64,37 @@ body {
     border-radius: 0px !important;
 }
 
-/* 헤더 레이아웃 균형 조정 */
 .window-header {
-    background: #f0f0f2; color: #333333; padding: 10px 16px;
+    background: #f0f0f2; color: #333333; padding: 10px 18px;
     display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid #d1d1d6; position: relative;
-    height: 38px; box-sizing: border-box;
+    height: 42px; box-sizing: border-box;
 }
 .window-title {
-    font-size: 13px; font-weight: 600; color: #3a3a3c;
+    font-size: 13.5px; font-weight: 600; color: #3a3a3c;
     position: absolute; left: 50%; transform: translateX(-50%);
 }
 
-/* ★ 고급형 탐색 화살표 버튼 (좌측 배치) */
-.nav-buttons { display: flex; align-items: center; gap: 12px; z-index: 12; }
+/* 탐색 화살표 버튼 */
+.nav-buttons { display: flex; align-items: center; gap: 14px; z-index: 12; }
 .nav-btn {
-    background: none; border: none; width: 24px; height: 24px;
+    background: none; border: none; width: 26px; height: 26px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; padding: 0; border-radius: 4px; transition: background 0.15s;
+    cursor: pointer; padding: 0; border-radius: 6px; transition: background 0.15s;
 }
 .nav-btn:not(.disabled):hover { background: rgba(0, 0, 0, 0.08); }
-.nav-btn svg { width: 18px; height: 18px; fill: #555559; }
-.nav-btn.disabled { cursor: default; opacity: 0.25; }
+.nav-btn svg { width: 20px; height: 20px; fill: #444446; }
+.nav-btn.disabled { cursor: default; opacity: 0.15; }
 .nav-btn.disabled svg { fill: #8e8e93; }
 
-/* ★ Mac OS 신호등 삼색 버튼 (우측 전면 배치) */
-.mac-buttons { display: flex; align-items: center; gap: 8px; z-index: 12; }
+/* 삼색 삼형제 색상 정의 및 기호 매핑 */
+.mac-buttons { display: flex; align-items: center; gap: 9px; z-index: 12; }
 .window-btn {
-    width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+    width: 14px; height: 14px; border-radius: 50%; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: bold; border: none; transition: background 0.15s;
+    font-size: 10px; font-weight: bold; border: none; transition: background 0.15s;
     color: transparent; line-height: 1; padding: 0;
 }
-.close-btn { background: #ff5f56; border: 1px solid #e0443e; }
-.close-btn:hover { background: #ff3b30; color: #4c0002; }
-.close-btn:hover::before { content: "×"; }
-
 .minimize-btn { background: #ffbd2e; border: 1px solid #de9e1e; }
 .minimize-btn:hover { background: #ffb115; color: #5d3e00; }
 .minimize-btn:hover::before { content: "−"; }
@@ -108,10 +103,14 @@ body {
 .maximize-btn:hover { background: #25b737; color: #024d00; }
 .maximize-btn:hover::before { content: "+"; }
 
+.close-btn { background: #ff5f56; border: 1px solid #e0443e; }
+.close-btn:hover { background: #ff3b30; color: #4c0002; }
+.close-btn:hover::before { content: "×"; }
+
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* 폴더 내부 스타일 */
+/* 폴더 내부 */
 .folder-content {
     padding: 20px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;
     background: #f5f5f7; height: 100%; box-sizing: border-box; align-content: flex-start;
@@ -120,32 +119,25 @@ body {
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; }
 
-/* ★ 실시간 유동형 Mac OS DOCK BAR */
+/* 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
-    transform: translateX(-50%) translateY(100px); /* 초기엔 화면 밑으로 완전히 숨김 */
+    transform: translateX(-50%) translateY(100px);
     z-index: 10010; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
-/* 최소화된 아이콘이 생겼을 때 활성화되는 클래스 */
-.mac-dock-container.active {
-    transform: translateX(-50%) translateY(0);
-}
+.mac-dock-container.active { transform: translateX(-50%) translateY(0); }
 .mac-dock {
-    background: rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    padding: 6px 10px; border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    padding: 6px 10px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.25);
 }
 #minimizedList { display: flex; gap: 10px; align-items: center; }
-
 .dock-item {
     width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
     cursor: pointer; position: relative; transition: transform 0.2s ease;
 }
 .dock-item:hover { transform: scale(1.18) translateY(-4px); }
 .dock-item img { width: 100%; height: 100%; object-fit: contain; }
-
 .dock-tooltip {
     display: none; position: absolute; top: -38px; background: rgba(0, 0, 0, 0.8);
     color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 5px; white-space: nowrap;
