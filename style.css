@@ -1,148 +1,121 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Malgun Gothic', sans-serif;
+    font-family: 'Malgun Gothic', -apple-system, sans-serif;
     overflow: hidden;
-    background: url('https://image.pollinations.ai/prompt/An%20epic%20and%20intense%20gaming%20desktop%20wallpaper%20with%20a%20dark%20neon%20cyberpunk%20aesthetic,%20completely%20blank%20with%20NO%20text,%20NO%20letters,%20NO%20words.%20The%20background%20vibrantlly%20blends%20elements%20from%20League%20of%20Legends%20(a%20glowing%20magical%20fantasy%20sword),%20PUBG%20(a%20military%20airdrop%20supply%20crate%20with%20thick%20red%20smoke),%20and%20Sudden%20Attack%20(tactical%20laser%20crosshairs%20and%20sparks%20flying).%20High-tech%20digital%20UI%20lines,%20dramatic%20volumetric%20lighting,%20deep%20blue,%20purple,%20and%20glowing%20red%20accents,%204k%20resolution,%20cinematic%20gaming%20station%20vibe?width=1920&height=1080&nologo=true') no-repeat center center/cover;
+    /* 새로 생성된 깔끔한 기본 배경화면 적용 */
+    background: url('https://image.pollinations.ai/prompt/Minimalist%20and%20clean%20computer%20desktop%20wallpaper,%20modern%20tech%20and%20gaming%20vibe.%20Smooth%20abstract%20dark%20blue%20and%20deep%20charcoal%20gradation%20with%20subtle%20glowing%20geometric%20lines.%20Absolutely%20NO%20text,%20NO%20letters,%20NO%20logos,%20NO%20characters.%20Very%20clean,%20sleek,%20high-end%20PC%20OS%20background,%204k%20resolution?width=1920&height=1080&nologo=true') no-repeat center center/cover;
     height: 100vh;
     user-select: none;
 }
 
-/* 바탕화면 정중앙 간지 타이틀 스타일 */
-.main-os-title {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 58px;
-    font-weight: 900;
-    color: #ffffff;
-    text-align: center;
-    letter-spacing: 4px;
-    font-family: 'Impact', 'Arial Black', sans-serif;
-    /* 미래지향적 네온 글씨 효과 */
-    text-shadow: 0 0 10px rgba(255,255,255,0.5), 
-                 0 0 20px #ff0055, 
-                 0 0 40px #ff0055, 
-                 0 0 70px #00d2ff;
-    pointer-events: none; /* 아이콘 클릭 방해 금지 */
-    animation: neonPulse 2s infinite alternate;
-}
-
-.main-os-title .emoticon {
-    color: #00d2ff;
-    font-size: 48px;
-    margin-left: 10px;
-    display: inline-block;
-}
-
-/* 미세하게 빛이 깜빡이는 애니메이션 */
-@keyframes neonPulse {
-    from {
-        opacity: 0.93;
-        filter: brightness(1);
-    }
-    to {
-        opacity: 1;
-        filter: brightness(1.2);
-    }
-}
-
-/* 바탕화면 그리드 */
+/* 바탕화면 공간 (실제 PC처럼 정렬) */
 .desktop {
-    padding: 20px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: 30px;
-    height: calc(100vh - 40px);
-    align-content: flex-start;
+    gap: 25px;
+    height: calc(100vh - 60px);
+    align-content: flex-start; /* 아이콘이 왼쪽부터 세로로 차곡차곡 쌓임 */
 }
 
-/* 아이콘 스타일 */
+/* 컴퓨터 바탕화면 아이콘 정밀 스타일 */
 .icon {
-    width: 80px;
+    width: 85px;
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
     text-align: center;
     border: 1px solid transparent;
-    padding: 8px 4px;
-    border-radius: 4px;
-    transition: background 0.2s;
+    padding: 10px 5px;
+    border-radius: 6px;
+    transition: all 0.15s ease-in-out;
 }
+
+/* 윈도우 바탕화면 아이콘 선택/마우스 오버 감성 */
 .icon:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
 .icon img {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     object-fit: contain;
-    margin-bottom: 5px;
-    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+    margin-bottom: 8px;
 }
+
 .icon .icon-name {
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    /* 글자가 흐릿한 배경에서도 잘 보이도록 얇은 그림자 처리 */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0,0,0,0.5);
     word-break: keep-all;
 }
 
-/* 가상 프로그램 창 (윈도우) 스타일 */
+/* 가상 프로그램 실행 창 (팝업 윈도우) */
 .window-popup {
-    display: none; /* 기본적으론 숨김 */
+    display: none;
     position: fixed;
-    top: 5%;
-    left: 10%;
-    width: 80%;
-    height: 85%;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    top: 5vh;
+    left: 10vw;
+    width: 80vw;
+    height: 85vh;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
     z-index: 9999;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid #5B5757;
+    border: 1px solid rgba(0,0,0,0.15);
 }
 
+/* 세련된 창 헤더 바 */
 .window-header {
-    background: #333;
-    color: white;
-    padding: 10px 15px;
+    background: #1e1e24;
+    color: #ffffff;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: move;
 }
+
 .window-title {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
 }
+
 .window-close-btn {
     background: #ff5f56;
     border: none;
-    color: white;
-    font-size: 16px;
-    width: 24px;
-    height: 24px;
+    color: transparent;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     cursor: pointer;
+    transition: background 0.2s;
+}
+.window-close-btn:hover {
+    background: #ff3b30;
+    color: #fff; /* 호버 시에만 X자 살짝 보이게 윈도우/맥 감성 구현 */
+    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
 }
-.window-close-btn:hover {
-    background: #ff3b30;
-}
 
 .window-body {
     flex: 1;
-    background: #fff;
+    background: #f8f9fa;
 }
+
 .window-body iframe {
     width: 100%;
     height: 100%;
