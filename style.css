@@ -34,18 +34,22 @@ body {
 .menu-item:hover { background: rgba(255, 255, 255, 0.2); }
 .menu-item.logo { font-weight: 700; margin-right: 8px; }
 .menu-item.clock { cursor: default; }
-.menu-item.clock:hover { background: transparent; }
 
-/* 바탕화면 및 아이콘 */
+/* 바탕화면 공간 */
 .desktop {
     padding: 50px 30px 30px 30px;
     display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
     height: calc(100vh - 80px); align-content: flex-start;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box;
+    z-index: 1;
 }
+
+/* 정갈한 바탕화면용 아이콘 */
 .icon {
-    width: 85px; display: flex; flex-direction: column; align-items: center;
+    width: 85px; height: 95px; /* 높이를 명확히 지정해서 늘어짐 방지 */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     cursor: pointer; text-align: center; border: 1.5px solid transparent;
-    padding: 10px 4px; border-radius: 12px;
+    padding: 5px; border-radius: 12px; box-sizing: border-box;
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .icon:hover {
@@ -53,20 +57,22 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     transform: translateY(-3px);
 }
-.icon img { width: 52px; height: 52px; object-fit: contain; margin-bottom: 6px; }
+.icon img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
 .icon .icon-name {
     color: #ffffff; font-size: 12px; font-weight: 500;
     text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all;
+    line-height: 1.2; max-height: 28px; overflow: hidden;
 }
 
-/* 가상 윈도우 창 (폴더 및 프로그램 공용) */
+/* 가상 윈도우 창 공용 */
 .window-popup {
     display: none; position: fixed;
-    top: 12vh; left: 15vw; width: 70vw; height: 70vh;
+    top: 15vh; left: 20vw; width: 60vw; height: 55vh;
     background: #ffffff; border-radius: 12px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     flex-direction: column; overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.15);
+    z-index: 10; /* 바탕화면보다 위에 뜨게 설정 */
 }
 .window-header {
     background: #ebebeb; color: #333333; padding: 12px 16px;
@@ -78,31 +84,41 @@ body {
     position: absolute; left: 50%; transform: translateX(-50%);
 }
 
-/* ★ MacOS 고증: 평소엔 무지, 올리면 작은 X 마크 */
+/* MacOS 닫기 버튼 */
 .window-close-btn {
     background: #ff5f56; border: 1px solid #e0443e; color: transparent;
     width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
     transition: all 0.15s; display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: bold; line-height: 1; z-index: 10;
+    font-size: 10px; font-weight: bold; line-height: 1; z-index: 12;
 }
 .window-close-btn:hover { background: #ff3b30; color: #4c0002; }
 .window-close-btn:hover::before { content: "×"; }
 
-.window-body { flex: 1; background: #ffffff; }
-.window-body iframe { width: 100%; height: 100%; display: block; }
+.window-body { flex: 1; background: #ffffff; overflow: auto; }
+.window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* 폴더 내부용 그리드 스타일 */
+/* ★ 폴더 내부 전용 그리드 스타일 (버그 완벽 수정) */
 .folder-content {
-    padding: 25px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 20px;
-    background: #f5f5f7; /* 맥북 폴더 내부 특유의 밝은 회색 */
+    padding: 20px;
+    display: flex;
+    flex-direction: row; /* 세로가 아닌 가로로 아이콘 나열 */
+    flex-wrap: wrap;
+    gap: 15px;
+    background: #f5f5f7;
+    height: 100%;
+    box-sizing: border-box;
+    align-content: flex-start;
+}
+/* 폴더 내부용 아이콘 별도 분리 */
+.folder-content .icon {
+    height: 90px; /* 고정 높이 제공으로 늘어남 해결 */
 }
 .folder-content .icon .icon-name {
-    color: #333333; /* 폴더 내부는 배경이 밝으므로 글씨를 어둡게 */
+    color: #333333;
     text-shadow: none;
 }
 .folder-content .icon:hover {
     background: rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+    transform: none; /* 폴더 내부에서는 붕 뜨는 효과 제외하여 깔끔함 유지 */
 }
