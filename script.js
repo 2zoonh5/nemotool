@@ -23,7 +23,6 @@ function openFolder(type) {
     if (!data) return;
 
     folderWindow.setAttribute("data-current-folder", type);
-    // [보완] 폴더 창이 열릴 때 기본 폴더 노란색 아이콘을 기억하게 세팅
     folderWindow.setAttribute("data-icon", "https://cdn-icons-png.flaticon.com/512/3767/3767084.png");
     
     document.getElementById("folderTitle").innerText = data.title;
@@ -34,7 +33,6 @@ function openFolder(type) {
         const iconDiv = document.createElement("div");
         iconDiv.className = "icon";
         iconDiv.innerHTML = `<img src="${app.icon}"> <span class="icon-name">${app.name}</span>`;
-        // [보완] 실행 시 고유 앱 아이콘 주소까지 함께 전달하도록 수정
         iconDiv.addEventListener("dblclick", (e) => { 
             e.stopPropagation(); 
             openApp(app.url, app.name, app.icon); 
@@ -45,12 +43,9 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
-// 🟡 보완된 최소화 함수: 제목과 개별 아이콘을 동적으로 정확하게 추출
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
-    
-    // [완벽 동기화] 창에 세팅된 개별 아이콘 이미지 주소를 완벽하게 읽어옴
     const useIcon = targetWindow.getAttribute("data-icon") || "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
 
     targetWindow.style.display = "none";
@@ -59,12 +54,10 @@ function minimizeWindow(windowId) {
     minimizedWindows[windowId] = true;
     
     const minimizedList = document.getElementById("minimizedList");
-
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
     dockItem.id = `dock-slot-${windowId}`;
     
-    // 알맞은 전용 아이콘과 타이틀 주입
     dockItem.innerHTML = `
         <img src="${useIcon}">
         <span class="dock-tooltip">${actualTitle}</span>
@@ -101,12 +94,10 @@ function closeFolder() {
     updateForwardButtonState();
 }
 
-// [보완] 앱이 켜질 때 해당 프로그램의 전용 아이콘 주소를 캐싱하도록 인자 추가
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
     
-    // 창 자체가 현재 실행된 앱의 아이콘 주소를 저장하도록 설계
     windowPopup.setAttribute("data-icon", icon);
     
     document.getElementById("appFrame").src = url;
@@ -129,7 +120,7 @@ function backToFolder() {
         lastClosedApp = { 
             url: document.getElementById("appFrame").src, 
             name: document.getElementById("windowTitle").innerText,
-            icon: windowPopup.getAttribute("data-icon") // 아이콘 상태 보존
+            icon: windowPopup.getAttribute("data-icon")
         };
         windowPopup.style.display = "none";
     }
