@@ -15,11 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 드롭다운 안전 해제기
+    // 화면 아무 데나 누르면 드롭다운 및 우측 시스템 패널 자동 소거 클리너
     document.addEventListener("click", () => {
         closeAllDropdowns();
+        closeAllSystemPanels();
     });
 
+    // 폴더 외곽 클릭 감지
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         closeFolder();
@@ -29,21 +31,47 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
+/* 드롭다운 제어 제어문 */
 function toggleDropdown(event, id) {
     event.stopPropagation(); 
+    closeAllSystemPanels(); // 상단 우측 패널 닫기
     const target = document.getElementById(id);
     const isOpen = target.style.display === "block";
     
     closeAllDropdowns(); 
-    if (!isOpen) {
-        target.style.display = "block";
-    }
+    if (!isOpen) target.style.display = "block";
 }
 
 function closeAllDropdowns() {
-    document.querySelectorAll(".mac-dropdown").forEach(menu => {
-        menu.style.display = "none";
-    });
+    document.querySelectorAll(".mac-dropdown").forEach(menu => menu.style.display = "none");
+}
+
+/* 🔍🎛️ [신규] 상단바 우측 시스템 아이콘 클릭 이벤트 리스너 패널 모듈 */
+function toggleSystemPanel(event, id) {
+    event.stopPropagation();
+    closeAllDropdowns(); // 일반 메뉴 드롭다운 닫기
+    const target = document.getElementById(id);
+    const isOpen = target.style.display === "flex" || target.style.display === "block";
+
+    closeAllSystemPanels();
+    if (!isOpen) {
+        target.style.display = (id === 'controlPanel') ? "flex" : "flex";
+        if(id === 'spotlightPanel') {
+            setTimeout(() => document.getElementById("spotlightInput").focus(), 50);
+        }
+    }
+}
+
+function closeAllSystemPanels() {
+    const spotlight = document.getElementById("spotlightPanel");
+    const control = document.getElementById("controlPanel");
+    if(spotlight) spotlight.style.display = "none";
+    if(control) control.style.display = "none";
+}
+
+// 스포트라이트 가상 타이핑 검색 (테스트 연동 기능)
+function searchDesktop(query) {
+    console.log("NEMO OS 검색어:", query);
 }
 
 function changeBg(theme) {
@@ -80,7 +108,7 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
-// 🟡 최소화 함수: 활성 표시 점(Dot)을 포함한 캐리어 래퍼 노드 렌더링 시스템 빌드
+// 🟡 최소화 함수: 점(Dot) 없이 순수한 아이콘 래퍼만 주입되도록 깔끔화
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
@@ -93,27 +121,18 @@ function minimizeWindow(windowId) {
     
     const minimizedList = document.getElementById("minimizedList");
 
-    // 앱 밑에 하얀 점(.dock-indicator)을 생성하도록 상위 래퍼 구조 추가
-    const dockWrapper = document.createElement("div");
-    dockWrapper.className = "dock-wrapper";
-    dockWrapper.id = `dock-slot-${windowId}`;
+    const dockItem = document.createElement("div");
+    dockItem.className = "dock-item";
+    dockItem.id = `dock-slot-${windowId}`;
     
-    dockWrapper.innerHTML = `
-        <div class="dock-item">
-            <img src="${useIcon}">
-        </div>
+    // 점(Dot)을 완벽히 없애고 1:1 패키징
+    dockItem.innerHTML = `
+        <img src="${useIcon}">
         <span class="dock-tooltip">${actualTitle}</span>
-        <div class="dock-indicator"></div>
     `;
     
-    // 클릭 시 원상 복구 인터랙션
-    dockWrapper.querySelector('.dock-item').addEventListener("click", (e) => { 
-        e.stopPropagation(); 
-        restoreWindow(windowId); 
-    });
-    
-    minimizedList.appendChild(dockWrapper);
-    updateDockVisibility();
+    dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
+    minimizedList.appendChild(dockItem);
 }
 
 function restoreWindow(windowId) {
@@ -126,12 +145,6 @@ function removeFromDock(windowId) {
     delete minimizedWindows[windowId];
     const slot = document.getElementById(`dock-slot-${windowId}`);
     if (slot) slot.remove();
-    updateDockVisibility();
-}
-
-function updateDockVisibility() {
-    const dockContainer = document.getElementById("macDockContainer");
-    dockContainer.classList.toggle("active", Object.keys(minimizedWindows).length > 0);
 }
 
 function closeFolder() {
@@ -145,9 +158,7 @@ function closeFolder() {
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
-    
     windowPopup.setAttribute("data-icon", icon);
-    
     document.getElementById("appFrame").src = url;
     document.getElementById("windowTitle").innerText = name; 
     windowPopup.style.display = "flex";
@@ -193,6 +204,7 @@ function toggleMaximize(windowId) {
     document.getElementById(windowId).classList.toggle("maximized");
 }
 
+/* 🕒 시계 기능 개선: Mac OS 정품 캘린더 클록 포맷 완벽 고증 반영 */
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
@@ -208,7 +220,8 @@ function startMacClock() {
         hours = hours % 12 || 12;
         
         if (clockElement) {
-            clockElement.innerText = `${month}월 ${date}일 (${dayOfWeek}) ${ampm} ${hours}:${minutes}`;
+            // [고증 완료] '목 7월 2일 오전 11:17' 포맷팅
+            clockElement.innerText = `${dayOfWeek} ${month}월 ${date}일 ${ampm} ${hours}:${minutes}`;
         }
     }
     updateClock();
