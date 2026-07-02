@@ -37,18 +37,18 @@
     <div class="window-popup" id="folderWindow">
         <div class="window-header">
             <div class="nav-buttons">
-                <button class="nav-btn back-btn disabled">
+                <button class="nav-btn back-btn disabled" id="folderBackBtn">
                     <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
-                <button class="nav-btn forward-btn disabled">
+                <button class="nav-btn forward-btn" id="folderForwardBtn" onclick="forwardToApp()">
                     <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
             </div>
             <span class="window-title" id="folderTitle">폴더</span>
             <div class="mac-buttons">
-                <button class="window-btn close-btn" onclick="closeFolder()"></button>
                 <button class="window-btn minimize-btn" onclick="minimizeWindow('folderWindow', '폴더 창')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('folderWindow')"></button>
+                <button class="window-btn close-btn" onclick="closeFolder()"></button>
             </div>
         </div>
         <div class="window-body folder-content" id="folderContent"></div>
@@ -66,9 +66,9 @@
             </div>
             <span class="window-title" id="windowTitle">프로그램</span>
             <div class="mac-buttons">
-                <button class="window-btn close-btn" onclick="closeApp()"></button>
                 <button class="window-btn minimize-btn" onclick="minimizeWindow('appWindow', '프로그램 창')"></button>
                 <button class="window-btn maximize-btn" onclick="toggleMaximize('appWindow')"></button>
+                <button class="window-btn close-btn" onclick="closeApp()"></button>
             </div>
         </div>
         <div class="window-body">
