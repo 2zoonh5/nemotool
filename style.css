@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Malgun Gothic', sans-serif;
+    overflow: hidden;
+    /* 고화질 배경이미지가 있다면 assets/bg.jpg로 교체하세요 */
+    background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070') no-repeat center center/cover;
+    height: 100vh;
+    user-select: none;
+}
+
+/* 바탕화면 그리드 */
+.desktop {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 30px;
+    height: calc(100vh - 40px);
+    align-content: flex-start;
+}
+
+/* 아이콘 스타일 */
+.icon {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid transparent;
+    padding: 8px 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.icon img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+}
+.icon .icon-name {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    word-break: keep-all;
+}
+
+/* 가상 프로그램 창 (윈도우) 스타일 */
+.window-popup {
+    display: none; /* 기본적으론 숨김 */
+    position: fixed;
+    top: 5%;
+    left: 10%;
+    width: 80%;
+    height: 85%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #5B5757;
+}
+
+.window-header {
+    background: #333;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+}
+.window-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+.window-close-btn {
+    background: #ff5f56;
+    border: none;
+    color: white;
+    font-size: 16px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.window-close-btn:hover {
+    background: #ff3b30;
+}
+
+.window-body {
+    flex: 1;
+    background: #fff;
+}
+.window-body iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
