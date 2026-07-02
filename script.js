@@ -3,7 +3,7 @@ const folderData = {
         title: "배틀그라운드 매니저", 
         apps: [
             { id: "pubg-stat", name: "전적 검색", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-stat.html" }, 
-            // [편입] 배틀그라운드 폴더 내부에 네모 가챠머신을 고정 앱으로 빌드 연동
+            // [체크] 이 url 이름이 아래 생성할 파일명과 글자 토씨 하나 안 틀리고 똑같아야 합니다!
             { id: "pubg-gacha", name: "네모 가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }
         ] 
     },
@@ -79,12 +79,8 @@ function updateWebVolume(volume) {
     const iframes = document.querySelectorAll("iframe");
     iframes.forEach(iframe => {
         try {
-            // [오디오 바인딩] 가챠 슬롯머신 오디오 구동 노드가 포착되면 마스터 볼륨 실시간 조절
             if(iframe.contentWindow.document.querySelectorAll("audio").length > 0) {
                 iframe.contentWindow.document.querySelectorAll("audio").forEach(aud => aud.volume = volume / 100);
-            }
-            if(iframe.contentWindow.document.getElementById("gachaAudio")) {
-                iframe.contentWindow.document.getElementById("gachaAudio").volume = volume / 100;
             }
         } catch(e) {}
     });
