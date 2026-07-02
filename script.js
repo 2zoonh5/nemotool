@@ -20,7 +20,6 @@ const folderData = {
     }
 };
 
-// 최소화 상태를 관리하는 객체
 let minimizedWindows = {};
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -41,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         popup.addEventListener("dblclick", (e) => { e.stopPropagation(); });
     });
 
-    // 바탕화면 클릭 시 (단, 최소화된 것이 아닐 때만) 열려있는 모든 것 완전 종료
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         closeFolder();
@@ -51,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-// 폴더 창 열기
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
     const folderTitle = document.getElementById("folderTitle");
@@ -79,18 +76,15 @@ function openFolder(type) {
         folderContent.appendChild(iconDiv);
     });
 
-    // 최소화되어있던 상태라면 초기화
     folderWindow.style.display = "flex";
 }
 
-// 🔴 빨간 버튼: 폴더 창 완전 종료 및 독 리스트에서 제외
 function closeFolder() {
     document.getElementById("folderWindow").style.display = "none";
     document.getElementById("folderWindow").classList.remove("maximized");
     removeFromDock("folderWindow");
 }
 
-// 프로그램 창 열기
 function openApp(url, name) {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -101,7 +95,6 @@ function openApp(url, name) {
     windowPopup.style.display = "flex";
 }
 
-// 🔴 빨간 버튼: 프로그램 창 완전 종료 및 독 리스트에서 제거
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -114,6 +107,7 @@ function closeApp() {
     closeFolder(); 
 }
 
+// ◀ 왼쪽에 새로 배치된 화살표 누를 때 작동할 찐 뒤로가기
 function backToFolder() {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -125,20 +119,15 @@ function backToFolder() {
     removeFromDock("appWindow");
 }
 
-// 🟡 노란색 버튼: 창을 숨기고 하단 Dock 바 오른쪽에 축소 아이콘 생성
+// 🟡 노란색 버튼: 독바 영역 업데이트 처리 연동
 function minimizeWindow(windowId, displayName) {
     const targetWindow = document.getElementById(windowId);
-    targetWindow.style.display = "none"; // 창 숨김
+    targetWindow.style.display = "none";
     
-    // 이미 독바에 등록되어 있다면 중복 생성 금지
     if (minimizedWindows[windowId]) return;
-
     minimizedWindows[windowId] = true;
     
-    // 독 리스트 영역 가져오기
     const minimizedList = document.getElementById("minimizedList");
-    
-    // 임시 슬롯 생성 (실제 가상 폴더인지 아이콘인지 매핑 이미지 분기)
     const folderIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
     const appIcon = "https://cdn-icons-png.flaticon.com/512/2893/2893051.png";
     const useIcon = (windowId === 'folderWindow') ? folderIcon : appIcon;
@@ -148,37 +137,48 @@ function minimizeWindow(windowId, displayName) {
     dockItem.id = `dock-slot-${windowId}`;
     dockItem.innerHTML = `
         <img src="${useIcon}" alt="minimized">
-        <span class="dock-tooltip">${displayName} (최소화됨)</span>
+        <span class="dock-tooltip">${displayName}</span>
     `;
     
-    // 클릭하면 다시 창 복원시키고 독바에서 제거
     dockItem.addEventListener("click", (e) => {
         e.stopPropagation();
         restoreWindow(windowId);
     });
 
     minimizedList.appendChild(dockItem);
+    updateDockVisibility(); // 독바 가시성 업데이트 호출
 }
 
-// 최소화 해제 복원 기능
 function restoreWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
-        targetWindow.style.display = "flex"; // 복원
+        targetWindow.style.display = "flex";
     }
     removeFromDock(windowId);
 }
 
-// 독 바에서 끄기 전용 클리너 
 function removeFromDock(windowId) {
     delete minimizedWindows[windowId];
     const slot = document.getElementById(`dock-slot-${windowId}`);
     if (slot) {
         slot.remove();
     }
+    updateDockVisibility(); // 독바 가시성 업데이트 호출
 }
 
-// 🟢 초록색 버튼: 실제 맥북처럼 전체화면 토글 시스템 구동
+// ★ 하단 바 제어 로직: 최소화된 슬롯 아이콘 개수가 0개이면 아래로 숨기고, 1개 이상일 때만 위로 띄움
+function updateDockVisibility() {
+    const dockContainer = document.getElementById("macDockContainer");
+    const itemCount = Object.keys(minimizedWindows).length;
+    
+    if (itemCount > 0) {
+        dockContainer.classList.add("active");
+    } else {
+        dockContainer.classList.remove("active");
+    }
+}
+
+// 🟢 초록색 버튼: 전체화면 토글
 function toggleMaximize(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
@@ -186,7 +186,7 @@ function toggleMaximize(windowId) {
     }
 }
 
-// Mac OS 실시간 시계
+// 시계 시스템
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
