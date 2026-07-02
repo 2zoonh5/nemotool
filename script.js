@@ -1,3 +1,4 @@
+// [데이터 정의] 각 게임 폴더를 더블클릭했을 때 생성될 세부 기능 리스트
 const folderData = {
     pubg: {
         title: "배틀그라운드 매니저",
@@ -22,26 +23,30 @@ const folderData = {
 
 document.addEventListener("DOMContentLoaded", () => {
     const folders = document.querySelectorAll("[data-folder]");
+    
+    // 메인 바탕화면 폴더 아이콘 더블클릭
     folders.forEach(folder => {
         folder.addEventListener("dblclick", (e) => {
-            e.stopPropagation(); // 바탕화면 클릭 이벤트로 번지는 것 차단
+            e.stopPropagation(); // 바탕화면 클릭으로 퍼지는 것 방지
             const folderType = folder.getAttribute("data-folder");
             openFolder(folderType);
         });
     });
 
-    // ★ 바탕화면 클릭 시 폴더 창 닫기 기능 추가
+    // ★ 바탕화면 클릭 시 폴더 닫기 (정확하게 타겟 감지)
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", (e) => {
-        // 클릭한 대상이 아이콘이 아니라 순수 바탕화면일 때만 폴더를 닫음
+        // 클릭한 곳이 순수 바탕화면('.desktop')일 때만 폴더를 닫음
         if (e.target === desktop) {
             closeFolder();
         }
     });
 
+    // 실시간 시계 작동
     startMacClock();
 });
 
+// [1] 폴더 창 열기
 function openFolder(type) {
     const folderWindow = document.getElementById("folderWindow");
     const folderTitle = document.getElementById("folderTitle");
@@ -60,8 +65,9 @@ function openFolder(type) {
             <img src="${app.icon}" alt="${app.name}">
             <span class="icon-name">${app.name}</span>
         `;
+        // 폴더 안의 아이콘 더블클릭 시 앱(프로그램) 실행
         iconDiv.addEventListener("dblclick", (e) => {
-            e.stopPropagation(); // 더블클릭 이벤트 버블링 방지
+            e.stopPropagation(); 
             openApp(app.url, app.name);
         });
         folderContent.appendChild(iconDiv);
@@ -70,10 +76,15 @@ function openFolder(type) {
     folderWindow.style.display = "flex";
 }
 
+// [1-2] 폴더 창 닫기 (오타 수정 완료!)
 function closeFolder() {
-    document.getElementById("folderWindow").style.style.display = "none";
+    const folderWindow = document.getElementById("folderWindow");
+    if (folderWindow) {
+        folderWindow.style.display = "none";
+    }
 }
 
+// [2] 진짜 프로그램(iframe) 실행 창 열기
 function openApp(url, name) {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
@@ -84,13 +95,17 @@ function openApp(url, name) {
     windowPopup.style.display = "flex";
 }
 
+// [2-2] 프로그램 창 닫기
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
-    windowPopup.style.display = "none";
-    appFrame.src = "";
+    if (windowPopup) {
+        windowPopup.style.display = "none";
+        appFrame.src = ""; // 메모리 초기화
+    }
 }
 
+// Mac OS 스타일 실시간 시계 로직
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
