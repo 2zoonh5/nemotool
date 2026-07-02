@@ -21,6 +21,7 @@ const folderData = {
 };
 
 let minimizedWindows = {};
+let lastClosedApp = null; 
 
 document.addEventListener("DOMContentLoaded", () => {
     const folders = document.querySelectorAll("[data-folder]");
@@ -77,18 +78,24 @@ function openFolder(type) {
     });
 
     folderWindow.style.display = "flex";
+    updateForwardButtonState();
 }
 
 function closeFolder() {
     document.getElementById("folderWindow").style.display = "none";
     document.getElementById("folderWindow").classList.remove("maximized");
     removeFromDock("folderWindow");
+    lastClosedApp = null; 
+    updateForwardButtonState();
 }
 
 function openApp(url, name) {
+    const folderWindow = document.getElementById("folderWindow");
     const windowPopup = document.getElementById("appWindow");
     const appFrame = document.getElementById("appFrame");
     const windowTitle = document.getElementById("windowTitle");
+
+    folderWindow.style.display = "none"; 
 
     appFrame.src = url;
     windowTitle.innerText = name;
@@ -104,22 +111,47 @@ function closeApp() {
         appFrame.src = ""; 
     }
     removeFromDock("appWindow");
+    lastClosedApp = null;
     closeFolder(); 
 }
 
-// ◀ 왼쪽에 새로 배치된 화살표 누를 때 작동할 찐 뒤로가기
 function backToFolder() {
     const windowPopup = document.getElementById("appWindow");
+    const folderWindow = document.getElementById("folderWindow");
     const appFrame = document.getElementById("appFrame");
-    if (windowPopup) {
+    
+    if (windowPopup && windowPopup.style.display !== "none") {
+        lastClosedApp = {
+            url: appFrame.src,
+            name: document.getElementById("windowTitle").innerText
+        };
+        
         windowPopup.style.display = "none";
         windowPopup.classList.remove("maximized");
         appFrame.src = "";
     }
     removeFromDock("appWindow");
+    
+    folderWindow.style.display = "flex";
+    updateForwardButtonState();
 }
 
-// 🟡 노란색 버튼: 독바 영역 업데이트 처리 연동
+function forwardToApp() {
+    if (!lastClosedApp) return;
+    openApp(lastClosedApp.url, lastClosedApp.name);
+    lastClosedApp = null; 
+    updateForwardButtonState();
+}
+
+function updateForwardButtonState() {
+    const forwardBtn = document.getElementById("folderForwardBtn");
+    if (lastClosedApp) {
+        forwardBtn.classList.remove("disabled");
+    } else {
+        forwardBtn.classList.add("disabled");
+    }
+}
+
 function minimizeWindow(windowId, displayName) {
     const targetWindow = document.getElementById(windowId);
     targetWindow.style.display = "none";
@@ -146,7 +178,7 @@ function minimizeWindow(windowId, displayName) {
     });
 
     minimizedList.appendChild(dockItem);
-    updateDockVisibility(); // 독바 가시성 업데이트 호출
+    updateDockVisibility();
 }
 
 function restoreWindow(windowId) {
@@ -157,20 +189,19 @@ function restoreWindow(windowId) {
     removeFromDock(windowId);
 }
 
+// 독 바에서 완전 삭제
 function removeFromDock(windowId) {
     delete minimizedWindows[windowId];
     const slot = document.getElementById(`dock-slot-${windowId}`);
     if (slot) {
         slot.remove();
     }
-    updateDockVisibility(); // 독바 가시성 업데이트 호출
+    updateDockVisibility();
 }
 
-// ★ 하단 바 제어 로직: 최소화된 슬롯 아이콘 개수가 0개이면 아래로 숨기고, 1개 이상일 때만 위로 띄움
 function updateDockVisibility() {
     const dockContainer = document.getElementById("macDockContainer");
     const itemCount = Object.keys(minimizedWindows).length;
-    
     if (itemCount > 0) {
         dockContainer.classList.add("active");
     } else {
@@ -178,7 +209,6 @@ function updateDockVisibility() {
     }
 }
 
-// 🟢 초록색 버튼: 전체화면 토글
 function toggleMaximize(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
@@ -186,7 +216,6 @@ function toggleMaximize(windowId) {
     }
 }
 
-// 시계 시스템
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
