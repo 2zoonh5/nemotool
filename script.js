@@ -8,6 +8,9 @@ let minimizedWindows = {};
 let lastClosedApp = null; 
 
 document.addEventListener("DOMContentLoaded", () => {
+    // [신규 기믹] 바탕화면 아이콘을 자동으로 미러링하여 고정 독바 아이콘 생성
+    syncDesktopToDock();
+
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
             e.stopPropagation(); 
@@ -15,13 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 화면 아무 데나 누르면 드롭다운 및 우측 시스템 패널 자동 소거 클리너
     document.addEventListener("click", () => {
         closeAllDropdowns();
         closeAllSystemPanels();
     });
 
-    // 폴더 외곽 클릭 감지
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         closeFolder();
@@ -31,10 +32,75 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-/* 드롭다운 제어 제어문 */
+// ⚓ [스마트 동적 바인딩] 바탕화면의 폴더 구조와 아이콘을 추적해 고정 독 리스트 순서대로 복제 빌드
+function syncDesktopToDock() {
+    const fixedDockList = document.getElementById("fixedDockList");
+    const desktopIcons = document.querySelectorAll(".desktop .icon");
+    
+    fixedDockList.innerHTML = ""; // 초기화
+    
+    desktopIcons.forEach(icon => {
+        const folderType = icon.getAttribute("data-folder");
+        const imgSrc = icon.querySelector("img").src;
+        const name = icon.querySelector("span").innerText;
+        
+        const dockItem = document.createElement("div");
+        dockItem.className = "dock-item";
+        dockItem.innerHTML = `
+            <img src="${imgSrc}">
+            <span class="dock-tooltip">${name}</span>
+        `;
+        
+        // 하단바 아이콘 클릭 시 해당 폴더 다이렉트 팝업
+        dockItem.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openFolder(folderType);
+        });
+        
+        fixedDockList.appendChild(dockItem);
+    });
+}
+
+/* 🔍 [진짜 기능 작동] Spotlight 실시간 데스크탑 필터링 검색 엔진 */
+function searchDesktop(query) {
+    const icons = document.querySelectorAll(".desktop .icon");
+    const cleanQuery = query.toLowerCase().trim();
+
+    icons.forEach(icon => {
+        const iconName = icon.querySelector(".icon-name").innerText.toLowerCase();
+        if (iconName.includes(cleanQuery)) {
+            icon.style.display = "flex";
+            icon.style.opacity = "1";
+            icon.style.transform = "scale(1)";
+        } else {
+            // 매칭되지 않는 아이콘은 투명화 및 축소 처리하며 부드럽게 숨김
+            icon.style.opacity = "0";
+            icon.style.transform = "scale(0.8)";
+            setTimeout(() => {
+                if(icon.style.opacity === "0") icon.style.display = "none";
+            }, 200);
+        }
+    });
+}
+
+// 🔊 [제어센터 기능 연동] 가상 오디오 볼륨 제어 핸들러
+function updateWebVolume(volume) {
+    document.getElementById('volumeVal').innerText = volume + '%';
+    // 웹OS 내부에 탑재될 iframe 및 모든 오디오 엘리먼트 볼륨 실시간 컨트롤 구조 확보
+    const iframes = document.querySelectorAll("iframe");
+    iframes.forEach(iframe => {
+        try {
+            if(iframe.contentWindow.document.querySelector("audio")) {
+                iframe.contentWindow.document.querySelectorAll("audio").forEach(aud => aud.volume = volume / 100);
+            }
+        } catch(e) { /* 크로스 도메인 예방 블록 */ }
+    });
+}
+
+/* 패널 제어 로직 */
 function toggleDropdown(event, id) {
     event.stopPropagation(); 
-    closeAllSystemPanels(); // 상단 우측 패널 닫기
+    closeAllSystemPanels(); 
     const target = document.getElementById(id);
     const isOpen = target.style.display === "block";
     
@@ -46,18 +112,20 @@ function closeAllDropdowns() {
     document.querySelectorAll(".mac-dropdown").forEach(menu => menu.style.display = "none");
 }
 
-/* 🔍🎛️ [신규] 상단바 우측 시스템 아이콘 클릭 이벤트 리스너 패널 모듈 */
 function toggleSystemPanel(event, id) {
     event.stopPropagation();
-    closeAllDropdowns(); // 일반 메뉴 드롭다운 닫기
+    closeAllDropdowns(); 
     const target = document.getElementById(id);
-    const isOpen = target.style.display === "flex" || target.style.display === "block";
+    const isOpen = target.style.display === "flex";
 
     closeAllSystemPanels();
     if (!isOpen) {
-        target.style.display = (id === 'controlPanel') ? "flex" : "flex";
+        target.style.display = "flex";
         if(id === 'spotlightPanel') {
-            setTimeout(() => document.getElementById("spotlightInput").focus(), 50);
+            const input = document.getElementById("spotlightInput");
+            input.value = ""; // 초기화
+            searchDesktop(""); // 바탕화면 복원
+            setTimeout(() => input.focus(), 50);
         }
     }
 }
@@ -67,11 +135,6 @@ function closeAllSystemPanels() {
     const control = document.getElementById("controlPanel");
     if(spotlight) spotlight.style.display = "none";
     if(control) control.style.display = "none";
-}
-
-// 스포트라이트 가상 타이핑 검색 (테스트 연동 기능)
-function searchDesktop(query) {
-    console.log("NEMO OS 검색어:", query);
 }
 
 function changeBg(theme) {
@@ -108,7 +171,6 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
-// 🟡 최소화 함수: 점(Dot) 없이 순수한 아이콘 래퍼만 주입되도록 깔끔화
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
@@ -120,12 +182,11 @@ function minimizeWindow(windowId) {
     minimizedWindows[windowId] = true;
     
     const minimizedList = document.getElementById("minimizedList");
-
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
     dockItem.id = `dock-slot-${windowId}`;
     
-    // 점(Dot)을 완벽히 없애고 1:1 패키징
+    // 유저 피드백 반영: 흰색 점을 영구 제거한 순수 플랫 디자인
     dockItem.innerHTML = `
         <img src="${useIcon}">
         <span class="dock-tooltip">${actualTitle}</span>
@@ -204,24 +265,19 @@ function toggleMaximize(windowId) {
     document.getElementById(windowId).classList.toggle("maximized");
 }
 
-/* 🕒 시계 기능 개선: Mac OS 정품 캘린더 클록 포맷 완벽 고증 반영 */
+/* 🕒 [1번 피드백 반영] 시계 서식을 h:mm a (예: 11:24 AM)로 전면 포맷팅 보정 */
 function startMacClock() {
     const clockElement = document.getElementById("macClock");
     function updateClock() {
         const now = new Date();
-        const month = now.getMonth() + 1;
-        const date = now.getDate();
-        const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
-        const dayOfWeek = weekDays[now.getDay()];
-        
         let hours = now.getHours();
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? '오후' : '오전';
-        hours = hours % 12 || 12;
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        hours = hours % 12 || 12; // 12시간제 변환
         
         if (clockElement) {
-            // [고증 완료] '목 7월 2일 오전 11:17' 포맷팅
-            clockElement.innerText = `${dayOfWeek} ${month}월 ${date}일 ${ampm} ${hours}:${minutes}`;
+            clockElement.innerText = `${hours}:${minutes} ${ampm}`;
         }
     }
     updateClock();
