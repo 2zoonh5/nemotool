@@ -3,31 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>네모의 게임 매니저 OS</title>
+    <title>네모툴</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="desktop">
-        <div class="icon" data-app="lol">
-            <img src="assets/lol-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/825/825590.png'" alt="LOL">
-            <span class="icon-name">롤모장</span>
-        </div>
 
-        <div class="icon" data-app="pubg">
-            <img src="assets/pubg-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3408/3408506.png'" alt="PUBG">
-            <span class="icon-name">배틀그라운드</span>
+    <!-- 실시간 시계가 작동하는 Mac OS 스타일 메뉴 바 -->
+    <div class="mac-menu-bar">
+        <div class="left-menu">
+            <span class="menu-item logo" onclick="location.reload()">NEMO OS</span>
+            <span class="menu-item" onclick="openApp('lol')">롤모장</span>
+            <span class="menu-item" onclick="openApp('pubg')">배틀그라운드</span>
+            <span class="menu-item" onclick="openApp('sudden')">서든어택</span>
         </div>
-
-        <div class="icon" data-app="sudden">
-            <img src="assets/sudden-icon.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5750/5750226.png'" alt="Sudden Attack">
-            <span class="icon-name">서든어택</span>
+        <div class="right-menu">
+            <span class="menu-item clock" id="macClock">오전 00:00</span>
         </div>
     </div>
 
+    <!-- 바탕화면 아이콘 공간 -->
+    <div class="desktop">
+        
+        <!-- 롤 아이콘 (더블클릭 시 실행) -->
+        <div class="icon" data-app="lol">
+            <img src="https://cdn-icons-png.flaticon.com/512/825/825590.png" alt="LOL">
+            <span class="icon-name">롤모장</span>
+        </div>
+
+        <!-- 배그 아이콘 -->
+        <div class="icon" data-app="pubg">
+            <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG">
+            <span class="icon-name">배틀그라운드</span>
+        </div>
+
+        <!-- 서든 아이콘 -->
+        <div class="icon" data-app="sudden">
+            <img src="https://cdn-icons-png.flaticon.com/512/5750/5750226.png" alt="Sudden Attack">
+            <span class="icon-name">서든어택</span>
+        </div>
+
+    </div>
+
+    <!-- 가상 앱 실행 창 (Mac 윈도우 스타일) -->
     <div class="window-popup" id="appWindow">
         <div class="window-header">
+            <!-- 왼쪽 배치된 빨간색 닫기 버튼 -->
+            <button class="window-close-btn" onclick="closeApp()"></button>
+            <!-- 정중앙 타이틀 -->
             <span class="window-title" id="windowTitle">프로그램</span>
-            <button class="window-close-btn" onclick="closeApp()">×</button>
         </div>
         <div class="window-body">
             <iframe id="appFrame" src="" frameborder="0"></iframe>
