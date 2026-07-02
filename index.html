@@ -3,53 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>네모툴</title>
+    <title>네모의 게임 매니저 OS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 실시간 시계가 작동하는 Mac OS 스타일 메뉴 바 -->
+    <!-- 상단바: 밑에 아이콘들과 중복되는 메뉴 제거 및 시스템 메뉴로 대체 -->
     <div class="mac-menu-bar">
         <div class="left-menu">
             <span class="menu-item logo" onclick="location.reload()">NEMO OS</span>
-            <span class="menu-item" onclick="openApp('lol')">롤모장</span>
-            <span class="menu-item" onclick="openApp('pubg')">배틀그라운드</span>
-            <span class="menu-item" onclick="openApp('sudden')">서든어택</span>
+            <span class="menu-item">시스템 설정</span>
+            <span class="menu-item">배경화면</span>
+            <span class="menu-item">정보</span>
         </div>
         <div class="right-menu">
             <span class="menu-item clock" id="macClock">오전 00:00</span>
         </div>
     </div>
 
-    <!-- 바탕화면 아이콘 공간 -->
+    <!-- 바탕화면 아이콘 공간 (순서 변경: 배그 -> 롤 -> 서든) -->
     <div class="desktop">
         
-        <!-- 롤 아이콘 (더블클릭 시 실행) -->
-        <div class="icon" data-app="lol">
-            <img src="https://cdn-icons-png.flaticon.com/512/825/825590.png" alt="LOL">
-            <span class="icon-name">롤모장</span>
-        </div>
-
-        <!-- 배그 아이콘 -->
-        <div class="icon" data-app="pubg">
-            <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG">
+        <!-- 배그 폴더 아이콘 -->
+        <div class="icon" data-folder="pubg">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="PUBG Folder">
             <span class="icon-name">배틀그라운드</span>
         </div>
 
-        <!-- 서든 아이콘 -->
-        <div class="icon" data-app="sudden">
-            <img src="https://cdn-icons-png.flaticon.com/512/5750/5750226.png" alt="Sudden Attack">
+        <!-- 롤 폴더 아이콘 -->
+        <div class="icon" data-folder="lol">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="LOL Folder">
+            <span class="icon-name">리그오브레전드</span>
+        </div>
+
+        <!-- 서든 폴더 아이콘 -->
+        <div class="icon" data-folder="sudden">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="Sudden Folder">
             <span class="icon-name">서든어택</span>
         </div>
 
     </div>
 
-    <!-- 가상 앱 실행 창 (Mac 윈도우 스타일) -->
-    <div class="window-popup" id="appWindow">
+    <!-- [1] 가상 폴더 열기 창 (윈도우 팝업 #1) -->
+    <div class="window-popup" id="folderWindow">
         <div class="window-header">
-            <!-- 왼쪽 배치된 빨간색 닫기 버튼 -->
+            <button class="window-close-btn" onclick="closeFolder()"></button>
+            <span class="window-title" id="folderTitle">폴더</span>
+        </div>
+        <!-- 폴더 내부에 들어갈 기능 아이콘들이 자바스크립트로 주입됩니다 -->
+        <div class="window-body folder-content" id="folderContent"></div>
+    </div>
+
+    <!-- [2] 가상 프로그램 실행 창 (윈도우 팝업 #2) -->
+    <div class="window-popup" id="appWindow" style="z-index: 10000;">
+        <div class="window-header">
             <button class="window-close-btn" onclick="closeApp()"></button>
-            <!-- 정중앙 타이틀 -->
             <span class="window-title" id="windowTitle">프로그램</span>
         </div>
         <div class="window-body">
