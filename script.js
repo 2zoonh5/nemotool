@@ -3,6 +3,7 @@ const folderData = {
         title: "배틀그라운드 매니저", 
         apps: [
             { id: "pubg-stat", name: "전적 검색", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-stat.html" }, 
+            // [체크] 이 url 이름이 아래 생성할 파일명과 글자 토씨 하나 안 틀리고 똑같아야 합니다!
             { id: "pubg-gacha", name: "네모 가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }
         ] 
     },
@@ -152,7 +153,6 @@ function openFolder(type) {
         content.appendChild(iconDiv);
     });
     folderWindow.style.display = "flex";
-    document.getElementById("macDockContainer").classList.add("dimmed");
     updateForwardButtonState();
 }
 
@@ -170,14 +170,12 @@ function minimizeWindow(windowId) {
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
     dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
     minimizedList.appendChild(dockItem);
-    document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
 function restoreWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) targetWindow.style.display = "flex";
     removeFromDock(windowId);
-    document.getElementById("macDockContainer").classList.add("dimmed");
 }
 
 function removeFromDock(windowId) {
@@ -191,7 +189,6 @@ function closeFolder() {
     document.getElementById("folderWindow").classList.remove("maximized");
     removeFromDock("folderWindow");
     lastClosedApp = null;
-    document.getElementById("macDockContainer").classList.remove("dimmed");
     updateForwardButtonState();
 }
 
@@ -201,10 +198,7 @@ function openApp(url, name, icon) {
     windowPopup.setAttribute("data-icon", icon);
     document.getElementById("appFrame").src = url;
     document.getElementById("windowTitle").innerText = name; 
-    
     windowPopup.style.display = "flex";
-    windowPopup.classList.add("maximized"); 
-    document.getElementById("macDockContainer").classList.add("dimmed");
 }
 
 function closeApp() {
@@ -214,7 +208,6 @@ function closeApp() {
     removeFromDock("appWindow");
     lastClosedApp = null;
     closeFolder(); 
-    document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
 function backToFolder() {
@@ -223,7 +216,6 @@ function backToFolder() {
         lastClosedApp = { url: document.getElementById("appFrame").src, name: document.getElementById("windowTitle").innerText, icon: windowPopup.getAttribute("data-icon") };
         windowPopup.style.display = "none";
     }
-    windowPopup.classList.remove("maximized");
     removeFromDock("appWindow");
     document.getElementById("folderWindow").style.display = "flex";
     updateForwardButtonState();
@@ -234,6 +226,11 @@ function forwardToApp() {
     openApp(lastClosedApp.url, lastClosedApp.name, lastClosedApp.icon);
     lastClosedApp = null; 
     updateForwardButtonState();
+}
+
+function updateForwardButtonState() {
+    const forwardBtn = document.getElementById("folderForwardBtn");
+    forwardBtn.classList.toggle("disabled", !lastClosedApp);
 }
 
 function toggleMaximize(windowId) {
