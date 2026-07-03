@@ -112,15 +112,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
-
-/* 🛠️ [1번 요청 완전 적용] 꼼수 마진을 완전히 지우고 바닥 끝까지 꽉 차는 진정한 100% 전체화면 고증 롤백 */
-.window-popup.maximized { 
-    top: 25px !important; 
-    left: 0 !important; 
-    width: 100vw !important; 
-    height: calc(100vh - 25px) !important; 
-    border-radius: 0px !important; 
-}
+.window-popup.maximized { top: 25px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 25px) !important; border-radius: 0px !important; }
 
 .window-header { background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box; }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); }
@@ -154,23 +146,11 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; border-color: transparent; }
 
-/* ⚓ 대형 3D Glassmorphism 독 바 최상단 레이어 격리 */
+/* 대형 3D Glassmorphism 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
     transform: translateX(-50%); z-index: 10030;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.22s ease-in-out;
-    pointer-events: auto; /* 마우스 호버 이벤트를 차단하지 않도록 해제 */
 }
-
-/* 🛠️ [1번 피드백 반영] 평소에는 맑게 비치는 리얼 반투명 0.15 레이어 상태 유지 */
-.mac-dock-container.dimmed {
-    opacity: 0.15;
-}
-/* 🛠️ 마우스를 갖다 대면 본래의 선명한 상태(1.0)로 완벽하게 활성화 반전 스위칭 */
-.mac-dock-container:hover {
-    opacity: 1 !important;
-}
-
 .mac-dock {
     background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     padding: 8px 16px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
