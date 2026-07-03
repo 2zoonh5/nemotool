@@ -112,8 +112,15 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
-/* 🛠️ [복구 고정] 하단 꼼수 마진을 삭제하고 순정 전체 화면 규격으로 회귀 맵핑 */
-.window-popup.maximized { top: 25px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 25px) !important; border-radius: 0px !important; }
+
+/* 🛠️ [중요 버그 패치] 최대화 창 높이를 110px 깎아주어 하단 마우스 포인터가 독바 이벤트를 방해하지 않도록 완전 격리 */
+.window-popup.maximized { 
+    top: 25px !important; 
+    left: 0 !important; 
+    width: 100vw !important; 
+    height: calc(100vh - 110px) !important; 
+    border-radius: 0px !important; 
+}
 
 .window-header { background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box; }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); }
@@ -147,17 +154,14 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .folder-content .icon .icon-name { color: #333333; text-shadow: none; }
 .folder-content .icon:hover { background: rgba(0, 0, 0, 0.06); box-shadow: none; transform: none; border-color: transparent; }
 
-/* ⚓ 대형 3D Glassmorphism 독 바 최상위 레이어 격리 */
+/* 대형 3D Glassmorphism 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
     transform: translateX(-50%); z-index: 10030;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.22s ease-in-out;
 }
-
-/* 🛠️ [2번 피드백 반영] 원래 위치를 사수하되 뒤가 맑게 비치는 리얼 반투명 블러 레이어 장착 */
 .mac-dock-container.dimmed {
     opacity: 0.15;
-    pointer-events: auto;
 }
 .mac-dock-container.dimmed:hover {
     opacity: 1 !important;
