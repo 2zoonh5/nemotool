@@ -8,14 +8,10 @@
     
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
-      display: flex; justify-content: center;
-      /* 🛠️ Flex Center Overflow 버그 방지: 위아래가 절대 가려지지 않도록 시작축 정렬 */
-      align-items: flex-start; 
+      display: flex; justify-content: center; align-items: flex-start; 
       min-height: 100vh; margin: 0; padding: 25px 20px; 
-      box-sizing: border-box; user-select: none;
-      overflow-y: auto; overflow-x: hidden;
+      box-sizing: border-box; user-select: none; overflow-y: auto; overflow-x: hidden;
     }
-    
     body::-webkit-scrollbar { width: 6px; }
     body::-webkit-scrollbar-track { background: transparent; }
     body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
@@ -24,16 +20,11 @@
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 📦 대화면과 축소화면 양쪽 다 황금비율을 유지시켜주는 컨테이너 */
     .mac-app-container {
-      display: flex; gap: 35px; align-items: stretch; justify-content: center;
-      width: 100%; max-width: 840px;
-      /* 화면에 세로 여유가 있을 때만 자동 마진 센터 정렬 (이탈 원천방지) */
-      margin: auto 0;
-      padding: 5px; box-sizing: border-box; z-index: 10;
+      display: flex; gap: 35px; align-items: flex-start; justify-content: center;
+      width: 100%; max-width: 860px; margin: auto 0; padding: 5px; box-sizing: border-box; z-index: 10;
     }
 
-    /* 📊 좌측 컨트롤 패널 */
     .sheet-control-panel {
       width: 480px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 14px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
@@ -45,58 +36,42 @@
       border-radius: 6px; padding: 6px 10px; text-align: center; flex: 1;
     }
     .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
-    .sheet-box input[type="number"] {
-      width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono';
-      font-size: 16px; font-weight: 700; text-align: center; outline: none;
-    }
-    .btn-reset {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-      font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s;
-    }
+    .sheet-box input[type="number"] { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
+    .btn-reset { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
     
-    .btn-click {
-      flex: 1.3; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 8px;
-      font-size: 16px; font-weight: 700; font-family: 'Inter'; cursor: pointer;
-      transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(226, 180, 189, 0.2);
-    }
+    .btn-click { flex: 1.3; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; font-family: 'Inter'; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(226, 180, 189, 0.2); }
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
     .participant-table { display: flex; flex-direction: column; gap: 8px; }
     .table-header { display: grid; grid-template-columns: 1.1fr 2.1fr 0.8fr; padding: 0 4px; font-size: 11px; color: #8e8e93; font-weight: 600; }
-    
-    .table-row {
-      display: grid; grid-template-columns: 1.1fr 2.1fr 0.8fr; gap: 8px; align-items: center;
-      background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05);
-      padding: 8px; border-radius: 8px; transition: all 0.2s ease;
-    }
+    .table-row { display: grid; grid-template-columns: 1.1fr 2.1fr 0.8fr; gap: 8px; align-items: center; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
     .table-row.active { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
+    .table-row input[type="text"] { background: transparent; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: #fff; font-size: 12.5px; padding: 2px; outline: none; width: 100%; box-sizing: border-box; }
     
-    .table-row input[type="text"] {
-      background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #fff; font-size: 12.5px; padding: 2px; outline: none; width: 100%; box-sizing: border-box;
-    }
-    
-    .mac-capsule-control {
-      display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 6px;
-      padding: 2px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between; gap: 2px;
-    }
-    .capsule-chip-label {
-      flex: 1; text-align: center; font-size: 10.5px; font-weight: 600; padding: 5px 0;
-      border-radius: 4px; cursor: pointer; color: #8e8e93; position: relative;
-    }
+    .mac-capsule-control { display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between; gap: 2px; }
+    .capsule-chip-label { flex: 1; text-align: center; font-size: 10.5px; font-weight: 600; padding: 5px 0; border-radius: 4px; cursor: pointer; color: #8e8e93; position: relative; }
     .capsule-chip-label input[type="radio"] { display: none; }
     .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
-    .capsule-chip-label:has(input[type="radio"]:checked) {
-      color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
+    .capsule-chip-label:has(input[type="radio"]:checked) { color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
     .result-score { font-family: 'Space Mono'; font-size: 15px; font-weight: 700; text-align: center; color: #8e8e93; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 [전폭 업그레이드] 우측 대형 가챠 머신 프레임 (스케일업 및 고화질화) */
+    /* 📊 [신규] NEMO OS 가챠 전적 스코어 보드 기록판 스타일 */
+    .history-board-box {
+      margin-top: 15px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .history-board-title { font-size: 11px; color: #e2b4bd; font-weight: 600; letter-spacing: 1px; }
+    .history-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 12px; max-height: 100px; overflow-y: auto; }
+    .history-item { background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; border-left: 3px solid #ff3b30; }
+    .history-item.jackpot-item { border-left-color: #e2b4bd; }
+    .history-item .h-score { font-family: 'Space Mono'; font-weight: bold; }
+
+    /* 🎰 우측 대형 머신 프레임 */
     .gacha-machine-panel { width: 320px; display: flex; flex-direction: column; align-items: center; gap: 15px; min-width: 300px; }
     .header-box { text-align: center; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; }
@@ -109,13 +84,13 @@
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
     .spinning { transition: transform 6.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-    /* 휠 크기와 속성들을 웅장하게 전격 빌드업 */
     .number { height: 90px; line-height: 90px; font-size: 54px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
     .final-hit { color: #ff3b30 !important; }
     .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
 
-    .btn-finish { display: none; padding: 12px 40px; background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.2s; }
-    .btn-finish:hover { background: #ffffff; color: #1c1c1e; }
+    /* 🛠️ CLOSE WINDOW에서 업그레이드된 세이브 & 엑시트 마스터 버튼 */
+    .btn-finish { display: none; padding: 14px 35px; background: #e2b4bd; color: #1c1c1e; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(226,180,189,0.3); }
+    .btn-finish:hover { background: #ffffff; transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -123,7 +98,6 @@
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
   <div class="mac-app-container">
-    
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
@@ -145,6 +119,12 @@
         </div>
         <div id="tableRowsContainer"></div>
       </div>
+
+      <!-- 📊 [신규 생성] 누적 전적 히스토리 내역판 보드 -->
+      <div class="history-board-box">
+        <div class="history-board-title">📊 NEMO OS 가챠 누적 전적소</div>
+        <div class="history-grid" id="historyBoardGrid"></div>
+      </div>
     </div>
 
     <div class="gacha-machine-panel">
@@ -159,9 +139,9 @@
           <div id="reel" class="reel"></div>
         </div>
       </div>
-      <button id="finishBtn" class="btn-finish" onclick="closeGachaApp()">CLOSE WINDOW</button>
+      <!-- 🛠️ 결과 저장 기능이 결합된 명품 마무리 버튼 -->
+      <button id="finishBtn" class="btn-finish" onclick="saveGachaResultsAndClose()">결과 저장 및 종료 (SAVE & CLOSE)</button>
     </div>
-
   </div>
 
   <script>
@@ -172,8 +152,6 @@
     
     var isSkipped = false;
     var isRunning = false;
-    
-    // 🛠️ 대형 머신 스케일 업에 맞춘 릴 인덱스 휠 수학 보정
     var ITEM_HEIGHT = 90;
     var DISPLAY_HEIGHT = 220; 
     var CENTER_OFFSET = (DISPLAY_HEIGHT / 2) - (ITEM_HEIGHT / 2); 
@@ -181,13 +159,16 @@
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
+    
+    // 이번 턴의 결과를 임시 캐싱해둘 글로벌 인스턴스
+    var currentTurnData = [];
 
+    // 🛠️ 요구사항 2번 반영: autocomplete="off" 속성을 강제 삽입하여 난잡한 자동완성 박스 차단완료
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
       row.className = "table-row";
       row.id = `row-${i}`;
-      
       let segmentsHtml = colorList.map(color => `
         <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
           <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
@@ -196,13 +177,32 @@
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="이름 입력" oninput="activateRow(${i})">
-        <div class="mac-capsule-control">
-          ${segmentsHtml}
-        </div>
+        <input type="text" id="name-${i}" placeholder="이름 입력" autocomplete="off" oninput="activateRow(${i})">
+        <div class="mac-capsule-control">${segmentsHtml}</div>
         <div class="result-score" id="score-${i}">--</div>
       `;
       container.appendChild(row);
+    }
+
+    // 전적판 드로잉 엔진
+    function renderHistoryBoard() {
+      var grid = document.getElementById("historyBoardGrid");
+      grid.innerHTML = "";
+      var scores = JSON.parse(localStorage.getItem("nemoGachaScores") || "{}");
+      
+      var sortedKeys = Object.keys(scores).sort((a,b) => scores[a] - scores[b]); // 벌점 많은 순서(더 마이너스인 순서)
+      
+      if(sortedKeys.length === 0) {
+        grid.innerHTML = `<div style="grid-column: span 3; color:#636366; text-align:center; font-size:11px; padding:10px 0;">누적된 가챠 전적이 없습니다.</div>`;
+        return;
+      }
+      
+      sortedKeys.forEach(name => {
+        var item = document.createElement("div");
+        item.className = scores[name] === 0 ? "history-item jackpot-item" : "history-item";
+        item.innerHTML = `<span>${name}</span><span class="h-score">${scores[name]}</span>`;
+        grid.appendChild(item);
+      });
     }
 
     function activateRow(idx) {
@@ -213,18 +213,23 @@
       else row.classList.remove("active");
     }
 
+    // 🛠️ 요구사항 반영: 초기화 버튼 누르면 입력 그리드는 물론 로컬 랭킹 DB 전적까지 동시 폭파 리셋
     function resetGachaGrid() {
       if(isRunning) return;
-      for (let i = 0; i < 6; i++) {
-        document.getElementById(`name-${i}`).value = "";
-        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-        if(checked) checked.checked = false;
-        document.getElementById(`score-${i}`).innerText = "--";
-        document.getElementById(`row-${i}`).className = "table-row";
+      if(confirm("현재 입력창과 가챠 누적 전적소 기록을 완전히 포맷하시겠습니까?")) {
+          localStorage.removeItem("nemoGachaScores");
+          renderHistoryBoard();
+          for (let i = 0; i < 6; i++) {
+            document.getElementById(`name-${i}`).value = "";
+            var checked = document.querySelector(`input[name="color-${i}"]:checked`);
+            if(checked) checked.checked = false;
+            document.getElementById(`score-${i}`).innerText = "--";
+            document.getElementById(`row-${i}`).className = "table-row";
+          }
+          reel.innerHTML = ""; reel.style.transform = "none";
+          finishBtn.style.display = "none"; clickBtn.disabled = false;
+          isSkipped = false; currentTurnData = [];
       }
-      reel.innerHTML = ""; reel.style.transform = "none";
-      finishBtn.style.display = "none"; clickBtn.disabled = false;
-      isSkipped = false;
     }
 
     function createNumberElement(max, excludeValue) {
@@ -247,10 +252,7 @@
       return new Promise(resolve => {
         var start = Date.now();
         var timer = setInterval(() => {
-          if (isSkipped || (Date.now() - start) >= ms) { 
-              clearInterval(timer); 
-              resolve(); 
-          }
+          if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
         }, 30);
       });
     }
@@ -258,13 +260,13 @@
     async function runGachaMachine() {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
-      isSkipped = false;
+      isSkipped = false; currentTurnData = [];
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
         if (name.trim() !== "" && checkedColor) {
-          activeParticipants.push({ id: i, name: name, color: checkedColor.value, score: null });
+          activeParticipants.push({ id: i, name: name.trim(), color: checkedColor.value, score: null });
         }
       }
 
@@ -289,6 +291,8 @@
       activeParticipants.forEach(p => {
         p.score = colorScoreMap[p.color];
       });
+
+      currentTurnData = activeParticipants; // 백업 데이터 이관
 
       var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
 
@@ -341,9 +345,7 @@
       showFinalGachaState(activeParticipants);
     }
 
-    function skipAll() { 
-      isSkipped = true; 
-    }
+    function skipAll() { isSkipped = true; }
 
     function showFinalGachaState(activeParticipants) {
       var canvas = document.getElementById('jackpotCanvas');
@@ -383,9 +385,35 @@
       animate();
     }
 
+    // 🛠️ [기능 확장 완료] CLOSE WINDOW 버튼을 고성능 세이브 데이터 누적 엔진으로 전격 교체 인스톨
+    function saveGachaResultsAndClose() {
+      if(currentTurnData.length === 0) {
+        closeGachaApp();
+        return;
+      }
+      
+      // 기존 저장소에서 총 벌점 데이터 로드
+      var scores = JSON.parse(localStorage.getItem("nemoGachaScores") || "{}");
+      
+      // 현재 턴의 점수를 누적으로 병합 연산
+      currentTurnData.forEach(p => {
+        if(scores[p.name] === undefined) scores[p.name] = 0;
+        scores[p.name] += p.score; // 벌점 누적 합산 (마이너스 수치 누적)
+      });
+      
+      // 로컬에 세이브 데이터 하드 압축 백업
+      localStorage.setItem("nemoGachaScores", JSON.stringify(scores));
+      alert("이번 게임 가챠 결과가 누적 전적소에 정상 백업 완료되었습니다!");
+      
+      closeGachaApp();
+    }
+
     function closeGachaApp() {
       if(window.parent && window.parent.closeApp) window.parent.closeApp();
     }
+
+    // 로드 시 전적판 렌더링 동기화
+    window.addEventListener("load", renderHistoryBoard);
   </script>
 </body>
 </html>
