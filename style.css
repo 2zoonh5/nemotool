@@ -157,7 +157,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 /* 🛠️ [2번 피드백 반영] 원래 위치를 사수하되 뒤가 맑게 비치는 리얼 반투명 블러 레이어 장착 */
 .mac-dock-container.dimmed {
     opacity: 0.15;
-    pointer-events: auto; /* 마우스 호버 이벤트를 차단하지 않도록 해제 */
+    pointer-events: auto;
 }
 .mac-dock-container.dimmed:hover {
     opacity: 1 !important;
