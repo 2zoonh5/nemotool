@@ -8,74 +8,79 @@
     
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
-      display: flex; gap: 50px; align-items: center; justify-content: center;
-      height: 100vh; margin: 0; padding: 30px; overflow: hidden; position: relative;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; margin: 0; padding: 10px; 
       box-sizing: border-box; user-select: none;
+      overflow-y: auto; overflow-x: hidden;
     }
-    #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
     
-    /* 🛠️ 스킵 버튼 디자인 및 배치 맥북 고증 고도화 */
-    .btn-skip { 
-      position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; 
-      display: flex; align-items: center; justify-content: center; 
-      background: rgba(255, 255, 255, 0.05); color: #e5e5ea; 
-      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; 
-      cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s ease; 
-      z-index: 1005; backdrop-filter: blur(10px); 
-    }
-    .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); transform: scale(1.05); }
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: transparent; }
+    body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
 
-    /* 📊 좌측 패널 (전체화면 비율에 맞춰 시원시원하게 확장) */
-    .sheet-control-panel {
-      width: 560px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 22px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-      display: flex; flex-direction: column; gap: 16px; z-index: 10; box-sizing: border-box;
+    #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+    .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
+    .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
+
+    /* 📦 [핵심 변경] 확대를 하든 축소를 하든 황금 비율을 꽉 잡아줄 Mac 순정 메인 컨테이너 */
+    .mac-app-container {
+      display: flex; gap: 30px; align-items: center; justify-content: center;
+      width: 100%; max-width: 780px; /* 붕 뜨거나 늘어나는 버그 원천 차단 */
+      padding: 5px; box-sizing: border-box; z-index: 10;
     }
-    .sheet-top-row { display: flex; gap: 12px; }
+
+    /* 📊 좌측 컨트롤 패널 */
+    .sheet-control-panel {
+      width: 460px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+      display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
+    }
+    .sheet-top-row { display: flex; gap: 8px; }
     .sheet-box { 
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 8px; padding: 6px 12px; text-align: center; flex: 1;
+      border-radius: 6px; padding: 4px 8px; text-align: center; flex: 1;
     }
-    .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+    .sheet-box-title { font-size: 10.5px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
     .sheet-box input[type="number"] {
-      width: 50px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono';
-      font-size: 18px; font-weight: 700; text-align: center; outline: none;
+      width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono';
+      font-size: 15px; font-weight: 700; text-align: center; outline: none;
     }
     .btn-reset {
       background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-      font-size: 12px; padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s;
+      font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s;
     }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
     
     .btn-click {
-      flex: 1.4; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 8px;
-      font-size: 18px; font-weight: 700; font-family: 'Inter'; cursor: pointer;
+      flex: 1.2; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 6px;
+      font-size: 15px; font-weight: 700; font-family: 'Inter'; cursor: pointer;
       transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(226, 180, 189, 0.2);
     }
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
-    .participant-table { display: flex; flex-direction: column; gap: 10px; }
-    .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 6px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    .participant-table { display: flex; flex-direction: column; gap: 6px; }
+    .table-header { display: grid; grid-template-columns: 1fr 1.8fr 0.6fr; padding: 0 4px; font-size: 10.5px; color: #8e8e93; font-weight: 600; }
     
+    /* 축소 모드에서도 짤림 없도록 패딩 및 높이 다이어트 정밀 보정 */
     .table-row {
-      display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; gap: 10px; align-items: center;
+      display: grid; grid-template-columns: 1fr 1.8fr 0.6fr; gap: 6px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05);
-      padding: 10px; border-radius: 8px; transition: all 0.2s ease;
+      padding: 5px 6px; border-radius: 6px; transition: all 0.2s ease;
     }
     .table-row.active { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
     
     .table-row input[type="text"] {
       background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #fff; font-size: 13px; padding: 2px; outline: none; width: 100%; box-sizing: border-box;
+      color: #fff; font-size: 12px; padding: 1px 2px; outline: none; width: 100%; box-sizing: border-box;
     }
     
     .mac-capsule-control {
       display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 6px;
-      padding: 2px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between; gap: 2px;
+      padding: 1px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between; gap: 1px;
     }
     .capsule-chip-label {
-      flex: 1; text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0;
+      flex: 1; text-align: center; font-size: 9.5px; font-weight: 600; padding: 4px 0;
       border-radius: 4px; cursor: pointer; color: #8e8e93; position: relative;
     }
     .capsule-chip-label input[type="radio"] { display: none; }
@@ -84,72 +89,78 @@
       color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #8e8e93; }
+    .result-score { font-family: 'Space Mono'; font-size: 14px; font-weight: 700; text-align: center; color: #8e8e93; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 우측 가챠 머신 프레임 (대화면 규격 스케일 매칭) */
-    .gacha-machine-panel { width: 260px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
+    /* 🎰 우측 가챠 머신 프레임 */
+    .gacha-machine-panel { width: 200px; display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 180px; }
     .header-box { text-align: center; }
-    .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; }
-    .machine-frame { background: #1c1c1e; padding: 12px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 100%; box-sizing: border-box; }
-    .slot-display { width: 100%; height: 200px; border-radius: 28px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
-    .curve-shadow { position: absolute; left: 0; width: 100%; height: 80px; z-index: 15; pointer-events: none; }
+    .header-main { font-family: 'Poiret One', cursive; font-size: 24px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 2px; }
+    .machine-frame { background: #1c1c1e; padding: 10px; border-radius: 30px; border: 1px solid #3a3a3c; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; box-sizing: border-box; }
+    .slot-display { width: 100%; height: 150px; border-radius: 20px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
+    .curve-shadow { position: absolute; left: 0; width: 100%; height: 55px; z-index: 15; pointer-events: none; }
     .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
     .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
     .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
     .spinning { transition: transform 6.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-    .number { height: 80px; line-height: 80px; font-size: 48px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
+    .number { height: 80px; line-height: 80px; font-size: 38px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
     .final-hit { color: #ff3b30 !important; }
     .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
 
-    .btn-finish { display: none; padding: 12px 40px; background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+    .btn-finish { display: none; padding: 8px 24px; background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; cursor: pointer; font-size: 11px; transition: 0.2s; }
     .btn-finish:hover { background: #ffffff; color: #1c1c1e; }
   </style>
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <!-- 🛠️ 초기 상태 스크립트 제어를 받기 위해 숨김 기본 처리 -->
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
-  <div class="sheet-control-panel">
-    <div class="sheet-top-row">
-      <div class="sheet-box">
-        <div class="sheet-box-title">- 최대값 (B3)</div>
-        <input type="number" id="maxValInput" min="1" max="99" value="5">
+  <!-- 📦 새로 설계한 단단한 통합 정렬 가이드 컨테이너 -->
+  <div class="mac-app-container">
+    
+    <!-- 📊 좌측 컨트롤 보드 -->
+    <div class="sheet-control-panel">
+      <div class="sheet-top-row">
+        <div class="sheet-box">
+          <div class="sheet-box-title">- 최대값 (B3)</div>
+          <input type="number" id="maxValInput" min="1" max="99" value="5">
+        </div>
+        <div class="sheet-box">
+          <div class="sheet-box-title">초기화 (C3)</div>
+          <button class="btn-reset" onclick="resetGachaGrid()">RESET</button>
+        </div>
+        <button class="btn-click" id="clickBtn" onclick="runGachaMachine()">CLICK (D2)</button>
       </div>
-      <div class="sheet-box">
-        <div class="sheet-box-title">초기화 (C3)</div>
-        <button class="btn-reset" onclick="resetGachaGrid()">RESET</button>
+
+      <div class="participant-table">
+        <div class="table-header">
+          <span>참가자 이름 (B열)</span>
+          <center>지정 색상 (C열)</center>
+          <center>결과값 (D열)</center>
+        </div>
+        <div id="tableRowsContainer"></div>
       </div>
-      <button class="btn-click" id="clickBtn" onclick="runGachaMachine()">CLICK (D2)</button>
     </div>
 
-    <div class="participant-table">
-      <div class="table-header">
-        <span>참가자 이름 (B열)</span>
-        <center>지정 색상 (C열)</center>
-        <center>결과값 (D열)</center>
+    <!-- 🎰 우측 가챠 슬롯 기기 -->
+    <div class="gacha-machine-panel">
+      <div class="header-box">
+        <h1 class="header-main">NEMO GACHA</h1>
       </div>
-      <div id="tableRowsContainer"></div>
+      <div class="machine-frame">
+        <div class="slot-display">
+          <div class="top-shadow curve-shadow"></div>
+          <div class="bottom-shadow curve-shadow"></div>
+          <div class="center-line"></div>
+          <div id="reel" class="reel"></div>
+        </div>
+      </div>
+      <button id="finishBtn" class="btn-finish" onclick="closeGachaApp()">CLOSE WINDOW</button>
     </div>
-  </div>
 
-  <div class="gacha-machine-panel">
-    <div class="header-box">
-      <h1 class="header-main">NEMO GACHA</h1>
-    </div>
-    <div class="machine-frame">
-      <div class="slot-display">
-        <div class="top-shadow curve-shadow"></div>
-        <div class="bottom-shadow curve-shadow"></div>
-        <div class="center-line"></div>
-        <div id="reel" class="reel"></div>
-      </div>
-    </div>
-    <button id="finishBtn" class="btn-finish" onclick="closeGachaApp()">CLOSE WINDOW</button>
   </div>
 
   <script>
@@ -161,7 +172,7 @@
     var isSkipped = false;
     var isRunning = false;
     var ITEM_HEIGHT = 80;
-    var DISPLAY_HEIGHT = 200; 
+    var DISPLAY_HEIGHT = 150; 
     var CENTER_OFFSET = (DISPLAY_HEIGHT / 2) - (ITEM_HEIGHT / 2); 
     
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
@@ -229,7 +240,6 @@
       reel.appendChild(fragment);
     }
 
-    // 🛠️ [버그 수정의 핵심] 스킵 버튼 클릭 시 홀딩 루프를 강제로 중단하고 탈출하는 반응형 타이머
     function wait(ms) {
       return new Promise(resolve => {
         var start = Date.now();
@@ -238,14 +248,14 @@
               clearInterval(timer); 
               resolve(); 
           }
-        }, 30); // 정밀도를 올리기 위해 타이밍 스캔 주기 단축
+        }, 30);
       });
     }
 
     async function runGachaMachine() {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
-      isSkipped = false; // 플래그 초기화
+      isSkipped = false;
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
@@ -280,7 +290,7 @@
       var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
 
       for (var i = 0; i < activeParticipants.length; i++) {
-        if (isSkipped) break; // 스킵 포착 시 루프 탈출
+        if (isSkipped) break;
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
         
@@ -306,7 +316,7 @@
         var stopOffset = mode === 'B' ? -40 : (mode === 'C' ? 40 : 0);
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        await wait(6000); // 여기서 스킵을 실시간 감지함
+        await wait(6000);
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
@@ -328,7 +338,6 @@
       showFinalGachaState(activeParticipants);
     }
 
-    // 🛠️ 스킵 대기 해제 인터페이스 연계
     function skipAll() { 
       isSkipped = true; 
     }
