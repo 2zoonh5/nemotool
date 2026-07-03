@@ -9,7 +9,7 @@
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
       display: flex; justify-content: center; align-items: flex-start;
-      min-height: 100vh; margin: 0; padding: 25px 20px; padding-bottom: 120px; /* 독바 공간 확보용 패딩 */
+      min-height: 100vh; margin: 0; padding: 25px 20px; padding-bottom: 120px;
       box-sizing: border-box; user-select: none; overflow-y: auto; overflow-x: hidden;
     }
     body::-webkit-scrollbar { width: 6px; }
@@ -20,14 +20,12 @@
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 📦 [1번 보정] 전체화면/축소화면 밸런스를 모두 조율하는 황금분할 3단 패널 */
     .mac-app-container {
       display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 24px;
       width: 100%; max-width: 1260px; align-items: start;
       margin: 0 auto; padding: 10px; box-sizing: border-box; z-index: 10;
     }
 
-    /* 📊 1단: 좌측 보드 */
     .sheet-control-panel {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
@@ -39,7 +37,7 @@
       border-radius: 6px; padding: 6px 10px; text-align: center; flex: 1;
     }
     .sheet-box-title { font-size: 10.5px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
-    .sheet-box input type="number" { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
+    .sheet-box input[type="number"] { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
     .btn-reset { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
     
@@ -59,14 +57,12 @@
     .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
     .capsule-chip-label:has(input[type="radio"]:checked) { color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-    /* 결과값 출력 보드 배지 서식 */
     .result-score { display: flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Space Mono'; font-size: 15px; font-weight: 700; color: #636366; }
     .color-mini-badge { width: 10px; height: 10px; border-radius: 50%; display: none; box-shadow: 0 0 6px var(--badge-color); background: var(--badge-color); }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done .color-mini-badge { display: inline-block; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 2단: 가챠 머신 구역 (스케일업 유지) */
     .gacha-machine-panel { display: flex; flex-direction: column; align-items: center; gap: 15px; }
     .header-box { text-align: center; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; }
@@ -77,7 +73,6 @@
     .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
     .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
     
-    /* 🛠️ 렉 방지 최적화: 가속 전용 3D 렌더링 지시문 주입 */
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; transform: translate3d(0,0,0); }
     .spinning { transition: transform 6.5s cubic-bezier(0.1, 0.85, 0.25, 1); }
     .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
@@ -88,7 +83,6 @@
     .btn-finish { display: none; padding: 14px 45px; background: #e2b4bd; color: #1c1c1e; font-weight: 800; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; transition: 0.2s; box-shadow: 0 4px 15px rgba(226,180,189,0.3); }
     .btn-finish:hover { background: #ffffff; transform: translateY(-1px); }
 
-    /* 📊 3단: 우측 누적 전적소 */
     .history-board-box {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
@@ -102,7 +96,6 @@
     .history-item .h-score { font-family: 'Space Mono'; font-weight: 700; color: #ff3b30; }
     .history-item.jackpot-item .h-score { color: #e2b4bd; }
 
-    /* 애플 스타일 리셋 확인용 모달 */
     .mac-modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0, 0, 0, 0.4); z-index: 5000; align-items: center; justify-content: center;
@@ -125,15 +118,9 @@
     .mac-m-btn.confirm { background: #ff3b30; color: #fff; font-weight: 600; }
     .mac-m-btn.confirm:hover { background: #ff453a; }
 
-    /* 🛠️ [1번 최적화] 최소화(작은 창) 스위칭 시 우측 전적판을 축소 가림하여 짤림을 원천 예방하는 오토 레이아웃 */
     @media (max-width: 1140px) {
-      .mac-app-container {
-        grid-template-columns: 1.2fr 1fr;
-        max-width: 840px;
-      }
-      .history-board-box {
-        display: none !important; /* 축소 스냅 뷰포트 상태에서는 전적소 패널을 숨겨 메인 보드 가독성 사수 */
-      }
+      .mac-app-container { grid-template-columns: 1.2fr 1fr; max-width: 840px; }
+      .history-board-box { display: none !important; }
     }
   </style>
 </head>
@@ -242,7 +229,7 @@
       var grid = document.getElementById("historyBoardGrid");
       grid.innerHTML = "";
       
-      // 🛠️ [1번 버그 패치 키] 지저분한 레거시 키를 파괴하고 완벽하게 최신 통합 세션 구조로 통일 유도
+      // 구 버전 데이터 완전 파괴 처리 후 최신 코어 고정 바인딩
       var sessionStore = JSON.parse(localStorage.getItem("nemoGachaStore_v4") || "{}");
       var names = Object.keys(sessionStore);
       
@@ -307,7 +294,6 @@
       closeMacModal();
     }
 
-    // 🛠️ 렉 방지 엔진: 불필요하게 휠 인덱스를 무한 생성하지 않도록 난수 풀 최적 압축 바인딩
     function createNumberElement(max, excludeValue) {
       var div = document.createElement('div'); div.className = 'number';
       var val;
@@ -382,7 +368,7 @@
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 20; // 🛠️ [렉 방지 마감] 생성 휠 인덱스를 35개에서 20개로 최적 다이어트하여 과부하 원천소거
+        var spinCount = 20; 
         var startIndex = reel.children.length;
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
@@ -392,16 +378,16 @@
         reel.appendChild(createNumberElement(maxVal, p.score));
         appendRandomNumbers(maxVal, 2);
         
-        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));
+        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 40)));
         var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
         var rand = Math.random();
         var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
 
         reel.className = 'reel spinning';
         var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
-        reel.style.transform = 'translate3d(0, -' + (targetY + stopOffset) + 'px, 0)'; // GPU 하드웨어 제어 가속 바인딩
+        reel.style.transform = 'translate3d(0, -' + (targetY + stopOffset) + 'px, 0)'; 
         
-        await wait(5000); // 렉 제거용 연출 타이밍 6초 -> 5초 콤팩트 축소
+        await wait(5000); 
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
@@ -473,15 +459,14 @@
       animate();
     }
 
-    // 🛠️ [1번 버그 완전 박멸] 합산 누적 기능을 완벽 중단하고 새 세션으로 100% 최신 오버라이트 덮어쓰는 무결점 모듈
+    // 🛠️ [최종 덮어쓰기 고정] 구형 보드 메모리 파괴 후 순정 객체 교환식 덮어쓰기 로직 적용 구역
     function pureSaveGachaResults() {
       if(currentTurnData.length === 0) return;
       
-      // 버그 소거용 정품 데이터 키 로드
       var sessionStore = JSON.parse(localStorage.getItem("nemoGachaStore_v4") || "{}");
       
       currentTurnData.forEach(p => {
-        // [디버깅 완료] 연산 기호(+=)가 아닌 대입(=) 구조 객체 완전 전면 밀어내기 교체
+        // 기존에 점수가 더해지던 복합 연산(+=)을 '완전 파괴'하고 통째로 치환 처리 완료!
         sessionStore[p.name] = {
             score: p.score,
             color: p.color
