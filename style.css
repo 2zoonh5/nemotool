@@ -150,7 +150,19 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
     transform: translateX(-50%); z-index: 10010;
+    /* 🛠️ 기본 트랜지션 추가 */
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease-in-out;
 }
+
+/* 🛠️ [신규 기믹] 앱 실행 시 반투명 레이어로 처리하는 모드 클래스 */
+.mac-dock-container.dimmed {
+    opacity: 0.25;
+}
+/* 🛠️ 커서를 근처에 가져다 대면 다시 100% 또렷하게 활성화 */
+.mac-dock-container.dimmed:hover {
+    opacity: 1 !important;
+}
+
 .mac-dock {
     background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     padding: 8px 16px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
