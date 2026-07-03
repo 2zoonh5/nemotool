@@ -9,21 +9,21 @@
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
       display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; margin: 0; padding: 20px; 
-      box-sizing: border-box; user-select: none; overflow: hidden;
+      min-height: 100vh; margin: 0; padding: 20px;
+      box-sizing: border-box; user-select: none; overflow-y: auto; overflow-x: hidden;
     }
     #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 황금비율 3단 패널 디자인 */
+    /* 📊 3단 가로 분할 레이아웃 가이드 */
     .mac-app-container {
       display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 24px;
       width: 100%; max-width: 1240px; align-items: center;
       margin: 0 auto; padding: 10px; box-sizing: border-box; z-index: 10;
     }
 
-    /* 📊 1단: 좌측 보드 (스프레드시트 흔적 소거) */
+    /* 📊 1단: 좌측 참가자 패널 */
     .sheet-control-panel {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
@@ -37,17 +37,18 @@
     .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
     .sheet-box input[type="number"] { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
     
-    /* 🛠️ [5번 피드백] 버튼 디자인 및 폰트 고성능화 인스톨 */
+    /* 🛠️ [5번 피드백] 괄호 걷어내고 정밀 다듬은 리셋 버튼 */
     .btn-reset { 
       background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
       font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; 
     }
     .btn-reset:hover { background: #ff3b30; border-color: #ff3b30; box-shadow: 0 0 10px rgba(255,59,48,0.3); }
     
+    /* 🛠️ [5번 피드백] CLICK 대신 최적 명칭 인스톨 및 폰트 튜닝 */
     .btn-click { 
       flex: 1.5; background: linear-gradient(135deg, #007aff, #0056b3); color: #ffffff; border: none; border-radius: 8px; 
-      font-size: 15px; font-weight: 600; font-family: 'Inter'; padding: 10px 0; cursor: pointer; transition: all 0.2s ease; 
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); 
+      font-size: 14px; font-weight: 600; font-family: 'Inter'; padding: 10px 0; cursor: pointer; transition: all 0.2s ease; 
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); letter-spacing: 0.5px;
     }
     .btn-click:hover { transform: translateY(-1px); background: linear-gradient(135deg, #3498ff, #007aff); box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4); }
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
@@ -64,20 +65,22 @@
     .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
     .capsule-chip-label:has(input[type="radio"]:checked) { color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-    /* 🛠 *[1번 피드백 지적사항 보완]* 결과값 서식에서 도트 장식 완전히 도려내고 텍스트 스코어만 정밀 표출 하도록 선언 */
+    /* 🛠️ [1번 피드백] 도트 마크를 제거하여 숫자 스코어만 단독 출력 */
     .result-score { display: block; text-align: center; font-family: 'Space Mono'; font-size: 15px; font-weight: 700; color: #636366; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 2단: 중앙 가챠머신 (컴팩트 매립 통합 모듈화 디자인) */
+    /* 🎰 2단: 중앙 가챠머신 (컴팩트 융합 통합형 레이아웃) */
     .gacha-machine-panel { 
       background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      border-radius: 20px; padding: 22px; display: flex; flex-direction: column; align-items: center;
+      /* 🛠️ [3,4번 피드백 반영] 내부 상하 정렬 밀도를 완벽 대칭 구조로 조정하여 처짐 현상 교정 */
+      justify-content: center; gap: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25); height: 100%; min-height: 440px; box-sizing: border-box;
     }
-    .header-box { text-align: center; }
-    .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; }
-    .machine-frame { background: #1c1c1e; padding: 14px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 260px; box-sizing: border-box; }
+    .header-box { text-align: center; margin: 0; padding: 0; }
+    .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0 0 4px 0; letter-spacing: 3px; line-height: 1; }
+    .machine-frame { background: #1c1e22; padding: 14px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 260px; box-sizing: border-box; }
     .slot-display { width: 100%; height: 220px; border-radius: 30px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
     .curve-shadow { position: absolute; left: 0; width: 100%; height: 80px; z-index: 15; pointer-events: none; }
     .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
@@ -85,34 +88,35 @@
     .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
     
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; transform: translate3d(0,0,0); }
-    .spinning { transition: transform 6.5s cubic-bezier(0.1, 0.85, 0.25, 1); }
-    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .spinning { transition: transform 4.8s cubic-bezier(0.12, 0.9, 0.22, 1); } /* 🛠️ [2번 렉 현상] 프레임 드랍 튕김 버그를 차단하기 위해 트랜지션 회전 속도 축소 매칭 */
+    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
     .number { height: 90px; line-height: 90px; font-size: 54px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
     .final-hit { color: #ff3b30 !important; }
     .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
 
-    /* 🛠️ [4,5번 고도화] 가챠머신 패널 하단에 최적 크기로 융합 매립한 명품 플랫 스타일 세이브 버튼 */
+    /* 🛠️ [5번 피드백] SAVE를 플랫하고 세련되게 바꾼 결과 기록용 버튼 컴포넌트 */
     .btn-finish { 
       display: none; width: 100%; max-width: 232px; padding: 12px 0; 
       background: linear-gradient(135deg, #34c759, #28a745); color: #ffffff; 
       font-weight: 600; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; 
-      transition: all 0.2s; box-shadow: 0 4px 12px rgba(52,199,89,0.3); 
+      transition: all 0.2s; box-shadow: 0 4px 12px rgba(52,199,89,0.3); font-family: 'Inter'; letter-spacing: 0.5px;
     }
     .btn-finish:hover { transform: translateY(-1px); background: linear-gradient(135deg, #42d76b, #34c759); box-shadow: 0 6px 16px rgba(52,199,89,0.4); }
 
-    /* 📊 3단: 우측 가챠 결과 기록판 (이모지 삭제 및 심플 마이너화 단장 완료) */
+    /* 📊 3단: 우측 가챠 결과 기록판 */
     .history-board-box {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
       display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; height: 100%; min-height: 440px;
     }
-    /* 🛠️ 네이밍 심플 간결화 보정 */
-    .history-board-title { font-size: 13px; color: #e5e5ea; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+    /* 🛠️ [5번 피드백] 이모지 제거 및 간결 명료 네이밍 전환 */
+    .history-board-title { font-size: 13px; color: #e5e5ea; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-transform: uppercase; }
     .history-grid { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; height: 360px; padding-right: 2px; }
     
-    /* 🛠️ [1번 지적사항] 전적소 내부에서 중복되던 불필요 도트 제거, 오직 좌측 그라데이션 선 하나만 심플 매칭 */
+    /* 🛠️ [1번 피드백] 도트 배지를 완벽히 제거하고 선 하나만 심플하게 남긴 전적소 슬롯 */
     .history-item { background: rgba(255,255,255,0.02); padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--item-border-color); font-size: 13px; font-weight: 500; }
     .history-item.jackpot-item { background: rgba(226, 180, 189, 0.05); }
+    .history-item .h-left-part { display: flex; align-items: center; gap: 8px; }
     .history-item .h-score { font-family: 'Space Mono'; font-weight: 700; color: #ff3b30; }
     .history-item.jackpot-item .h-score { color: #e2b4bd; }
 
@@ -161,7 +165,6 @@
   </div>
 
   <div class="mac-app-container">
-    <!-- 📊 1단 보드 구역 -->
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
@@ -185,7 +188,6 @@
       </div>
     </div>
 
-    <!-- 🎰 2단: 컴팩트 융합 가챠 머신 패널 -->
     <div class="gacha-machine-panel">
       <div class="header-box">
         <h1 class="header-main">NEMO GACHA</h1>
@@ -201,9 +203,8 @@
       <button id="finishBtn" class="btn-finish" onclick="pureSaveGachaResults()">SAVE RESULT</button>
     </div>
 
-    <!-- 📊 3단: 가챠 결과 기록판 구역 -->
     <div class="history-board-box">
-      <div class="history-board-title">가챠 결과 기록</div>
+      <div class="history-board-title">GACHA HISTORY</div>
       <div class="history-grid" id="historyBoardGrid"></div>
     </div>
   </div>
@@ -266,7 +267,6 @@
         item.className = data.score === 0 ? "history-item jackpot-item" : "history-item";
         item.style.setProperty('--item-border-color', colorHexMap[data.color] || '#333');
         
-        // 🛠️ 도트 마크 완벽 제거 후 심플 텍스트 명단만 각인
         item.innerHTML = `
           <div class="h-left-part">
             <span>${name}</span>
@@ -331,12 +331,13 @@
       reel.appendChild(fragment);
     }
 
+    // 🛠️ [2번 렉 현상 버그 패치] 비동기 루프 주기와 CSS 트랜지션을 타이트하게 싱크 매칭하여 하드웨어 병목현상 소거
     function wait(ms) {
       return new Promise(resolve => {
         var start = Date.now();
         var timer = setInterval(() => {
           if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
-        }, 40);
+        }, 20);
       });
     }
 
@@ -345,7 +346,7 @@
       var activeParticipants = [];
       isSkipped = false; currentTurnData = [];
 
-      // 🛠️ [렉 현상 해결] 매 턴 구동을 새로 시작할 때 이전 휠 누적 찌꺼기 엘리먼트를 노드에서 흔적도 없이 파괴하고 초기화
+      // 매 구동마다 DOM 인덱스를 물리적으로 리셋 파괴 처리
       reel.innerHTML = ""; 
       reel.style.transition = "none";
       reel.style.transform = "translate3d(0, 0, 0)";
@@ -393,7 +394,7 @@
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 20; 
+        var spinCount = 15; // 노드 적재량을 더 줄여 초경량화 프레임 사수
         var startIndex = reel.children.length;
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
@@ -403,16 +404,17 @@
         reel.appendChild(createNumberElement(maxVal, p.score));
         appendRandomNumbers(maxVal, 2);
         
-        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 40)));
+        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 20)));
         var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
         var rand = Math.random();
         var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
 
+        // 🛠️ [2번 버그 피드백] 4.8초 트랜지션 회전각도와 자바스크립트 스캐닝 대기 타임을 연동하여 브라우저 가속 가동
         reel.className = 'reel spinning';
-        var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
+        var stopOffset = mode === 'B' ? -30 : (mode === 'C' ? 30 : 0);
         reel.style.transform = 'translate3d(0, -' + (targetY + stopOffset) + 'px, 0)'; 
         
-        await wait(5000); 
+        await wait(4800); // 4.8초에 정확히 브레이크 스냅 타임 싱크 동기화
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
