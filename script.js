@@ -191,7 +191,7 @@ function closeFolder() {
     updateForwardButtonState();
 }
 
-// 🛠️ [고증 고도화] 가챠머신 실행 시 자동으로 가챠 전용 명품 해상도 창 크기로 맞춤 부킹
+// 🛠️ 피드백 반영: 프로그램 진입 시 무조건 확대 레이아웃(maximized)을 기본 베이스로 세팅 구동
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
@@ -200,29 +200,18 @@ function openApp(url, name, icon) {
     document.getElementById("windowTitle").innerText = name; 
     
     windowPopup.style.display = "flex";
-    windowPopup.classList.remove("maximized"); // 기본 상태는 고급스러운 정렬창으로 구동
-
-    if (url.includes("pubg-gacha.html")) {
-        // 가챠머신의 황금 비율 맞춤형 가로세로 규격 강제 배정 (짤림 완벽 탈출)
-        windowPopup.style.width = "920px";
-        windowPopup.style.height = "640px";
-        windowPopup.style.top = "60px";
-        windowPopup.style.left = "calc(50vw - 460px)";
-    } else {
-        // 다른 기본 앱들은 초기 템플릿 규격 보존
-        windowPopup.style.width = "";
-        windowPopup.style.height = "";
-        windowPopup.style.top = "";
-        windowPopup.style.left = "";
-    }
+    windowPopup.style.width = "";
+    windowPopup.style.height = "";
+    windowPopup.style.top = "";
+    windowPopup.style.left = "";
+    // 항상 최대화 모드로 시원하게 켬
+    windowPopup.classList.add("maximized"); 
 }
 
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
-    windowPopup.style.width = "";
-    windowPopup.style.height = "";
     removeFromDock("appWindow");
     lastClosedApp = null;
     closeFolder(); 
@@ -235,8 +224,6 @@ function backToFolder() {
         windowPopup.style.display = "none";
     }
     windowPopup.classList.remove("maximized");
-    windowPopup.style.width = "";
-    windowPopup.style.height = "";
     removeFromDock("appWindow");
     document.getElementById("folderWindow").style.display = "flex";
     updateForwardButtonState();
@@ -250,20 +237,7 @@ function forwardToApp() {
 }
 
 function toggleMaximize(windowId) {
-    const win = document.getElementById(windowId);
-    win.classList.toggle("maximized");
-    // 최대화 유무에 따라 스타일 리셋
-    if (win.classList.contains("maximized")) {
-        win.style.width = "";
-        win.style.height = "";
-        win.style.top = "";
-        win.style.left = "";
-    } else if (document.getElementById("appFrame").src.includes("pubg-gacha.html")) {
-        win.style.width = "920px";
-        win.style.height = "640px";
-        win.style.top = "60px";
-        win.style.left = "calc(50vw - 460px)";
-    }
+    document.getElementById(windowId).classList.toggle("maximized");
 }
 
 function startMacClock() {
