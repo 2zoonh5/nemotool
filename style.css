@@ -112,7 +112,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
-.window-popup.maximized { top: 25px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 25px) !important; border-radius: 0px !important; }
+.window-popup.maximized { top: 24px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 24px) !important; border-radius: 0px !important; }
 
 .window-header { background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box; }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); }
@@ -149,7 +149,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 /* 대형 3D Glassmorphism 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
-    transform: translateX(-50%); z-index: 10030;
+    transform: translateX(-50%); z-index: 10010;
 }
 .mac-dock {
     background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
