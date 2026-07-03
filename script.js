@@ -3,7 +3,6 @@ const folderData = {
         title: "배틀그라운드 매니저", 
         apps: [
             { id: "pubg-stat", name: "전적 검색", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-stat.html" }, 
-            // [체크] 이 url 이름이 아래 생성할 파일명과 글자 토씨 하나 안 틀리고 똑같아야 합니다!
             { id: "pubg-gacha", name: "네모 가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }
         ] 
     },
@@ -192,13 +191,17 @@ function closeFolder() {
     updateForwardButtonState();
 }
 
+// 🛠️ [기능 보완] 폴더(상위 틀)를 제외한 인게임 앱 실행 시 자동으로 전체 화면 최대화 스위칭 기믹 연동
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
     windowPopup.setAttribute("data-icon", icon);
     document.getElementById("appFrame").src = url;
     document.getElementById("windowTitle").innerText = name; 
+    
     windowPopup.style.display = "flex";
+    // 꽉 찬 해상도로 켜서 짤림 현상을 원천 방지합니다.
+    windowPopup.classList.add("maximized"); 
 }
 
 function closeApp() {
@@ -216,6 +219,7 @@ function backToFolder() {
         lastClosedApp = { url: document.getElementById("appFrame").src, name: document.getElementById("windowTitle").innerText, icon: windowPopup.getAttribute("data-icon") };
         windowPopup.style.display = "none";
     }
+    windowPopup.classList.remove("maximized");
     removeFromDock("appWindow");
     document.getElementById("folderWindow").style.display = "flex";
     updateForwardButtonState();
