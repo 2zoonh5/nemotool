@@ -8,34 +8,33 @@
     
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
-      display: flex; justify-content: center; align-items: flex-start; 
-      min-height: 100vh; margin: 0; padding: 25px 20px; 
-      box-sizing: border-box; user-select: none; overflow-y: auto; overflow-x: hidden;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; margin: 0; padding: 20px; 
+      box-sizing: border-box; user-select: none; overflow: hidden;
     }
-    body::-webkit-scrollbar { width: 6px; }
-    body::-webkit-scrollbar-track { background: transparent; }
-    body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-
     #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
+    /* 📦 [1번 피드백 반영] 대화면을 아주 풍성하고 럭셔리하게 분할 점유하는 3단 가로 그리드 패널 */
     .mac-app-container {
-      display: flex; gap: 35px; align-items: flex-start; justify-content: center;
-      width: 100%; max-width: 860px; margin: auto 0; padding: 5px; box-sizing: border-box; z-index: 10;
+      display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 24px;
+      width: 100%; max-width: 1240px; align-items: start;
+      margin: auto 0; padding: 10px; box-sizing: border-box; z-index: 10;
     }
 
+    /* 📊 [1번 단 구역] 좌측 참가자 기입 보드 */
     .sheet-control-panel {
-      width: 480px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 14px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
       display: flex; flex-direction: column; gap: 12px; box-sizing: border-box;
     }
-    .sheet-top-row { display: flex; gap: 10px; }
+    .sheet-top-row { display: flex; gap: 8px; }
     .sheet-box { 
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); 
       border-radius: 6px; padding: 6px 10px; text-align: center; flex: 1;
     }
-    .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+    .sheet-box-title { font-size: 10.5px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
     .sheet-box input[type="number"] { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
     .btn-reset { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
@@ -60,19 +59,8 @@
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 📊 [신규] NEMO OS 가챠 전적 스코어 보드 기록판 스타일 */
-    .history-board-box {
-      margin-top: 15px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
-    }
-    .history-board-title { font-size: 11px; color: #e2b4bd; font-weight: 600; letter-spacing: 1px; }
-    .history-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 12px; max-height: 100px; overflow-y: auto; }
-    .history-item { background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; border-left: 3px solid #ff3b30; }
-    .history-item.jackpot-item { border-left-color: #e2b4bd; }
-    .history-item .h-score { font-family: 'Space Mono'; font-weight: bold; }
-
-    /* 🎰 우측 대형 머신 프레임 */
-    .gacha-machine-panel { width: 320px; display: flex; flex-direction: column; align-items: center; gap: 15px; min-width: 300px; }
+    /* 🎰 [2번 단 구역] 중앙 슬롯머신 기기 캐리어 */
+    .gacha-machine-panel { display: flex; flex-direction: column; align-items: center; gap: 15px; }
     .header-box { text-align: center; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; }
     .machine-frame { background: #1c1c1e; padding: 14px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 100%; box-sizing: border-box; }
@@ -88,16 +76,64 @@
     .final-hit { color: #ff3b30 !important; }
     .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
 
-    /* 🛠️ CLOSE WINDOW에서 업그레이드된 세이브 & 엑시트 마스터 버튼 */
-    .btn-finish { display: none; padding: 14px 35px; background: #e2b4bd; color: #1c1c1e; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(226,180,189,0.3); }
+    /* 🛠️ [2번 피드백 반영] 알림창 주지 않고 즉시 기록만 추가 저장하는 순수 SAVE 버튼 컴포넌트 */
+    .btn-finish { display: none; padding: 14px 45px; background: #e2b4bd; color: #1c1c1e; font-weight: 800; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; transition: 0.2s; box-shadow: 0 4px 15px rgba(226,180,189,0.3); }
     .btn-finish:hover { background: #ffffff; transform: translateY(-1px); }
+
+    /* 📊 [3번 단 구역] 우측 가챠 누적 전적소 전용 독립 패널 박스 */
+    .history-board-box {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+      display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; height: 100%; min-height: 440px;
+    }
+    .history-board-title { font-size: 12px; color: #e2b4bd; font-weight: 700; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+    .history-grid { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; height: 360px; padding-right: 2px; }
+    .history-item { background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; border-left: 4px solid #ff3b30; font-size: 13px; font-weight: 500; }
+    .history-item.jackpot-item { border-left-color: #e2b4bd; background: rgba(226, 180, 189, 0.05); }
+    .history-item .h-score { font-family: 'Space Mono'; font-weight: 700; }
+
+    /* 🖥️ [2번 피드백 반영] 브라우저 경고창 전면 대체형 순정 Apple 스타일 가상 모달 팝업 구조 레이아웃 */
+    .mac-modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.4); z-index: 5000; align-items: center; justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    .mac-modal-window {
+      background: rgba(35, 35, 35, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      width: 280px; padding: 20px; border-radius: 14px; text-align: center; color: #fff;
+      border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; gap: 14px;
+      transform: scale(0.9); transition: transform 0.15s ease-out;
+    }
+    .mac-modal-window.open { transform: scale(1); }
+    .mac-modal-title { font-size: 14px; font-weight: 600; }
+    .mac-modal-desc { font-size: 11.5px; color: #8e8e93; line-height: 1.4; }
+    .mac-modal-buttons { display: flex; gap: 10px; margin-top: 5px; }
+    .mac-m-btn { flex: 1; padding: 8px 0; border-radius: 6px; border: none; font-size: 12.5px; font-weight: 500; cursor: pointer; }
+    .mac-m-btn.cancel { background: rgba(255,255,255,0.1); color: #fff; }
+    .mac-m-btn.cancel:hover { background: rgba(255,255,255,0.15); }
+    .mac-m-btn.confirm { background: #ff3b30; color: #fff; font-weight: 600; }
+    .mac-m-btn.confirm:hover { background: #ff453a; }
   </style>
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
+  <!-- 🖥️ 애플 순정 커스텀 가상 모달 팝업 구조체 패키징 -->
+  <div class="mac-modal-overlay" id="macModal">
+    <div class="mac-modal-window" id="macModalWindow">
+      <div class="mac-modal-title">가챠 데이터를 리셋하시겠습니까?</div>
+      <div class="mac-modal-desc">초기화 버튼을 실행하면 현재 입력창은 물론이고 누적 전적소의 역대 기록이 영구히 포맷 소멸됩니다.</div>
+      <div class="mac-modal-buttons">
+        <button class="mac-m-btn cancel" onclick="closeMacModal()">취소</button>
+        <button class="mac-m-btn confirm" onclick="executeResetGacha()">초기화 실행</button>
+      </div>
+    </div>
+  </div>
+
   <div class="mac-app-container">
+    <!-- 📊 1단: 입력 기입 보드 -->
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
@@ -106,7 +142,7 @@
         </div>
         <div class="sheet-box">
           <div class="sheet-box-title">초기화 (C3)</div>
-          <button class="btn-reset" onclick="resetGachaGrid()">RESET</button>
+          <button class="btn-reset" onclick="openMacModal()">RESET</button>
         </div>
         <button class="btn-click" id="clickBtn" onclick="runGachaMachine()">CLICK (D2)</button>
       </div>
@@ -119,14 +155,9 @@
         </div>
         <div id="tableRowsContainer"></div>
       </div>
-
-      <!-- 📊 [신규 생성] 누적 전적 히스토리 내역판 보드 -->
-      <div class="history-board-box">
-        <div class="history-board-title">📊 NEMO OS 가챠 누적 전적소</div>
-        <div class="history-grid" id="historyBoardGrid"></div>
-      </div>
     </div>
 
+    <!-- 🎰 2단: 중앙 정렬 가챠 슬롯 머신 -->
     <div class="gacha-machine-panel">
       <div class="header-box">
         <h1 class="header-main">NEMO GACHA</h1>
@@ -139,8 +170,14 @@
           <div id="reel" class="reel"></div>
         </div>
       </div>
-      <!-- 🛠️ 결과 저장 기능이 결합된 명품 마무리 버튼 -->
-      <button id="finishBtn" class="btn-finish" onclick="saveGachaResultsAndClose()">결과 저장 및 종료 (SAVE & CLOSE)</button>
+      <!-- 🛠️ 알림 팝업 창 차단 및 순수 단발성 백업으로 보정된 SAVE 버튼 -->
+      <button id="finishBtn" class="btn-finish" onclick="pureSaveGachaResults()">결과 실시간 누적 기록 (SAVE RESULT)</button>
+    </div>
+
+    <!-- 📊 3단: 우측 가챠 누적 전적소 (전면 확대 분할 구조화 완료) -->
+    <div class="history-board-box">
+      <div class="history-board-title">📊 NEMO OS 가챠 누적 전적소</div>
+      <div class="history-grid" id="historyBoardGrid"></div>
     </div>
   </div>
 
@@ -160,10 +197,8 @@
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
     
-    // 이번 턴의 결과를 임시 캐싱해둘 글로벌 인스턴스
     var currentTurnData = [];
 
-    // 🛠️ 요구사항 2번 반영: autocomplete="off" 속성을 강제 삽입하여 난잡한 자동완성 박스 차단완료
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
@@ -184,16 +219,14 @@
       container.appendChild(row);
     }
 
-    // 전적판 드로잉 엔진
     function renderHistoryBoard() {
       var grid = document.getElementById("historyBoardGrid");
       grid.innerHTML = "";
       var scores = JSON.parse(localStorage.getItem("nemoGachaScores") || "{}");
-      
-      var sortedKeys = Object.keys(scores).sort((a,b) => scores[a] - scores[b]); // 벌점 많은 순서(더 마이너스인 순서)
+      var sortedKeys = Object.keys(scores).sort((a,b) => scores[a] - scores[b]);
       
       if(sortedKeys.length === 0) {
-        grid.innerHTML = `<div style="grid-column: span 3; color:#636366; text-align:center; font-size:11px; padding:10px 0;">누적된 가챠 전적이 없습니다.</div>`;
+        grid.innerHTML = `<div style="color:#636366; text-align:center; font-size:12px; padding:40px 0;">기록된 누적 전적이 없습니다.</div>`;
         return;
       }
       
@@ -213,23 +246,36 @@
       else row.classList.remove("active");
     }
 
-    // 🛠️ 요구사항 반영: 초기화 버튼 누르면 입력 그리드는 물론 로컬 랭킹 DB 전적까지 동시 폭파 리셋
-    function resetGachaGrid() {
+    /* 🖥️ [가상 모달 애니메이션 핸들러] */
+    function openMacModal() {
       if(isRunning) return;
-      if(confirm("현재 입력창과 가챠 누적 전적소 기록을 완전히 포맷하시겠습니까?")) {
-          localStorage.removeItem("nemoGachaScores");
-          renderHistoryBoard();
-          for (let i = 0; i < 6; i++) {
-            document.getElementById(`name-${i}`).value = "";
-            var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-            if(checked) checked.checked = false;
-            document.getElementById(`score-${i}`).innerText = "--";
-            document.getElementById(`row-${i}`).className = "table-row";
-          }
-          reel.innerHTML = ""; reel.style.transform = "none";
-          finishBtn.style.display = "none"; clickBtn.disabled = false;
-          isSkipped = false; currentTurnData = [];
+      var overlay = document.getElementById("macModal");
+      var win = document.getElementById("macModalWindow");
+      overlay.style.display = "flex";
+      setTimeout(() => win.classList.add("open"), 10);
+    }
+
+    function closeMacModal() {
+      var win = document.getElementById("macModalWindow");
+      win.classList.remove("open");
+      setTimeout(() => document.getElementById("macModal").style.display = "none", 150);
+    }
+
+    // 모달창 승인 시 실행되는 포맷 터미널
+    function executeResetGacha() {
+      localStorage.removeItem("nemoGachaScores");
+      renderHistoryBoard();
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`name-${i}`).value = "";
+        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
+        if(checked) checked.checked = false;
+        document.getElementById(`score-${i}`).innerText = "--";
+        document.getElementById(`row-${i}`).className = "table-row";
       }
+      reel.innerHTML = ""; reel.style.transform = "none";
+      finishBtn.style.display = "none"; clickBtn.disabled = false;
+      isSkipped = false; currentTurnData = [];
+      closeMacModal();
     }
 
     function createNumberElement(max, excludeValue) {
@@ -253,7 +299,7 @@
         var start = Date.now();
         var timer = setInterval(() => {
           if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
-        }, 30);
+        }, 40);
       });
     }
 
@@ -292,7 +338,7 @@
         p.score = colorScoreMap[p.color];
       });
 
-      currentTurnData = activeParticipants; // 백업 데이터 이관
+      currentTurnData = activeParticipants;
 
       var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
 
@@ -370,7 +416,7 @@
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       var particles = [];
       for(var i=0; i<80; i++) {
-        particles.push({ x: canvas.width/2 + 100, y: canvas.height/2.2, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
+        particles.push({ x: canvas.width/2, y: canvas.height/2.2, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
       }
       function animate() {
         if (isSkipped) return; ctx.clearRect(0,0,canvas.width, canvas.height); var alive = false;
@@ -385,34 +431,28 @@
       animate();
     }
 
-    // 🛠️ [기능 확장 완료] CLOSE WINDOW 버튼을 고성능 세이브 데이터 누적 엔진으로 전격 교체 인스톨
-    function saveGachaResultsAndClose() {
-      if(currentTurnData.length === 0) {
-        closeGachaApp();
-        return;
-      }
+    /* 🛠️ [2번 피드백 반영] 어떠한 브라우저 alert 팝업/창닫기 가동 차단하고 오직 1:1 조용히 기록만 덤프 적재하는 실시간 누적 엔진 */
+    function pureSaveGachaResults() {
+      if(currentTurnData.length === 0) return;
       
-      // 기존 저장소에서 총 벌점 데이터 로드
       var scores = JSON.parse(localStorage.getItem("nemoGachaScores") || "{}");
       
-      // 현재 턴의 점수를 누적으로 병합 연산
       currentTurnData.forEach(p => {
         if(scores[p.name] === undefined) scores[p.name] = 0;
-        scores[p.name] += p.score; // 벌점 누적 합산 (마이너스 수치 누적)
+        scores[p.name] += p.score; 
       });
       
-      // 로컬에 세이브 데이터 하드 압축 백업
       localStorage.setItem("nemoGachaScores", JSON.stringify(scores));
-      alert("이번 게임 가챠 결과가 누적 전적소에 정상 백업 완료되었습니다!");
       
-      closeGachaApp();
+      // 알림 창을 띄우지 않고 우측 전적판을 실시간으로 다시 그려 동기화합니다.
+      renderHistoryBoard();
+      
+      // 다음 턴 조작을 위해 세이브 후 세이브 버튼만 살짝 가려 복구합니다.
+      finishBtn.style.display = "none";
+      clickBtn.disabled = false;
+      currentTurnData = [];
     }
 
-    function closeGachaApp() {
-      if(window.parent && window.parent.closeApp) window.parent.closeApp();
-    }
-
-    // 로드 시 전적판 렌더링 동기화
     window.addEventListener("load", renderHistoryBoard);
   </script>
 </body>
