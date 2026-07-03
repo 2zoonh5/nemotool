@@ -54,7 +54,6 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .bar-svg { width: 15px; height: 15px; fill: rgba(255, 255, 255, 0.85); cursor: pointer; transition: fill 0.15s, transform 0.1s; }
 .bar-svg:hover { fill: #ffffff; transform: scale(1.05); }
 
-/* 드롭다운 메뉴 */
 .mac-dropdown {
     display: none; position: absolute; top: 24px; left: 4px;
     background: rgba(30, 30, 30, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -113,7 +112,7 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
 }
 
-/* 🛠️ [중요 버그 패치] 최대화 창 높이를 110px 깎아주어 하단 마우스 포인터가 독바 이벤트를 방해하지 않도록 완전 격리 */
+/* 🛠️ [수정] 최대화 창 높이를 110px 깎아주어 하단 마우스 포인터가 독바 이벤트를 방해하지 않도록 완전 격리 */
 .window-popup.maximized { 
     top: 25px !important; 
     left: 0 !important; 
