@@ -9,21 +9,21 @@
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
       display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; margin: 0; padding: 20px;
-      box-sizing: border-box; user-select: none; overflow-y: auto; overflow-x: hidden;
+      min-height: 100vh; margin: 0; padding: 20px; 
+      box-sizing: border-box; user-select: none; overflow: hidden;
     }
     #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
     .btn-skip { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #e5e5ea; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; z-index: 1005; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: #e2b4bd; color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 📊 3단 가로 분할 레이아웃 가이드 */
+    /* 📦 황금비율 3단 배치 컨테이너 */
     .mac-app-container {
-      display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 24px;
+      display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 24px;
       width: 100%; max-width: 1240px; align-items: center;
-      margin: 0 auto; padding: 10px; box-sizing: border-box; z-index: 10;
+      margin: auto 0; padding: 10px; box-sizing: border-box; z-index: 10;
     }
 
-    /* 📊 1단: 좌측 참가자 패널 */
+    /* 📊 1단 보드 구역 */
     .sheet-control-panel {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
@@ -37,14 +37,12 @@
     .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
     .sheet-box input[type="number"] { width: 45px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; outline: none; }
     
-    /* 🛠️ [5번 피드백] 괄호 걷어내고 정밀 다듬은 리셋 버튼 */
     .btn-reset { 
       background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
       font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; 
     }
     .btn-reset:hover { background: #ff3b30; border-color: #ff3b30; box-shadow: 0 0 10px rgba(255,59,48,0.3); }
     
-    /* 🛠️ [5번 피드백] CLICK 대신 최적 명칭 인스톨 및 폰트 튜닝 */
     .btn-click { 
       flex: 1.5; background: linear-gradient(135deg, #007aff, #0056b3); color: #ffffff; border: none; border-radius: 8px; 
       font-size: 14px; font-weight: 600; font-family: 'Inter'; padding: 10px 0; cursor: pointer; transition: all 0.2s ease; 
@@ -54,8 +52,8 @@
     .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
 
     .participant-table { display: flex; flex-direction: column; gap: 8px; }
-    .table-header { display: grid; grid-template-columns: 1.1fr 2.1fr 0.8fr; padding: 0 4px; font-size: 11px; color: #8e8e93; font-weight: 600; }
-    .table-row { display: grid; grid-template-columns: 1.1fr 2.1fr 0.8fr; gap: 8px; align-items: center; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
+    .table-header { display: grid; grid-template-columns: 1fr 2fr 0.8fr; padding: 0 4px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    .table-row { display: grid; grid-template-columns: 1fr 2fr 0.8fr; gap: 8px; align-items: center; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
     .table-row.active { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
     .table-row input[type="text"] { background: transparent; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: #fff; font-size: 12.5px; padding: 2px; outline: none; width: 100%; box-sizing: border-box; }
     
@@ -65,21 +63,20 @@
     .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
     .capsule-chip-label:has(input[type="radio"]:checked) { color: #fff; background: var(--theme-color); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-    /* 🛠️ [1번 피드백] 도트 마크를 제거하여 숫자 스코어만 단독 출력 */
     .result-score { display: block; text-align: center; font-family: 'Space Mono'; font-size: 15px; font-weight: 700; color: #636366; }
     .table-row.done .result-score { color: #ff3b30; }
     .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
 
-    /* 🎰 2단: 중앙 가챠머신 (컴팩트 융합 통합형 레이아웃) */
+    /* 🎰 2단: 중앙 가챠머신 (수직 보정 패치) */
     .gacha-machine-panel { 
       background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px; padding: 22px; display: flex; flex-direction: column; align-items: center;
-      /* 🛠️ [3,4번 피드백 반영] 내부 상하 정렬 밀도를 완벽 대칭 구조로 조정하여 처짐 현상 교정 */
-      justify-content: center; gap: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.25); height: 100%; min-height: 440px; box-sizing: border-box;
+      border-radius: 20px; padding: 24px; display: flex; flex-direction: column; align-items: center;
+      /* 🛠️ [3번 피드백 반영] 패널 내부 레이아웃 수직축 완전 센터 고정 */
+      justify-content: center; gap: 22px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25); height: 100%; min-height: 460px; box-sizing: border-box;
     }
     .header-box { text-align: center; margin: 0; padding: 0; }
-    .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0 0 4px 0; letter-spacing: 3px; line-height: 1; }
+    .header-main { font-family: 'Poiret One', cursive; font-size: 32px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 3px; line-height: 1; }
     .machine-frame { background: #1c1e22; padding: 14px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 260px; box-sizing: border-box; }
     .slot-display { width: 100%; height: 220px; border-radius: 30px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
     .curve-shadow { position: absolute; left: 0; width: 100%; height: 80px; z-index: 15; pointer-events: none; }
@@ -87,14 +84,14 @@
     .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
     .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
     
+    /* 🛠️ [1번 렉 박멸] 하드웨어 3D 입체 가속 명령 고수 */
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; transform: translate3d(0,0,0); }
-    .spinning { transition: transform 4.8s cubic-bezier(0.12, 0.9, 0.22, 1); } /* 🛠️ [2번 렉 현상] 프레임 드랍 튕김 버그를 차단하기 위해 트랜지션 회전 속도 축소 매칭 */
-    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
-    .number { height: 90px; line-height: 90px; font-size: 54px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
-    .final-hit { color: #ff3b30 !important; }
-    .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
+    .spinning { transition: transform 7.5s cubic-bezier(0.2, 0.8, 0.2, 1); } /* 순정 7.5초 셔플 타임 복원 */
+    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .number { height: 80px; line-height: 80px; font-size: 52px; font-family: 'Space Mono', monospace; color: #3a3a3c; font-weight: 400; letter-spacing: -2px; }
+    .final-hit { color: #ff3b30 !important; font-weight: 700 !important; }
+    .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; font-weight: 700 !important; }
 
-    /* 🛠️ [5번 피드백] SAVE를 플랫하고 세련되게 바꾼 결과 기록용 버튼 컴포넌트 */
     .btn-finish { 
       display: none; width: 100%; max-width: 232px; padding: 12px 0; 
       background: linear-gradient(135deg, #34c759, #28a745); color: #ffffff; 
@@ -107,20 +104,18 @@
     .history-board-box {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
-      display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; height: 100%; min-height: 440px;
+      display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; height: 100%; min-height: 460px;
     }
-    /* 🛠️ [5번 피드백] 이모지 제거 및 간결 명료 네이밍 전환 */
     .history-board-title { font-size: 13px; color: #e5e5ea; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-transform: uppercase; }
-    .history-grid { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; height: 360px; padding-right: 2px; }
+    .history-grid { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; height: 380px; padding-right: 2px; }
     
-    /* 🛠️ [1번 피드백] 도트 배지를 완벽히 제거하고 선 하나만 심플하게 남긴 전적소 슬롯 */
+    /* 🛠️ [2번 피드백 버그수정] 다른 점수(-3 등)에서도 고유 픽 컬러가 깨지지 않게 보정선 격리 */
     .history-item { background: rgba(255,255,255,0.02); padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--item-border-color); font-size: 13px; font-weight: 500; }
     .history-item.jackpot-item { background: rgba(226, 180, 189, 0.05); }
-    .history-item .h-left-part { display: flex; align-items: center; gap: 8px; }
     .history-item .h-score { font-family: 'Space Mono'; font-weight: 700; color: #ff3b30; }
     .history-item.jackpot-item .h-score { color: #e2b4bd; }
 
-    /* 애플 순정 블러 가상 모달창 */
+    /* 애플 순정 스타일 가상 모달창 */
     .mac-modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0, 0, 0, 0.4); z-index: 5000; align-items: center; justify-content: center;
@@ -217,8 +212,10 @@
     
     var isSkipped = false;
     var isRunning = false;
-    var ITEM_HEIGHT = 90;
-    var DISPLAY_HEIGHT = 220; 
+    
+    // 초기 순정 황금 배율 수학공식 롤백
+    var ITEM_HEIGHT = 80;
+    var DISPLAY_HEIGHT = 240; 
     var CENTER_OFFSET = (DISPLAY_HEIGHT / 2) - (ITEM_HEIGHT / 2); 
     
     var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
@@ -249,22 +246,40 @@
       container.appendChild(row);
     }
 
+    // 🛠️ [기록 순서 기획 반영] 기입창 폼 등록 순서(0~5번 로우 순서) 그대로 명확하게 출력되도록 로직 재배치
     function renderHistoryBoard() {
       var grid = document.getElementById("historyBoardGrid");
       grid.innerHTML = "";
       
       var sessionStore = JSON.parse(localStorage.getItem("nemoGachaStore_v4") || "{}");
-      var names = Object.keys(sessionStore);
+      var activeNames = [];
+
+      // 현재 기입 창에 있는 참가자들의 이름을 기입 순서대로 리스팅 배열
+      for (let i = 0; i < 6; i++) {
+        var inputName = document.getElementById(`name-${i}`).value.trim();
+        if(inputName !== "" && sessionStore[inputName]) {
+          activeNames.push(inputName);
+        }
+      }
       
-      if(names.length === 0) {
+      // 만약 세이브되어 있으나 현재 창에는 없는 잔여 백업 데이터가 있다면 뒤이어 나열
+      Object.keys(sessionStore).forEach(name => {
+        if(!activeNames.includes(name)) {
+          activeNames.push(name);
+        }
+      });
+
+      if(activeNames.length === 0) {
         grid.innerHTML = `<div style="color:#636366; text-align:center; font-size:12px; padding:40px 0;">기록된 내역이 없습니다.</div>`;
         return;
       }
       
-      names.reverse().forEach(name => {
+      activeNames.forEach(name => {
         var data = sessionStore[name];
         var item = document.createElement("div");
         item.className = data.score === 0 ? "history-item jackpot-item" : "history-item";
+        
+        // 🛠️ [2번 버그 패치 완료] 점수가 무엇이든 상관없이 해당 유저의 픽 고유 컬러코드를 1:1 상시 추적 바인딩
         item.style.setProperty('--item-border-color', colorHexMap[data.color] || '#333');
         
         item.innerHTML = `
@@ -275,44 +290,6 @@
         `;
         grid.appendChild(item);
       });
-    }
-
-    function activateRow(idx) {
-      var name = document.getElementById(`name-${idx}`).value;
-      var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
-      var row = document.getElementById(`row-${idx}`);
-      if (name.trim() !== "" && checkedColor) row.classList.add("active");
-      else row.classList.remove("active");
-    }
-
-    function openMacModal() {
-      if(isRunning) return;
-      var overlay = document.getElementById("macModal");
-      var win = document.getElementById("macModalWindow");
-      overlay.style.display = "flex";
-      setTimeout(() => win.classList.add("open"), 10);
-    }
-
-    function closeMacModal() {
-      var win = document.getElementById("macModalWindow");
-      win.classList.remove("open");
-      setTimeout(() => document.getElementById("macModal").style.display = "none", 150);
-    }
-
-    function executeResetGacha() {
-      localStorage.removeItem("nemoGachaStore_v4");
-      renderHistoryBoard();
-      for (let i = 0; i < 6; i++) {
-        document.getElementById(`name-${i}`).value = "";
-        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-        if(checked) checked.checked = false;
-        document.getElementById(`txt-score-${i}`).innerText = "--";
-        document.getElementById(`row-${i}`).className = "table-row";
-      }
-      reel.innerHTML = ""; reel.style.transform = "none";
-      finishBtn.style.display = "none"; clickBtn.disabled = false;
-      isSkipped = false; currentTurnData = [];
-      closeMacModal();
     }
 
     function createNumberElement(max, excludeValue) {
@@ -331,25 +308,49 @@
       reel.appendChild(fragment);
     }
 
-    // 🛠️ [2번 렉 현상 버그 패치] 비동기 루프 주기와 CSS 트랜지션을 타이트하게 싱크 매칭하여 하드웨어 병목현상 소거
     function wait(ms) {
       return new Promise(resolve => {
         var start = Date.now();
         var timer = setInterval(() => {
           if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
-        }, 20);
+        }, 50);
       });
     }
 
+    function activateRow(idx) {
+      var name = document.getElementById(`name-${idx}`).value;
+      var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
+      var row = document.getElementById(`row-${idx}`);
+      if (name.trim() !== "" && checkedColor) row.classList.add("active");
+      else row.classList.remove("active");
+    }
+
+    function executeResetGacha() {
+      localStorage.removeItem("nemoGachaStore_v4");
+      renderHistoryBoard();
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`name-${i}`).value = "";
+        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
+        if(checked) checked.checked = false;
+        document.getElementById(`txt-score-${i}`).innerText = "--";
+        document.getElementById(`row-${i}`).className = "table-row";
+      }
+      reel.innerHTML = ""; reel.style.transform = "none";
+      finishBtn.style.display = "none"; clickBtn.disabled = false;
+      isSkipped = false; currentTurnData = [];
+      closeMacModal();
+    }
+
+    // 🎰 순정형 초경량화 회전 연산 가동
     async function runGachaMachine() {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
       isSkipped = false; currentTurnData = [];
 
-      // 매 구동마다 DOM 인덱스를 물리적으로 리셋 파괴 처리
+      // 🛠️ [렉 완전 박멸] 불필요한 엘리먼트 가중 누적을 지우기 위해 구동 즉시 노드 클리어
       reel.innerHTML = ""; 
-      reel.style.transition = "none";
-      reel.style.transform = "translate3d(0, 0, 0)";
+      reel.className = "reel";
+      reel.style.transform = "none";
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
@@ -394,8 +395,10 @@
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 15; // 노드 적재량을 더 줄여 초경량화 프레임 사수
+        // 🛠️ 초기 순정 원본 크래시 제로 코드 복원 규격 (과부하 100% 소거)
+        var spinCount = 40; 
         var startIndex = reel.children.length;
+        
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
 
@@ -404,22 +407,21 @@
         reel.appendChild(createNumberElement(maxVal, p.score));
         appendRandomNumbers(maxVal, 2);
         
-        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 20)));
+        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 50)));
         var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
         var rand = Math.random();
         var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
 
-        // 🛠️ [2번 버그 피드백] 4.8초 트랜지션 회전각도와 자바스크립트 스캐닝 대기 타임을 연동하여 브라우저 가속 가동
         reel.className = 'reel spinning';
-        var stopOffset = mode === 'B' ? -30 : (mode === 'C' ? 30 : 0);
-        reel.style.transform = 'translate3d(0, -' + (targetY + stopOffset) + 'px, 0)'; 
+        var stopOffset = mode === 'B' ? -40 : (mode === 'C' ? 40 : 0);
+        reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        await wait(4800); // 4.8초에 정확히 브레이크 스냅 타임 싱크 동기화
+        await wait(7500); // 원본의 무결점 7.5초 물리 프레임 타임
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
           reel.className = 'reel ' + snapClass; 
-          reel.style.transform = 'translate3d(0, -' + targetY + 'px, 0)';
+          reel.style.transform = 'translateY(-' + targetY + 'px)';
           await wait(400); 
 
           var targetEl = document.getElementById('target-' + i);
