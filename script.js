@@ -152,6 +152,9 @@ function openFolder(type) {
         content.appendChild(iconDiv);
     });
     folderWindow.style.display = "flex";
+    
+    // 폴더가 열릴 때도 가시성 확보차 독바 레이어 투명 처리
+    document.getElementById("macDockContainer").classList.add("dimmed");
     updateForwardButtonState();
 }
 
@@ -169,12 +172,16 @@ function minimizeWindow(windowId) {
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
     dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
     minimizedList.appendChild(dockItem);
+    
+    // 활성 창이 완전히 사라졌을 시 독바 원래 투명도로 롤백 복귀
+    document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
 function restoreWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) targetWindow.style.display = "flex";
     removeFromDock(windowId);
+    document.getElementById("macDockContainer").classList.add("dimmed");
 }
 
 function removeFromDock(windowId) {
@@ -188,10 +195,10 @@ function closeFolder() {
     document.getElementById("folderWindow").classList.remove("maximized");
     removeFromDock("folderWindow");
     lastClosedApp = null;
+    document.getElementById("macDockContainer").classList.remove("dimmed");
     updateForwardButtonState();
 }
 
-// 🛠️ 피드백 반영: 프로그램 진입 시 무조건 확대 레이아웃(maximized)을 기본 베이스로 세팅 구동
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
@@ -200,12 +207,10 @@ function openApp(url, name, icon) {
     document.getElementById("windowTitle").innerText = name; 
     
     windowPopup.style.display = "flex";
-    windowPopup.style.width = "";
-    windowPopup.style.height = "";
-    windowPopup.style.top = "";
-    windowPopup.style.left = "";
-    // 항상 최대화 모드로 시원하게 켬
     windowPopup.classList.add("maximized"); 
+    
+    // 🛠️ [고증 이식] 인게임 유틸 기능 진입 시 독 바를 흐릿하게 반투명화 처리하는 트리거 연동
+    document.getElementById("macDockContainer").classList.add("dimmed");
 }
 
 function closeApp() {
@@ -215,6 +220,8 @@ function closeApp() {
     removeFromDock("appWindow");
     lastClosedApp = null;
     closeFolder(); 
+    // 모든 앱이 꺼지면 독바 다시 생생하게 투명도 원상 복구
+    document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
 function backToFolder() {
