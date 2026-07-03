@@ -152,8 +152,6 @@ function openFolder(type) {
         content.appendChild(iconDiv);
     });
     folderWindow.style.display = "flex";
-    
-    // 폴더가 열릴 때도 가시성 확보차 독바 레이어 투명 처리
     document.getElementById("macDockContainer").classList.add("dimmed");
     updateForwardButtonState();
 }
@@ -172,8 +170,6 @@ function minimizeWindow(windowId) {
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
     dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
     minimizedList.appendChild(dockItem);
-    
-    // 활성 창이 완전히 사라졌을 시 독바 원래 투명도로 롤백 복귀
     document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
@@ -208,8 +204,6 @@ function openApp(url, name, icon) {
     
     windowPopup.style.display = "flex";
     windowPopup.classList.add("maximized"); 
-    
-    // 🛠️ [고증 이식] 인게임 유틸 기능 진입 시 독 바를 흐릿하게 반투명화 처리하는 트리거 연동
     document.getElementById("macDockContainer").classList.add("dimmed");
 }
 
@@ -220,7 +214,6 @@ function closeApp() {
     removeFromDock("appWindow");
     lastClosedApp = null;
     closeFolder(); 
-    // 모든 앱이 꺼지면 독바 다시 생생하게 투명도 원상 복구
     document.getElementById("macDockContainer").classList.remove("dimmed");
 }
 
