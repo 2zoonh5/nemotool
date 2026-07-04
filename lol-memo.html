@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
-        /* 🎨 Apple 샌프란시스코 서체 감성의 가독성 높은 국산 웹폰트 바인딩 */
-        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        /* 🎨 프리미엄 네이티브 서체 이식 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
             --bg-main: #0f0f12;
@@ -14,7 +14,6 @@
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
             --mac-red: #ff453a;
-            --text-accent: #e2b4bd;
         }
         
         body {
@@ -27,7 +26,7 @@
             max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
         }
 
-        /* 🖥️ [리뉴얼] 1번 반영: 아이콘을 과감히 걷어내고 텍스트 자체에 입체감을 준 크롬 실버 헤더 */
+        /* 🖥️ 고급 Mac OS 상단 앱 바 타이틀 */
         .mac-app-header {
             display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%;
         }
@@ -37,8 +36,9 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
+        /* 🛠️ 창 축소 시 짤림 방지용 minmax 가변 트랙 그리드 개편 */
         .app-content {
-            display: grid; grid-template-columns: 440px 1fr; gap: 30px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: minmax(400px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
         }
 
         /* 좌측 구성 제어 셋 보드 */
@@ -49,7 +49,7 @@
             min-height: 520px; height: 520px;
         }
         
-        /* 🖥️ [리뉴얼] 2번 반영: 경기 형식(좌), 게임 모드(우) 위치 완벽 스위칭 트랙 */
+        /* 🛠️ 위치 완전 고정 및 스왑 셋 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -120,35 +120,42 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🖥️ [리뉴얼] 3번 반영: 유연한 중앙 분배 및 인라인 애플 스크롤바 디자인 아키텍처 */
+        /* 🛠️ [image_aefc42.png 버그 완전 폭파]: 곡률 차단 이중 레이어 마스킹 구조 설계 */
         .result-container {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
+            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px; 
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; 
-            justify-content: center; /* 기본은 정중앙 배치(Bo1, Bo3 좌우정렬 완벽 해결) */
+            overflow: hidden; /* 모서리 깨짐 철저 방지 */
+            position: relative;
         }
         
-        /* 세트 수가 많아져서 정렬 한계를 넘을 때만 왼쪽 정렬로 유연 전환 */
-        .result-container:has(.set-table:nth-child(4)) {
+        /* 실제 스크롤 연출을 담당하는 내부 독립 코어 소켓 */
+        .result-scroll-core {
+            width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; 
+            justify-content: center;
+        }
+        
+        /* 4개 이상 슬롯 진입 시 좌측 정렬 변환 */
+        .result-container:has(.set-table:nth-child(4)) .result-scroll-core {
             justify-content: flex-start;
         }
 
-        /* 🛠️ 3번 반영: 스크롤바 돌출 버그 제거 및 슬림 미니멀 마스킹 */
-        .result-container::-webkit-scrollbar { height: 6px; }
-        .result-container::-webkit-scrollbar-track { background: transparent; }
-        .result-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; transition: background 0.2s; }
-        .result-container:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
-        .result-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15) !important; }
+        /* 🛠️ 스크롤바 모서리 침범 소멸 및 인라인 마스킹 트랙 */
+        .result-scroll-core::-webkit-scrollbar { height: 6px; }
+        .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
+        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
+        .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
+        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15) !important; }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         /* 결과 시트 테이블 컴팩트 최적화 */
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 12px; overflow: hidden; width: 205px; min-width: 205px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border-radius: 12px; overflow: hidden; width: 215px; min-width: 215px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
             animation: tableFadeIn 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
         @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -160,15 +167,17 @@
         .set-table th.sub-hdr {
             font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
         }
+        
+        /* 🛠️ [리뉴얼]: 배정 명단 닉네임 크기 확대 가독성 극대화 */
         .set-table td {
-            padding: 11px 6px; text-align: center; font-size: 13.5px; height: 32px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #e5e5ea; font-weight: 500;
+            padding: 10px 6px; text-align: center; font-size: 16px; height: 36px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff; font-weight: 500;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.005); font-size: 11px; font-weight: 700; width: 44px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
+            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
         }
 
-        /* 🛠️ 3번 반영: 블루 레드 진영 고선명 고채도 컬러 보정 패치 */
+        /* 블루 레드 진영 스케일 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; color: #73c0ff !important; font-weight: 700 !important; }
@@ -214,7 +223,7 @@
     <div class="app-content">
         <!-- 좌측 보드 -->
         <div class="setup-box">
-            <!-- 🛠️ 2번 반영: 경기 형식(좌), 게임 모드(우) 배치 체계 고정 스왑 -->
+            <!-- 🛠️ 경기 형식(좌), 게임 모드(우) 마크업 라인 완전 고정 스왑화 완료 -->
             <div class="mode-panel-row">
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
@@ -266,10 +275,12 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (Bo1 ~ Bo5 입체 스케일 보정 배정 완료) -->
+        <!-- 우측 결과 보드 (이중 마스킹 스크롤 케이스 쉴드 적용 완료) -->
         <div class="result-container" id="resultContainer">
-            <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 표시됩니다.</h3>
+            <div class="result-scroll-core" id="resultScrollCore">
+                <div class="no-result" id="noResultGrid">
+                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                </div>
             </div>
         </div>
     </div>
@@ -317,8 +328,8 @@
             document.getElementById(`p1_${i}`).value = "";
             document.getElementById(`p2_${i}`).value = "";
         }
-        const container = document.getElementById("resultContainer");
-        container.innerHTML = `
+        const scrollCore = document.getElementById("resultScrollCore");
+        scrollCore.innerHTML = `
             <div class="no-result" id="noResultGrid">
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
             </div>`;
@@ -393,8 +404,8 @@
             }
         }
 
-        const resultContainer = document.getElementById("resultContainer");
-        resultContainer.innerHTML = ""; 
+        const scrollCore = document.getElementById("resultScrollCore");
+        scrollCore.innerHTML = ""; 
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
@@ -488,7 +499,7 @@
             }
             htmlPayload += `</tbody>`;
             table.innerHTML = htmlPayload;
-            resultContainer.appendChild(table);
+            scrollCore.appendChild(table);
         }
     }
 </script>
