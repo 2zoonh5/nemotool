@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
+        /* 🎨 Apple 샌프란시스코 서체 감성의 가독성 높은 국산 웹폰트 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
@@ -26,17 +27,16 @@
             max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
         }
 
-        /* 🖥️ [리뉴얼] 1, 3번 반영: 가챠머신 무드를 그대로 가져온 시네마틱 하이엔드 로고 헤더 */
+        /* 🖥️ [리뉴얼] 1번 반영: 아이콘을 과감히 걷어내고 텍스트 자체에 입체감을 준 크롬 실버 헤더 */
         .mac-app-header {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; width: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%;
         }
-        .mac-app-header img { width: 28px; height: 28px; object-fit: contain; opacity: 0.8; }
         .mac-app-header h1 {
-            font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--text-accent); margin: 0; letter-spacing: 6px; 
-            text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); text-transform: uppercase;
+            font-size: 38px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
+            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 📋 균형 잡힌 고정 높이 2열 데스크탑 아키텍처 */
         .app-content {
             display: grid; grid-template-columns: 440px 1fr; gap: 30px; align-items: start; width: 100%;
         }
@@ -46,9 +46,10 @@
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px; /* 🛠️ 높이 상호 일체 고정화 */
+            min-height: 520px; height: 520px;
         }
         
+        /* 🖥️ [리뉴얼] 2번 반영: 경기 형식(좌), 게임 모드(우) 위치 완벽 스위칭 트랙 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -69,6 +70,7 @@
         }
         .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
         .mac-select option { background: #1c1c1e; color: #fff; }
+        .mac-select:disabled { cursor: not-allowed; opacity: 0.6; }
 
         /* 매칭 입력 영역 */
         .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
@@ -95,7 +97,7 @@
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
         /* 하단 액션 버튼 그룹 */
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } /* 하단 밀착 */
+        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } 
         
         .btn-reset {
             flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
@@ -118,28 +120,39 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🖥️ [디자인 리뉴얼] 2번 반영: 높이 고정 및 가로 스크롤 격할 유도 스크롤러 컨테이너 */
+        /* 🖥️ [리뉴얼] 3번 반영: 유연한 중앙 분배 및 인라인 애플 스크롤바 디자인 아키텍처 */
         .result-container {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px; /* 좌측 보드와 크기 일치 고정 */
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start;
+            min-height: 520px; height: 520px; 
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; 
+            justify-content: center; /* 기본은 정중앙 배치(Bo1, Bo3 좌우정렬 완벽 해결) */
         }
-        /* 가로 스크롤바 세련되게 세팅 */
-        .result-container::-webkit-scrollbar { height: 8px; }
-        .result-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
-        .result-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(0,0,0,0.2); }
-        .result-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.1); }
+        
+        /* 세트 수가 많아져서 정렬 한계를 넘을 때만 왼쪽 정렬로 유연 전환 */
+        .result-container:has(.set-table:nth-child(4)) {
+            justify-content: flex-start;
+        }
+
+        /* 🛠️ 3번 반영: 스크롤바 돌출 버그 제거 및 슬림 미니멀 마스킹 */
+        .result-container::-webkit-scrollbar { height: 6px; }
+        .result-container::-webkit-scrollbar-track { background: transparent; }
+        .result-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; transition: background 0.2s; }
+        .result-container:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
+        .result-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15) !important; }
 
         .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
-        /* 결과 시트 테이블 */
+        /* 결과 시트 테이블 컴팩트 최적화 */
         .set-table {
-            border-collapse: collapse; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 12px; overflow: hidden; width: 210px; min-width: 210px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
+            border-radius: 12px; overflow: hidden; width: 205px; min-width: 205px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            animation: tableFadeIn 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        
         .set-table th.set-title {
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
@@ -155,11 +168,11 @@
             background: rgba(255, 255, 255, 0.005); font-size: 11px; font-weight: 700; width: 44px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
         }
 
-        /* 블루 레드 매칭 디자인 고선명화 패치 */
-        .hdr-blue { background: rgba(0, 122, 255, 0.45) !important; color: #ffffff !important; }
-        .hdr-red { background: rgba(255, 69, 58, 0.45) !important; color: #ffffff !important; }
-        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; color: #7ec2ff !important; font-weight: 700 !important; }
-        .cell-red { background: rgba(255, 69, 58, 0.03) !important; color: #ff8e85 !important; font-weight: 700 !important; }
+        /* 🛠️ 3번 반영: 블루 레드 진영 고선명 고채도 컬러 보정 패치 */
+        .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
+        .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
+        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; color: #73c0ff !important; font-weight: 700 !important; }
+        .cell-red { background: rgba(255, 69, 58, 0.03) !important; color: #ff857d !important; font-weight: 700 !important; }
 
         /* Mac OS 스타일 알림창 모달 */
         .mac-alert-overlay {
@@ -187,8 +200,7 @@
 
 <div class="container">
     <div class="mac-app-header">
-        <img src="l_memo_icon.png" alt="롤모장 아이콘">
-        <h1>Nemo Team Balancer</h1>
+        <h1>롤모장</h1>
     </div>
 
     <div class="mac-alert-overlay" id="macAlertOverlay">
@@ -202,6 +214,7 @@
     <div class="app-content">
         <!-- 좌측 보드 -->
         <div class="setup-box">
+            <!-- 🛠️ 2번 반영: 경기 형식(좌), 게임 모드(우) 배치 체계 고정 스왑 -->
             <div class="mode-panel-row">
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
@@ -253,7 +266,7 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (안정된 컨테이너 가로 큐브 보정 배정 완료) -->
+        <!-- 우측 결과 보드 (Bo1 ~ Bo5 입체 스케일 보정 배정 완료) -->
         <div class="result-container" id="resultContainer">
             <div class="no-result" id="noResultGrid">
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
