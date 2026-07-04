@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
+    
+    <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         /* 🎨 프리미엄 서체 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
@@ -156,23 +161,34 @@
             border-radius: 12px; overflow: hidden; 
             width: 220px; min-width: 220px; flex: 0 0 auto; 
             box-shadow: 0 12px 35px rgba(0,0,0,0.3);
-            animation: tableFadeIn 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         
         .set-table th.set-title {
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
 
-        /* 🛠️ [image_b96c15.png 수평 완치]: 수평 어긋남을 박멸하기 위해 패딩, 높이, 수직 정렬을 칼같이 동기화 */
         .set-table th.sub-hdr {
             font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
             border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; 
             text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
         }
         
-        /* 결과값 닉네임 정석 3단계 셀 */
+        /* 🛠️ 드래그 앤 드롭 전용 애니메이션 행 클래스 추가 */
+        .draggable-row {
+            cursor: grab;
+            transition: background 0.15s ease;
+        }
+        .draggable-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .draggable-row:active {
+            cursor: grabbing;
+        }
+        .drag-over {
+            border-top: 2px solid var(--mac-blue) !important;
+        }
+
         .set-table td {
             padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
@@ -184,7 +200,7 @@
             background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015); letter-spacing: 0;
         }
 
-        /* 블루 레드 진영 테마 단색 */
+        /* 블루 레드 진영 헤더 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
         
@@ -240,7 +256,7 @@
                 </div>
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
-                    <select id="gameMode" class="mac-select">
+                    <select id="gameMode" class="mac-select" onchange="pushInputsToFirebase()">
                         <option value="Bo1">Bo1</option>
                         <option value="Bo3" selected>Bo3</option>
                         <option value="Bo5">Bo5</option>
@@ -250,29 +266,29 @@
 
             <div class="input-table-sheet">
                 <div class="table-row">
-                    <input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                     <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                 </div>
                 <div class="table-row">
-                    <input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                     <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                 </div>
                 <div class="table-row">
-                    <input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                     <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                 </div>
                 <div class="table-row">
-                    <input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                     <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                 </div>
                 <div class="table-row fixed-row">
-                    <input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                     <div class="vs-divider">서폿고정</div>
-                    <input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off">
+                    <input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
                 </div>
             </div>
 
@@ -287,7 +303,7 @@
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="table-wrapper-binder" id="tableWrapperBinder">
                     <div class="no-result" id="noResultGrid">
-                        <h3>배정 결과가 여기에 표시됩니다.</h3>
+                        <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
                     </div>
                 </div>
             </div>
@@ -296,6 +312,24 @@
 </div>
 
 <script>
+    // 🛠️ Firebase Realtime Database 동기화 코어 가동
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+        authDomain: "nemotool.firebaseapp.com",
+        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+        projectId: "nemotool",
+        storageBucket: "nemotool.firebasestorage.app",
+        messagingSenderId: "1003940918420",
+        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("nemo_lol_memo_session");
+
+    var globalResultData = null; // 실시간 변경 제어용 글로벌 캐시 메모리 소켓
+    var isOperating = false;
+
+    // macOS 다이얼로그
     function openMacAlert(title, subText, type, onConfirm) {
         const overlay = document.getElementById("macAlertOverlay");
         document.getElementById("macAlertTitle").innerText = title;
@@ -326,22 +360,55 @@
         overlay.style.display = "flex";
     }
 
-    function askRollmojangReset() {
-        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
-            executeFormReset();
+    // 명단 입력단 파이어베이스 업링크 푸시
+    function pushInputsToFirebase() {
+        if (isOperating) return;
+        let inputs = [];
+        for (let i = 0; i < 5; i++) {
+            inputs.push({
+                p1: document.getElementById(`p1_${i}`).value.trim(),
+                p2: document.getElementById(`p2_${i}`).value.trim()
+            });
+        }
+        db.update({
+            inputs: inputs,
+            gameMode: document.getElementById("gameMode").value
         });
     }
 
-    function executeFormReset() {
-        for(let i=0; i<5; i++) {
-            document.getElementById(`p1_${i}`).value = "";
-            document.getElementById(`p2_${i}`).value = "";
+    // 파이어베이스 실시간 원격 다운링크 수신 수신기 가동
+    db.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        isOperating = true;
+        if (data.inputs) {
+            data.inputs.forEach((item, idx) => {
+                if(document.getElementById(`p1_${idx}`).value !== item.p1) document.getElementById(`p1_${idx}`).value = item.p1;
+                if(document.getElementById(`p2_${idx}`).value !== item.p2) document.getElementById(`p2_${idx}`).value = item.p2;
+            });
         }
-        const binder = document.getElementById("tableWrapperBinder");
-        binder.innerHTML = `
-            <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-            </div>`;
+        if (data.gameMode) {
+            document.getElementById("gameMode").value = data.gameMode;
+        }
+
+        if (data.results) {
+            globalResultData = data.results;
+            renderResultTables(data.results);
+        } else {
+            globalResultData = null;
+            document.getElementById("tableWrapperBinder").innerHTML = `
+                <div class="no-result" id="noResultGrid">
+                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                </div>`;
+        }
+        isOperating = false;
+    });
+
+    function askRollmojangReset() {
+        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
+            db.set(null); // 파이어베이스 전격 초기화 무력화
+        });
     }
 
     function customShuffleArray(array) {
@@ -415,8 +482,7 @@
             }
         }
 
-        const binder = document.getElementById("tableWrapperBinder");
-        binder.innerHTML = ""; 
+        let serializedResults = [];
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
@@ -473,23 +539,44 @@
                 }
             }
 
-            let teamAHdrClass = (set % 2 === 0) ? "hdr-blue" : "hdr-red";
-            let teamBHdrClass = (set % 2 === 0) ? "hdr-red" : "hdr-blue";
-            let teamACellClass = (set % 2 === 0) ? "cell-blue" : "cell-red";
-            let teamBCellClass = (set % 2 === 0) ? "cell-red" : "cell-blue";
+            // 실시간 원격 구조용 JSON 스냅샷 아카이브 직렬화 빌드
+            let setLineArray = [];
+            let laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
+            for(let r=0; r<5; r++) {
+                setLineArray.push({
+                    lane: laneNames[r],
+                    blue: blueResult[r],
+                    red: redResult[r],
+                    isFixed: (r === 4)
+                });
+            }
+            serializedResults.push({ setIndex: set, lines: setLineArray });
+        }
+
+        db.update({ results: serializedResults });
+    }
+
+    // 🛠️ [리뉴얼 핵심]: 파이어베이스 데이터 스냅샷 기반 무결성 스크롤 시트 동적 렌더러
+    function renderResultTables(results) {
+        const binder = document.getElementById("tableWrapperBinder");
+        binder.innerHTML = ""; 
+
+        results.forEach((setObj, sIdx) => {
+            let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
+            let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
+            let teamACellClass = (setObj.setIndex % 2 === 0) ? "cell-blue" : "cell-red";
+            let teamBCellClass = (setObj.setIndex % 2 === 0) ? "cell-red" : "cell-blue";
 
             const table = document.createElement("table");
             table.className = "set-table";
 
-            let laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
-            let teamAName = (set % 2 === 0) ? "블루팀" : "레드팀";
-            let teamBName = (set % 2 === 0) ? "레드팀" : "블루팀";
+            let teamAName = (setObj.setIndex % 2 === 0) ? "블루팀" : "레드팀";
+            let teamBName = (setObj.setIndex % 2 === 0) ? "레드팀" : "블루팀";
             
-            // 🛠️ 찌꺼기 수식 수리 완비: 수평 균열 원인이던 스트링 버그를 말끔히 증발시킴
             let htmlPayload = `
                 <thead>
                     <tr>
-                        <th colspan="3" class="set-title">${set + 1}세트</th>
+                        <th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th>
                     </tr>
                     <tr>
                         <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px;">라인</th>
@@ -497,22 +584,83 @@
                         <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-set="${sIdx}">
             `;
 
-            for(let r=0; r<5; r++) {
+            setObj.lines.forEach((lineObj, lIdx) => {
+                // 서폿고정 행(lIdx === 4)은 드래그 속성 차단처리
+                let dragAttr = lineObj.isFixed ? '' : 'draggable="true" class="draggable-row"';
                 htmlPayload += `
-                    <tr>
-                        <td class="lane-cell">${laneNames[r]}</td>
-                        <td class="${teamACellClass}">${blueResult[r]}</td>
-                        <td class="${teamBCellClass}">${redResult[r]}</td>
+                    <tr ${dragAttr} data-line="${lIdx}" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                        <td class="lane-cell">${lineObj.lane}</td>
+                        <td class="${teamACellClass}">${lineObj.blue}</td>
+                        <td class="${teamBCellClass}">${lineObj.red}</td>
                     </tr>
                 `;
-            }
+            });
+
             htmlPayload += `</tbody>`;
             table.innerHTML = htmlPayload;
             binder.appendChild(table);
+        });
+    }
+
+    // 🛠️ [2번 과제]: HTML5 Native Drag & Drop 세션 중재 브로커 인터페이스 연동 단 가동
+    let dragSrcElement = null;
+    let dragSrcSetIdx = null;
+
+    function handleDragStart(e) {
+        dragSrcElement = e.currentTarget;
+        dragSrcSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute("data-line"));
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) e.preventDefault();
+        let targetSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
+        
+        // 같은 세트 테이블 내부의 요소끼리만 스위칭이 되도록 방어벽 설정
+        if (dragSrcSetIdx !== targetSetIdx) return false;
+        
+        e.currentTarget.classList.add('drag-over');
+        return false;
+    }
+
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+
+        let targetSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
+        if (dragSrcSetIdx !== targetSetIdx) return false; // 이종 간 교체 밀어내기 차단
+
+        let srcLineIdx = parseInt(dragSrcElement.getAttribute("data-line"));
+        let targetLineIdx = parseInt(e.currentTarget.getAttribute("data-line"));
+
+        if (srcLineIdx === targetLineIdx) return false;
+
+        // 글로벌 캐시 배열에서 맞밸 단위 교환 연산 단행
+        if (globalResultData && globalResultData[targetSetIdx]) {
+            let setLines = globalResultData[targetSetIdx].lines;
+            
+            // 데이터 쌍 스위칭 오케스트레이션
+            let tempBlue = setLines[srcLineIdx].blue;
+            let tempRed = setLines[srcLineIdx].red;
+
+            setLines[srcLineIdx].blue = setLines[targetLineIdx].blue;
+            setLines[srcLineIdx].red = setLines[targetLineIdx].red;
+
+            setLines[targetLineIdx].blue = tempBlue;
+            setLines[targetLineIdx].red = tempRed;
+
+            // 최종 수정된 실시간 오버라이딩 패킷을 업링크로 재푸시
+            db.update({ results: globalResultData });
         }
+        return false;
     }
 </script>
 </body>
