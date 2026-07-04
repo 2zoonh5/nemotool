@@ -74,7 +74,6 @@
     }
     .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
     
-    /* 🛠️ 버그 해결: 인라인 보더 대신 정석 테두리 바인딩 클래스 설계 */
     .table-row.active-border {
       border-color: var(--theme-color) !important;
       box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
@@ -211,7 +210,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("nemo_gacha_session");
 
-    // 🔷 정석 STATE MACHINE 정의 단일화
     const STATE = {
       IDLE: "idle",
       READY: "ready",
@@ -245,9 +243,12 @@
       row.className = "table-row";
       row.id = `row-${i}`;
       
+      // 🛠️ 버그 해결: 라디오 버튼 클릭 전 기존 상태를 임시 기억하기 위한 mousedown 처리 및 click 제어 트릭 추가
       let segmentsHtml = colorList.map(color => `
         <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
-          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
+          <input type="radio" name="color-${i}" value="${color}" 
+            onmousedown="this.setAttribute('data-was-checked', this.checked);"
+            onclick="handleRadioToggle(this, ${i})">
           <span>${colorShortMap[color]}</span>
         </label>
       `).join('');
@@ -262,7 +263,16 @@
       container.appendChild(row);
     }
 
-    // 🛠️ 1번 문제 해결: UI 단일 하드 리셋 마스터 기능 구현
+    // 🛠️ 핵심 추가: 라디오 버튼 한 번 더 누르면 선택 해제되는 커스텀 토글러 기능
+    function handleRadioToggle(radioEl, idx) {
+      var wasChecked = radioEl.getAttribute('data-was-checked') === 'true';
+      if (wasChecked) {
+        radioEl.checked = false;
+        radioEl.removeAttribute('data-was-checked');
+      }
+      activateRow(idx);
+    }
+
     function hardResetUI() {
       document.querySelectorAll(".table-row").forEach(r => {
         r.className = "table-row";
@@ -283,12 +293,10 @@
       skipBtn.style.display = "none";
     }
 
-    // 🌐 Firebase Value Listener ➔ 오직 상태 반영 및 UI 동기화만 담당 (로직 완전 배제)
     db.on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // 1. 단순 보드 데이터 동기화 (가챠 가동 중이 아닐 때만)
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
@@ -312,7 +320,6 @@
         document.getElementById("maxValInput").value = data.maxVal;
       }
 
-      // 2. 단일 상태(State) 분기 핸들러 작동
       handleSystemState(data);
     });
 
@@ -358,17 +365,34 @@
     }
 
     function activateRow(idx) {
+      var nameVal = document.getElementById(`name-${idx}`).value;
+      if (nameVal.trim() === "") {
+        var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
+        if (checked) checked.checked = false;
+      }
       pushGridToFirebase();
     }
 
     function triggerFirebaseReset() {
-      db.update({ state: STATE.RESET, history: null });
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`name-${i}`).value = "";
+        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
+        if(checked) checked.checked = false;
+      }
+      var gridData = [];
+      for(let i=0; i<6; i++) {
+        gridData.push({ name: "", color: null });
+      }
+      db.update({ 
+        grid: gridData,
+        state: STATE.RESET, 
+        history: null 
+      });
     }
 
     function localResetGrid() {
       hardResetUI();
       for (let i = 0; i < 6; i++) {
-        document.getElementById(`name-${i}`).value = "";
         var checked = document.querySelector(`input[name="color-${i}"]:checked`);
         if(checked) checked.checked = false;
       }
@@ -395,7 +419,6 @@
         alert("이름과 색상이 지정된 참가자가 없습니다."); return;
       }
 
-      // 전역 상태 난수 시퀀스 사전 획정
       var seedPool = [];
       for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
       for (var i = seedPool.length - 1; i > 0; i--) {
@@ -449,7 +472,6 @@
     }
 
     async function runGachaMachine(fullReelSequence, activeParticipants, modeSequence) {
-      // 🛠️ 1, 3번 복합 버그 해결: 무조건 구동 진입 첫 프레임 하드 리셋 UI 가동
       hardResetUI();
       isRunning = true;
 
@@ -464,7 +486,6 @@
         reel.appendChild(div);
       });
 
-      // Reflow 제어 및 안정적 트랜지션 진입 확보
       reel.style.removeProperty("transition");
       reel.offsetHeight;
       await new Promise(resolve => requestAnimationFrame(resolve));
@@ -478,7 +499,6 @@
         var rowEl = document.getElementById(`row-${p.id}`);
         var mode = modeSequence[i];
         
-        // 🛠️ 2번 문제 해결: 이전 테두리 완전 격리 청소 및 단일 라벨 보더 변수 주입
         document.querySelectorAll(".table-row").forEach(r => r.classList.remove("active-border"));
         rowEl.style.setProperty('--theme-color', colorHexMap[p.color]);
         rowEl.classList.add("active-border");
@@ -540,7 +560,6 @@
       clickBtn.disabled = false;
       isRunning = false;
       
-      // 구동 종료 선언을 파이어베이스에 업로드 (스킵 원복 및 상태 RESULT 고정)
       db.update({ state: STATE.RESULT });
     }
 
@@ -564,7 +583,6 @@
       animate();
     }
 
-    // 🛠️ 4번 문제 해결: 완벽하게 정비된 데이터 병합 구조의 전역 SAVE 시스템
     function triggerFirebaseSave() {
       var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
@@ -611,7 +629,6 @@
         historyGrid.appendChild(card);
       });
 
-      // 🛠️ 3번 문제 해결: 세이브 렌더링 시점에 상태 확정으로 꼬임 방지
       saveBtn.style.display = "none";
       clickBtn.disabled = false;
     }
