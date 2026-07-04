@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>NEMO GACHA</title>
+  <title>NEMO GACHA SYSTEM</title>
   
-  <!-- Firebase SDK 라이브러리 탑재 -->
+  <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -144,7 +144,7 @@
 <body>
   <canvas id="jackpotCanvas"></canvas>
   <div class="network-badge"><div class="network-dot"></div><span>FIREBASE REALTIME ONLINE</span></div>
-  <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
+  <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerFirebaseSkip()">»</button>
   
   <div class="gacha-main-workspace">
     <div class="sheet-control-panel">
@@ -245,12 +245,12 @@
       container.appendChild(row);
     }
 
-    // 🌐 Firebase 통합 단방향 이벤트 리스너 리얼타임 연동
+    // 🌐 Firebase 통합 단방향 리얼타임 리스너
     db.on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // 1. 실시간 입력창 보드 동기화 (작동 중이 아닐 때만)
+      // 1. 실시간 입력창 동기화 (가챠가 안 돌아갈 때만 수신)
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
@@ -274,17 +274,26 @@
         document.getElementById("maxValInput").value = data.maxVal;
       }
 
-      // 2. 상태(Status) 기반 실시간 동기화 오케스트레이션
+      // 2. 상태 기반 이벤트 수신 연동
       if (data.status === "spinning" && !isRunning) {
         runGachaMachine(data.fullReelSequence, data.activeParticipants, data.modeSequence);
+      }
+
+      // 🛠️ 1번 문제 해결: 스킵 상태 전역 실시간 반영 수신
+      if (data.status === "skip") {
+        isSkipped = true;
       }
 
       if (data.status === "reset") {
         localResetGrid();
       }
 
-      if (data.status === "saved" && data.history) {
+      // 🛠️ 4번 문제 해결: 병합 축적된 내역 렌더링 수신
+      if (data.history) {
         renderHistoryList(data.history);
+      } else {
+        historyGrid.innerHTML = "";
+        historySheet.style.display = "none";
       }
     });
 
@@ -348,7 +357,6 @@
         alert("이름과 색상이 지정된 참가자가 없습니다."); return;
       }
 
-      // 🎲 모든 난수/애니메이션 데이터 원천 생성 (Firebase 저장용)
       var seedPool = [];
       for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
       for (var i = seedPool.length - 1; i > 0; i--) {
@@ -391,6 +399,11 @@
       });
     }
 
+    // 🛠️ 1번 문제 해결: 스킵 버튼 클릭 시 파이어베이스 전역 전송
+    function triggerFirebaseSkip() {
+      db.update({ status: "skip" });
+    }
+
     function wait(ms) {
       return new Promise(resolve => {
         var start = Date.now();
@@ -404,18 +417,17 @@
       isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
       isSkipped = false;
 
-      // 🎨 클래스 잔상 및 보드 청소
+      // 🛠️ 2번 및 3번 문제 복합 해결: 구동 시작 시 이전 테두리/결과값 잔상 및 클래스 완전 제거
       document.querySelectorAll(".table-row").forEach(r => {
         r.classList.remove("done", "jackpot-row");
         r.style.borderColor = "";
       });
 
-      // 1. 강제 transition 차단 상태로 릴 도메인 내부 초기화 후 삽입
+      // 릴 내부 완전 초기화 후 새로 주입
       reel.style.transition = 'none';
       reel.style.transform = 'translateY(0px)';
       reel.innerHTML = "";
 
-      // Firebase 데이터 기반 릴 그리기
       fullReelSequence.forEach((val, idx) => {
         var div = document.createElement('div');
         div.className = 'number';
@@ -427,10 +439,8 @@
         reel.appendChild(div);
       });
 
-      // 🛠️ 버그 해결: 인라인에 박힌 'transition = none' 제거하기!
+      // 인라인 transition 속성 파괴 후 렌더 프레임 보장
       reel.style.removeProperty("transition");
-
-      // 🛠️ 버그 해결: 브라우저가 위에서 생성된 원점(0px) 상태를 먼저 온전히 그리도록 가상 Reflow 유도
       reel.offsetHeight;
       await new Promise(resolve => requestAnimationFrame(resolve));
       await new Promise(resolve => requestAnimationFrame(resolve));
@@ -443,9 +453,10 @@
         var rowEl = document.getElementById(`row-${p.id}`);
         var mode = modeSequence[i];
         
+        // 🛠️ 3번 문제 해결: 루프가 돌 때 '이전 사람'의 테두리 컬러를 싹 다 지우고 현재 차례만 highlight
+        document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        // 합성 버림 방지용 비동기 애니메이션 보정 프레임 트리거
         await new Promise(r => requestAnimationFrame(r));
         reel.className = 'reel spinning';
         await new Promise(r => requestAnimationFrame(r));
@@ -456,7 +467,6 @@
         
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        // 🛠️ 버그 해결: 트랜지션 타임(4000ms)보다 미세하게 더 많이 기다리도록 보정 (3800ms -> 4050ms)
         await wait(4050); 
 
         if(!isSkipped) {
@@ -465,7 +475,7 @@
           reel.style.transform = 'translateY(-' + targetY + 'px)';
           await wait(550); 
 
-          // 🛠️ 버그 해결: 예전 핑크색 하이라이트 글자 전부 초기화시키기
+          // 🛠️ 2번 문제 해결: 클래스 부여 전 기존에 흔적이 남아있던 모든 색상 클래스 일제 완전 초기화
           document.querySelectorAll(".jackpot-hit, .final-hit").forEach(e => e.className = "number");
 
           var targetEl = document.getElementById('target-' + i);
@@ -485,8 +495,6 @@
       showFinalGachaState(activeParticipants);
     }
 
-    function skipAll() { isSkipped = true; }
-
     function showFinalGachaState(activeParticipants) {
       var canvas = document.getElementById('jackpotCanvas');
       if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
@@ -505,6 +513,8 @@
       skipBtn.style.display = 'none'; 
       saveBtn.style.display = 'block'; 
       isRunning = false;
+      
+      // 구동 완료 후 상태 변경 (스킵 신호 초기화 목적)
       db.update({ status: "done" });
     }
 
@@ -528,24 +538,33 @@
       animate();
     }
 
+    // 🛠️ 4번 문제 해결: 누적 통합 데이터 구조 업데이트 병합 방식 도입 (방법 B 적용)
     function triggerFirebaseSave() {
-      var historyData = [];
+      var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
         var scoreText = document.getElementById(`score-${i}`).innerText;
         
         if (name.trim() !== "" && checkedColor && scoreText !== "--") {
-          historyData.push({
+          currentGachaData.push({
             name: name,
             color: checkedColor.value,
             score: scoreText
           });
         }
       }
-      db.update({
-        status: "saved",
-        history: historyData
+
+      // 파이어베이스에 한 번 빨아들여 기존 데이터 유무를 확인 후 스택 축적 병합
+      db.once("value", (snapshot) => {
+        var oldHistory = snapshot.val()?.history || [];
+        // 기존 아카이브 배열 뒤에 신규 스냅 데이터 결합
+        var mergedHistory = [...oldHistory, ...currentGachaData];
+        
+        db.update({
+          status: "saved",
+          history: mergedHistory
+        });
       });
     }
 
