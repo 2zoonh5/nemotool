@@ -211,10 +211,8 @@ function openApp(windowId) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById(windowId);
     
-    if (!windowPopup.classList.contains("maximized") && windowPopup.style.display !== "none" && !minimizedWindows[windowId]) {
-        windowPopup.classList.add("maximized");
-    }
-    
+    // 🛠️ 최대화 버그 완전 해결: 앱을 켤 때 강제 조건문 검증 없이 무조건 클래스 주입 보장하도록 고정
+    windowPopup.classList.add("maximized");
     windowPopup.style.display = "flex";
 }
 
