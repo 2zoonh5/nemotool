@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>네모의 게임 매니저 OS</title>
+    <title>NEMO TOOL</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -55,22 +55,22 @@
             <input type="range" min="30" max="100" value="100" oninput="document.body.style.opacity = this.value/100; document.getElementById('brightnessVal').innerText = this.value + '%'">
         </div>
         <div class="cc-slider-box">
-            <div class="cc-label-row"><span>🔊 웹 가상 사운드 볼륨</span><span id="volumeVal">70%</span></div>
+            <div class="cc-label-row"><span>🔊 사운드 볼륨</span><span id="volumeVal">70%</span></div>
             <input type="range" min="0" max="100" value="70" oninput="updateWebVolume(this.value)">
         </div>
     </div>
 
     <div class="desktop" id="desktopContainer">
         <div class="icon" data-folder="pubg">
-            <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="PUBG Folder">
+            <img src="pubg_icon.png" alt="PUBG Folder">
             <span class="icon-name">배틀그라운드</span>
         </div>
         <div class="icon" data-folder="lol">
-            <img src="https://cdn-icons-png.flaticon.com/512/825/825590.png" alt="LoL Folder">
-            <span class="icon-name">롤모장</span>
+            <img src="lol_icon.png" alt="LoL Folder">
+            <span class="icon-name">리그오브레전드</span>
         </div>
         <div class="icon" data-folder="sudden">
-            <img src="https://cdn-icons-png.flaticon.com/512/5750/5750226.png" alt="Sudden Folder">
+            <img src="sa_icon.png" alt="Sudden Folder">
             <span class="icon-name">서든어택</span>
         </div>
     </div>
