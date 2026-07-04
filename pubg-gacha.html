@@ -29,13 +29,12 @@
     .btn-skip { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #8e8e93; border: 1px solid var(--border-glass); border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: var(--mac-accent); color: #1c1c1e; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 🖥️ 메인 워크스페이스 반응형 및 최대화 배율 최적화 패치 */
     .gacha-main-workspace {
       display: flex; gap: 35px; align-items: flex-start; justify-content: center;
       max-width: 1200px; width: 100%; z-index: 10; flex-wrap: wrap;
     }
 
-    /* 📊 좌측 컨트롤 보드 시트 */
+    /* 📊 좌측 컨트롤 패널 */
     .sheet-control-panel {
       flex: 1.3; min-width: 480px; background: var(--bg-glass); border: 1px solid var(--border-glass);
       border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -43,7 +42,7 @@
     }
     .sheet-top-row { display: flex; gap: 16px; align-items: center; width: 100%; }
     
-    /* 🖥️ Mac OS 스타일 양방향 스텝퍼 컴포넌트 */
+    /* 🖥️ Mac OS 스타일 스텝퍼 */
     .mac-stepper-box {
       background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); 
       border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; gap: 12px; height: 52px; box-sizing: border-box;
@@ -67,7 +66,7 @@
     }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.12); }
     
-    /* ⚡ Mac 스타일 럭셔리 대형 CLICK 버튼 */
+    /* ⚡ Mac 스타일 CLICK 버튼 개편 */
     .btn-click {
       flex: 1.4; background: var(--mac-accent); color: #1c1c1e; border: none; border-radius: 12px;
       height: 52px; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
@@ -76,8 +75,8 @@
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1.5px); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
     .btn-click:disabled { background: #2c2c2e; color: #48484a; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 리스트 정밀 분할 및 자름 방지 크기 고정 */
-    .participant-table { display: flex; flex-direction: column; gap: 12px; }
+    /* 참가자 리스트 명단 간격 조절 */
+    .participant-table { display: flex; flex-direction: column; gap: 16px; } /* 줄 사이 간격 확대 */
     .table-header { display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; padding: 0 12px; font-size: 12.5px; color: #8e8e93; font-weight: 700; letter-spacing: 0.5px; }
     .table-header center { text-align: center; }
     .table-header right-head { text-align: right; padding-right: 12px; }
@@ -85,7 +84,7 @@
     .table-row {
       display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; gap: 14px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.04);
-      padding: 10px 14px; border-radius: 12px; transition: all 0.2s ease;
+      padding: 14px 16px; border-radius: 12px; transition: all 0.2s ease; /* 세로 패딩 확대 */
     }
     .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
     .table-row.active-border { border-color: var(--theme-color) !important; }
@@ -113,7 +112,7 @@
     .table-row.done .result-score { color: #ff453a; }
     .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
 
-    /* 🎰 우측 가챠 머신 프레임 */
+    /* 🎰 우측 가챠 머신 패널 */
     .gacha-machine-panel { flex: 0.7; min-width: 260px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--mac-accent); margin: 0; letter-spacing: 6px; text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); }
     .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 245px; box-sizing: border-box; }
@@ -134,7 +133,7 @@
     .btn-save { display: none; padding: 14px 45px; background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .btn-save:hover { background: #ffffff; color: #1c1c1e; }
 
-    /* 💾 하단 세이브 히스토리 시트 */
+    /* 💾 하단 결과 기록 시트 */
     .history-sheet {
       max-width: 1200px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -144,7 +143,6 @@
     .history-title { font-size: 13.5px; color: #8e8e93; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
     .history-title::before { content: '📂'; }
     
-    /* 🛠️ 휴지통 쓰레기통 모양 삭제 보강 버튼 */
     .btn-trash-clear {
       background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
       width: 28px; height: 28px; border-radius: 6px; transition: background 0.15s; padding: 0;
@@ -159,20 +157,50 @@
     .history-card .p-score { font-family: 'Space Mono'; font-weight: 700; font-size: 15px; color: #ff453a; }
     .history-card.jackpot .p-score { color: var(--mac-accent); text-shadow: 0 0 6px var(--mac-accent); }
     
-    .network-badge { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    /* 🌐 상단 커넥션 배지 위치 최적화 조정 완료 */
+    .network-badge { position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
     .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
+
+    /* 🖥️ [핵심 추가] Mac OS 스타일 정석 다이얼로그 모달 디자인 */
+    .mac-alert-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+    }
+    .mac-alert-modal {
+      background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+    .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
+    .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
+    .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+    .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .mac-alert-btn.cancel:hover { background: rgba(255, 255, 255, 0.15); }
+    .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
+    .mac-alert-btn.confirm:hover { background: #148cff; }
   </style>
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
+  <div class="network-badge"><div class="network-dot"></div><span>FIREBASE STATE MACHINE ENGINE</span></div>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerLocalSkip()">»</button>
   
+  <!-- 🖥️ 커스텀 Mac OS 알림창 마크업 컴포넌트 내장 -->
+  <div class="mac-alert-overlay" id="macAlertOverlay">
+    <div class="mac-alert-modal">
+      <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
+      <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
+      <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
+    </div>
+  </div>
+
   <div class="gacha-main-workspace">
     <!-- 좌측 보드 -->
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
-        <!-- 🛠️ 한국어 패치 및 Mac OS 정석 스텝퍼 바인딩 개편 -->
         <div class="mac-stepper-box">
           <div class="stepper-label-group">
             <span class="sheet-box-title" style="margin-bottom:2px;">최대값</span>
@@ -184,8 +212,8 @@
           </div>
         </div>
         
-        <button class="btn-reset" onclick="triggerFirebaseReset()">명단 초기화</button>
-        <button class="btn-click" id="clickBtn" onclick="triggerFirebaseStart()">CLICK</button>
+        <button class="btn-reset" onclick="askFirebaseReset()">초기화</button>
+        <button class="btn-click" id="clickBtn" onclick="triggerFirebaseStart()">가챠머신 실행</button>
       </div>
 
       <div class="participant-table">
@@ -211,14 +239,15 @@
           <div id="reel" class="reel"></div>
         </div>
       </div>
-      <button id="saveBtn" class="btn-save" onclick="triggerFirebaseSave()">SAVE RESULT</button>
+      <button id="saveBtn" class="btn-save" onclick="triggerFirebaseSave()">결과값 저장</button>
     </div>
   </div>
 
+  <!-- 하단 결과 기록 -->
   <div class="history-sheet" id="historySheet">
     <div class="history-header-row">
       <div class="history-title">가챠 결과 기록</div>
-      <button class="btn-trash-clear" title="기록 전체 삭제" onclick="triggerTrashHistoryClear()">
+      <button class="btn-trash-clear" title="기록 전체 삭제" onclick="askTrashHistoryClear()">
         <svg viewBox="0 0 24 24">
           <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
         </svg>
@@ -283,7 +312,7 @@
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="이름을 입력하세요" autocomplete="off" oninput="activateRow(${i})">
+        <input type="text" id="name-${i}" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="activateRow(${i})">
         <div class="mac-capsule-control">
           ${segmentsHtml}
         </div>
@@ -292,7 +321,37 @@
       container.appendChild(row);
     }
 
-    // 🛠️ Mac 스텝퍼 전용 증감 인터랙션 스크립트 함수
+    // 🖥️ macOS 스타일 알림 패널 연출기 (마스터 다이얼로그 브로커)
+    function openMacAlert(title, subText, type, onConfirm) {
+      const overlay = document.getElementById("macAlertOverlay");
+      document.getElementById("macAlertTitle").innerText = title;
+      document.getElementById("macAlertSub").innerText = subText;
+      const btnBox = document.getElementById("macAlertBtnBox");
+      btnBox.innerHTML = "";
+
+      if (type === "confirm") {
+        const cancelBtn = document.createElement("button");
+        cancelBtn.className = "mac-alert-btn cancel";
+        cancelBtn.innerText = "취소";
+        cancelBtn.onclick = () => { overlay.style.display = "none"; };
+        
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = "mac-alert-btn confirm";
+        confirmBtn.innerText = "확인";
+        confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
+        
+        btnBox.appendChild(cancelBtn);
+        btnBox.appendChild(confirmBtn);
+      } else {
+        const alertBtn = document.createElement("button");
+        alertBtn.className = "mac-alert-btn confirm";
+        alertBtn.innerText = "확인";
+        alertBtn.onclick = () => { overlay.style.display = "none"; };
+        btnBox.appendChild(alertBtn);
+      }
+      overlay.style.display = "flex";
+    }
+
     function stepMaxVal(amount) {
       if (isRunning) return;
       var input = document.getElementById("maxValInput");
@@ -418,7 +477,15 @@
       pushGridToFirebase();
     }
 
-    function triggerFirebaseReset() {
+    // 🛠️ Mac OS 모달 다이얼로그 연동 패치
+    function askFirebaseReset() {
+      if (isRunning) return;
+      openMacAlert("참가자 명단 초기화", "작성 중인 모든 명단 정보를 지우시겠습니까?", "confirm", () => {
+        executeFirebaseReset();
+      });
+    }
+
+    function executeFirebaseReset() {
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
         activeColorsState[i] = "";
@@ -434,10 +501,12 @@
       });
     }
 
-    function triggerTrashHistoryClear() {
-      db.update({
-        state: STATE.SAVED,
-        history: null
+    function askTrashHistoryClear() {
+      openMacAlert("결과 기록 삭제", "저장된 가챠 결과 기록을 모두 삭제하시겠습니까?", "confirm", () => {
+        db.update({
+          state: STATE.SAVED,
+          history: null
+        });
       });
     }
 
@@ -465,7 +534,9 @@
       }
 
       if (activeParticipants.length === 0) {
-        alert("닉네임과 색상이 지정된 참가자가 없습니다."); return;
+        // 🛠️ 버그 해결: alert 걷어내고 Mac 정석 알림창 매핑
+        openMacAlert("실행 불가 안내", "닉네임과 색상이 지정된 참가자가 없습니다.", "alert");
+        return;
       }
 
       var seedPool = [];
@@ -668,10 +739,11 @@
         card.className = "history-card";
         if (item.score === "0") card.classList.add("jackpot");
         
+        // 🛠️ 괄호 색상 문구 텍스트 제거 완료
         card.innerHTML = `
           <div class="p-info">
             <div class="p-dot" style="background: ${colorHexMap[item.color]}"></div>
-            <span>${item.name} (${item.color})</span>
+            <span>${item.name}</span>
           </div>
           <div class="p-score">${item.score}</div>
         `;
