@@ -101,7 +101,7 @@
     .table-row.done .result-score { color: #ff453a; }
     .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
 
-    /* 우측 가챠 머신 패널 */
+    /* 🎰 우측 가챠 머신 패널 */
     .gacha-machine-panel { flex: 0.8; min-width: 280px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--mac-accent); margin: 0; letter-spacing: 6px; text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); }
     .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 250px; box-sizing: border-box; }
@@ -122,7 +122,7 @@
     .btn-save { display: none; padding: 14px 45px; background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .btn-save:hover { background: #ffffff; color: #1c1c1e; }
 
-    /* 하단 세이브 히스토리 시트 */
+    /* 💾 하단 세이브 히스토리 시트 */
     .history-sheet {
       max-width: 1100px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -150,7 +150,7 @@
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
-          <div class="sheet-box-title">최대값</div>
+          <div class="sheet-box-title">MAX VALUE</div>
           <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="pushGridToFirebase()">
         </div>
         <div class="sheet-box">
@@ -182,7 +182,7 @@
           <div id="reel" class="reel"></div>
         </div>
       </div>
-      <button id="saveBtn" class="btn-save" onclick="saveGachaResult()">SAVE RESULT</button>
+      <button id="saveBtn" class="btn-save" onclick="triggerFirebaseSave()">SAVE RESULT</button>
     </div>
   </div>
 
@@ -192,7 +192,6 @@
   </div>
 
   <script>
-    // 보내준 Firebase 정보 연동
     const firebaseConfig = {
       apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
       authDomain: "nemotool.firebaseapp.com",
@@ -246,12 +245,12 @@
       container.appendChild(row);
     }
 
-    // 🌐 Firebase Realtime 스트리밍 감지기
+    // 🌐 Firebase 통합 단방향 이벤트 리스너 리얼타임 연동
     db.on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // 실시간 입력창 동기화
+      // 1. 실시간 입력창 보드 동기화 (작동 중이 아닐 때만)
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
@@ -266,8 +265,8 @@
           }
           
           var row = document.getElementById(`row-${idx}`);
+          row.classList.remove("active", "done", "jackpot-row");
           if (item.name.trim() !== "" && item.color) row.classList.add("active");
-          else row.classList.remove("active");
         });
       }
       
@@ -275,14 +274,17 @@
         document.getElementById("maxValInput").value = data.maxVal;
       }
 
-      // 실시간 머신 동시 작동 시그널
+      // 2. 상태(Status) 기반 실시간 동기화 오케스트레이션
       if (data.status === "spinning" && !isRunning) {
-        runGachaMachine(data.seedPool);
+        runGachaMachine(data.fullReelSequence, data.activeParticipants, data.modeSequence);
       }
 
-      // 실시간 리셋 시그널
-      if (data.status === "reset" && !isRunning) {
+      if (data.status === "reset") {
         localResetGrid();
+      }
+
+      if (data.status === "saved" && data.history) {
+        renderHistoryList(data.history);
       }
     });
 
@@ -302,20 +304,11 @@
     }
 
     function activateRow(idx) {
-      var name = document.getElementById(`name-${idx}`).value;
-      var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
-      var row = document.getElementById(`row-${idx}`);
-      if (name.trim() !== "" && checkedColor) row.classList.add("active");
-      else row.classList.remove("active");
-      
       pushGridToFirebase();
     }
 
     function triggerFirebaseReset() {
-      if (isRunning) return;
-      db.update({ status: "reset" }).then(() => {
-        localResetGrid();
-      });
+      db.update({ status: "reset", history: null });
     }
 
     function localResetGrid() {
@@ -324,59 +317,22 @@
         var checked = document.querySelector(`input[name="color-${i}"]:checked`);
         if(checked) checked.checked = false;
         document.getElementById(`score-${i}`).innerText = "--";
-        document.getElementById(`row-${i}`).className = "table-row";
+        
+        var row = document.getElementById(`row-${i}`);
+        row.className = "table-row";
+        row.style.borderColor = "";
       }
       reel.style.transition = 'none';
       reel.style.transform = 'none';
       reel.innerHTML = ""; 
-      saveBtn.style.display = "none"; clickBtn.disabled = false;
+      saveBtn.style.display = "none"; clickBtn.disabled = false; skipBtn.style.display = "none";
       historyGrid.innerHTML = "";
       historySheet.style.display = "none";
+      isRunning = false;
     }
 
     function triggerFirebaseStart() {
       if (isRunning) return;
-      var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
-      
-      var seedPool = [];
-      for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
-      for (var i = seedPool.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = seedPool[i]; seedPool[i] = seedPool[j]; seedPool[j] = temp;
-      }
-
-      db.update({
-        status: "spinning",
-        seedPool: seedPool
-      });
-    }
-
-    function createNumberElement(max, excludeValue) {
-      var div = document.createElement('div'); div.className = 'number';
-      var val;
-      do {
-        var tmp = Math.floor(Math.random() * (max + 1));
-        val = (tmp === 0 ? 0 : -tmp);
-      } while (excludeValue !== undefined && Math.abs(val - excludeValue) < 2);
-      div.innerText = val; return div;
-    }
-
-    function appendRandomNumbers(max, count) {
-      var fragment = document.createDocumentFragment();
-      for(var j=0; j < count; j++) { fragment.appendChild(createNumberElement(max)); }
-      reel.appendChild(fragment);
-    }
-
-    function wait(ms) {
-      return new Promise(resolve => {
-        var start = Date.now();
-        var timer = setInterval(() => {
-          if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
-        }, 30);
-      });
-    }
-
-    async function runGachaMachine(seedPool) {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
 
@@ -388,67 +344,138 @@
         }
       }
 
-      if (activeParticipants.length === 0) { return; }
+      if (activeParticipants.length === 0) {
+        alert("이름과 색상이 지정된 참가자가 없습니다."); return;
+      }
 
-      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
-      
-      reel.style.transition = 'none';
-      reel.style.transform = 'translateY(0px)';
-      reel.innerHTML = "";
-      isSkipped = false;
+      // 🎲 모든 난수/애니메이션 데이터 원천 생성 (Firebase 저장용)
+      var seedPool = [];
+      for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
+      for (var i = seedPool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = seedPool[i]; seedPool[i] = seedPool[j]; seedPool[j] = temp;
+      }
 
       var colorScoreMap = {};
       colorList.forEach((color, idx) => {
         colorScoreMap[color] = seedPool[idx % seedPool.length];
       });
 
-      activeParticipants.forEach(p => { p.score = colorScoreMap[p.color]; });
+      var fullReelSequence = [0]; // 최초 공백 spacer 대용
+      var modeSequence = [];
+      var spinCount = 24;
 
-      var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
+      activeParticipants.forEach(p => {
+        p.score = colorScoreMap[p.color];
+        
+        // 중간 난수 완벽 일치 고정화
+        for(var k=0; k < spinCount - 1; k++) {
+          var tmp = Math.floor(Math.random() * (maxVal + 1));
+          fullReelSequence.push(tmp === 0 ? 0 : -tmp);
+        }
+        fullReelSequence.push(p.score); // 타겟 점수 정밀 매핑
+        
+        var rand = Math.random();
+        modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); // 스냅 연출 고정
+        
+        // 오버슛 버퍼 난수 매핑
+        for(var k=0; k < 3; k++) {
+          var tmp = Math.floor(Math.random() * (maxVal + 1));
+          fullReelSequence.push(tmp === 0 ? 0 : -tmp);
+        }
+      });
+
+      db.update({
+        status: "spinning",
+        activeParticipants: activeParticipants,
+        fullReelSequence: fullReelSequence,
+        modeSequence: modeSequence
+      });
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => {
+        var start = Date.now();
+        var timer = setInterval(() => {
+          if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
+        }, 20);
+      });
+    }
+
+    async function runGachaMachine(fullReelSequence, activeParticipants, modeSequence) {
+      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
+      isSkipped = false;
+
+      // 🎨 클래스 잔상 완전 청소 버그 해결
+      document.querySelectorAll(".table-row").forEach(r => {
+        r.classList.remove("done", "jackpot-row");
+        r.style.borderColor = "";
+      });
+
+      // 릴 완전 초기화 로드
+      reel.style.transition = 'none';
+      reel.style.transform = 'translateY(0px)';
+      reel.innerHTML = "";
+
+      // Firebase에서 동기화된 모든 시퀀스 노드를 기반으로 릴 사전에 일괄 빌드
+      fullReelSequence.forEach((val, idx) => {
+        var div = document.createElement('div');
+        div.className = 'number';
+        div.innerText = val;
+        // 인덱싱을 활용하여 타겟 아이디 동적 설정
+        if (idx % 27 === 24 && idx > 0) {
+          var pIdx = Math.floor(idx / 27);
+          div.id = 'target-' + pIdx;
+        }
+        reel.appendChild(div);
+      });
+
+      var spinCount = 24;
 
       for (var i = 0; i < activeParticipants.length; i++) {
         if (isSkipped) break;
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
+        var mode = modeSequence[i];
         
+        // 현재 차례 테두리 컬러 안내 연출
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 24; 
-        var startIndex = reel.children.length;
-        appendRandomNumbers(maxVal, spinCount - 1);
-        reel.appendChild(createNumberElement(maxVal, p.score));
-
-        var f = document.createElement('div'); f.className = 'number'; f.id = 'target-' + i; f.innerText = p.score; reel.appendChild(f); 
-        var finalTargetIndex = startIndex + spinCount;
-        reel.appendChild(createNumberElement(maxVal, p.score));
-        appendRandomNumbers(maxVal, 2);
-        
-        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 20)));
-        var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
-        var rand = Math.random();
-        var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
-
+        // 덮어쓰기 병합 방지 프레임 안전장치 이중 삽입
+        await new Promise(r => requestAnimationFrame(r));
         reel.className = 'reel spinning';
+        await new Promise(r => requestAnimationFrame(r));
+
+        var finalTargetIndex = (i * 27) + spinCount;
+        var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
         var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
+        
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        await wait(3800); 
+        // ⏰ 타임아웃 끊김 해결 (T: 4s -> Wait: 4.05s 마진 적용)
+        await wait(4050); 
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
-          reel.className = 'reel ' + snapClass; reel.style.transform = 'translateY(-' + targetY + 'px)';
-          await wait(300); 
+          reel.className = 'reel ' + snapClass; 
+          reel.style.transform = 'translateY(-' + targetY + 'px)';
+          await wait(550); 
+
+          // 핑크 글씨 누적 버그 청산 및 정밀 하이라이트 매핑
+          document.querySelectorAll(".jackpot-hit, .final-hit").forEach(e => e.className = "number");
 
           var targetEl = document.getElementById('target-' + i);
           rowEl.classList.add("done");
           
           if (p.score === 0) {
-            targetEl.className = 'number jackpot-hit'; rowEl.classList.add('jackpot-row'); triggerJackpotBurst();
+            if(targetEl) targetEl.className = 'number jackpot-hit'; 
+            rowEl.classList.add('jackpot-row'); 
+            triggerJackpotBurst();
           } else {
-            targetEl.className = 'number final-hit';
+            if(targetEl) targetEl.className = 'number final-hit';
           }
           document.getElementById(`score-${p.id}`).innerText = p.score;
-          await wait(600);
+          await wait(700);
         }
       }
       showFinalGachaState(activeParticipants);
@@ -459,16 +486,21 @@
     function showFinalGachaState(activeParticipants) {
       var canvas = document.getElementById('jackpotCanvas');
       if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      
       reel.style.transition = 'none';
+      document.querySelectorAll(".jackpot-hit, .final-hit").forEach(e => e.className = "number");
+
       activeParticipants.forEach((p) => {
         var rowEl = document.getElementById(`row-${p.id}`);
         document.getElementById(`score-${p.id}`).innerText = p.score;
         rowEl.classList.add("done");
         if (p.score === 0) rowEl.classList.add('jackpot-row');
       });
+      
       document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
-      skipBtn.style.display = 'none'; saveBtn.style.display = 'block'; isRunning = false;
-      db.update({ status: "done" });
+      skipBtn.style.display = 'none'; 
+      saveBtn.style.display = 'block'; 
+      isRunning = false;
     }
 
     function triggerJackpotBurst() {
@@ -491,28 +523,47 @@
       animate();
     }
 
-    function saveGachaResult() {
-      historySheet.style.display = "flex";
+    // 🌐 실시간 전체 공유 세이브 트리거
+    function triggerFirebaseSave() {
+      var historyData = [];
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
         var scoreText = document.getElementById(`score-${i}`).innerText;
         
         if (name.trim() !== "" && checkedColor && scoreText !== "--") {
-          var card = document.createElement("div");
-          card.className = "history-card";
-          if (scoreText === "0") card.classList.add("jackpot");
-          
-          card.innerHTML = `
-            <div class="p-info">
-              <div class="p-dot" style="background: ${colorHexMap[checkedColor.value]}"></div>
-              <span>${name} (${checkedColor.value})</span>
-            </div>
-            <div class="p-score">${scoreText}</div>
-          `;
-          historyGrid.appendChild(card);
+          historyData.push({
+            name: name,
+            color: checkedColor.value,
+            score: scoreText
+          });
         }
       }
+      db.update({
+        status: "saved",
+        history: historyData
+      });
+    }
+
+    function renderHistoryList(historyData) {
+      historySheet.style.display = "flex";
+      historyGrid.innerHTML = ""; // 초기화 리렌더링
+      
+      historyData.forEach(item => {
+        var card = document.createElement("div");
+        card.className = "history-card";
+        if (item.score === "0") card.classList.add("jackpot");
+        
+        card.innerHTML = `
+          <div class="p-info">
+            <div class="p-dot" style="background: ${colorHexMap[item.color]}"></div>
+            <span>${item.name} (${item.color})</span>
+          </div>
+          <div class="p-score">${item.score}</div>
+        `;
+        historyGrid.appendChild(card);
+      });
+
       saveBtn.style.display = "none";
       clickBtn.disabled = false;
     }
