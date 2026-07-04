@@ -4,69 +4,83 @@
   <meta charset="UTF-8">
   <title>NEMO GACHA SYSTEM</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
     
+    :root {
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --mac-accent: #e2b4bd;
+    }
+
     body { 
       background: #0f0f12; color: #d1d1d6; font-family: 'Inter', sans-serif; 
-      display: flex; gap: 40px; align-items: center; justify-content: center;
-      height: 100vh; margin: 0; padding: 20px; overflow: hidden; position: relative;
+      display: flex; flex-direction: column; gap: 24px; align-items: center; justify-content: flex-start;
+      min-height: 100vh; margin: 0; padding: 40px 20px; overflow-y: auto; position: relative;
       box-sizing: border-box; user-select: none;
     }
-    #jackpotCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
-    .btn-skip { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); color: #636366; border: 1px solid rgba(226, 180, 189, 0.2); border-radius: 50%; cursor: pointer; font-size: 14px; transition: all 0.3s ease; z-index: 100; backdrop-filter: blur(10px); }
-    .btn-skip:hover { background: rgba(226, 180, 189, 0.8); color: #1c1c1e; border-color: #e2b4bd; box-shadow: 0 0 15px rgba(226, 180, 189, 0.3); }
+    
+    #jackpotCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+    
+    .btn-skip { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #8e8e93; border: 1px solid var(--border-glass); border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 100; backdrop-filter: blur(10px); }
+    .btn-skip:hover { background: var(--mac-accent); color: #1c1c1e; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 📊 좌측 컨트롤 패널 (Mac OS 환경 규격 정렬) */
+    /* 🖥️ 메인 컨테이너 (최대화/최소화 대응 유연한 그리드 배치) */
+    .gacha-main-workspace {
+      display: flex; gap: 35px; align-items: flex-start; justify-content: center;
+      max-width: 1100px; width: 100%; z-index: 10; flex-wrap: wrap;
+    }
+
+    /* 📊 좌측 컨트롤 패널 (Mac OS 시트 규격) */
     .sheet-control-panel {
-      width: 530px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 22px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
-      display: flex; flex-direction: column; gap: 20px; z-index: 10;
+      flex: 1.2; min-width: 500px; background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      display: flex; flex-direction: column; gap: 24px; backdrop-filter: blur(30px);
     }
-    .sheet-top-row { display: flex; gap: 12px; }
+    .sheet-top-row { display: flex; gap: 14px; align-items: center; }
     .sheet-box { 
-      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 8px; padding: 8px 12px; text-align: center; flex: 1;
+      background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass); 
+      border-radius: 10px; padding: 10px 14px; text-align: center; flex: 1;
     }
-    .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+    .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
     .sheet-box input[type="number"] {
-      width: 60px; background: transparent; border: none; color: #ff3b30; font-family: 'Space Mono';
-      font-size: 18px; font-weight: 700; text-align: center; outline: none;
+      width: 70px; background: transparent; border: none; color: #ff453a; font-family: 'Space Mono';
+      font-size: 20px; font-weight: 700; text-align: center; outline: none;
     }
     .btn-reset {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-      font-size: 12px; padding: 5px 14px; border-radius: 6px; cursor: pointer; transition: background 0.2s;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); color: #fff;
+      font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background 0.2s;
     }
-    .btn-reset:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-reset:hover { background: rgba(255, 255, 255, 0.12); }
     
     .btn-click {
-      flex: 1.5; background: #e2b4bd; color: #1c1c1e; border: none; border-radius: 8px;
-      font-size: 18px; font-weight: 700; font-family: 'Inter'; cursor: pointer;
-      transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(226, 180, 189, 0.2);
+      flex: 1.6; background: var(--mac-accent); color: #1c1c1e; border: none; border-radius: 10px;
+      padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(226, 180, 189, 0.2);
     }
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
-    .btn-click:disabled { background: #3a3a3c; color: #636366; cursor: default; box-shadow: none; transform: none; }
+    .btn-click:disabled { background: #2c2c2e; color: #48484a; cursor: default; box-shadow: none; transform: none; }
 
     /* 참가자 등록 테이블 */
-    .participant-table { display: flex; flex-direction: column; gap: 10px; }
-    .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 8px; font-size: 11px; color: #8e8e93; font-weight: 600; }
+    .participant-table { display: flex; flex-direction: column; gap: 12px; }
+    .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 10px; font-size: 12px; color: #8e8e93; font-weight: 600; }
     
     .table-row {
-      display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; gap: 14px; align-items: center;
-      background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.05);
-      padding: 10px; border-radius: 10px; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; gap: 16px; align-items: center;
+      background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.04);
+      padding: 12px; border-radius: 12px; transition: all 0.2s ease;
     }
-    .table-row.active { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
+    .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
     
     .table-row input[type="text"] {
-      background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #fff; font-size: 13px; padding: 4px; outline: none; width: 100%; box-sizing: border-box;
+      background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: #fff; font-size: 13.5px; padding: 4px; outline: none; width: 100%; box-sizing: border-box;
     }
-    .table-row input[type="text"]:focus { border-bottom-color: #007aff; }
+    .table-row input[type="text"]:focus { border-bottom-color: #0a84ff; }
     
-    /* 💊 [전면 보완] MacOS 정석 스타일 가로 미니 캡슐 바 (Segmented Control) */
+    /* MacOS 정석 세그먼트 컨트롤 */
     .mac-capsule-control {
-      display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 8px;
-      padding: 2px; border: 1px solid rgba(255, 255, 255, 0.04); justify-content: space-between;
+      display: flex; background: rgba(255, 255, 255, 0.04); border-radius: 8px;
+      padding: 2px; border: 1px solid rgba(255, 255, 255, 0.02); justify-content: space-between; gap: 2px;
     }
     .capsule-chip-label {
       flex: 1; text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0;
@@ -75,97 +89,134 @@
     }
     .capsule-chip-label input[type="radio"] { display: none; }
     .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
-    
-    /* 체크되었을 때 활성화되는 정밀 맥북 스타일 캡슐 칩 */
     .capsule-chip-label:has(input[type="radio"]:checked) {
       color: #fff; background: var(--theme-color);
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #8e8e93; }
-    .table-row.done .result-score { color: #ff3b30; }
-    .table-row.done.jackpot-row .result-score { color: #e2b4bd; text-shadow: 0 0 8px #e2b4bd; }
+    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #48484a; }
+    .table-row.active .result-score { color: #8e8e93; }
+    .table-row.done .result-score { color: #ff453a; }
+    .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
 
-    /* 🎰 우측 가챠 머신 프레임 */
-    .gacha-machine-panel { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
-    .header-box { text-align: center; }
-    .header-main { font-family: 'Poiret One', cursive; font-size: 34px; font-weight: 400; color: #e2b4bd; margin: 0; letter-spacing: 4px; }
-    .machine-frame { background: #1c1c1e; padding: 12px; border-radius: 40px; border: 1px solid #3a3a3c; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 240px; }
-    .slot-display { width: 200px; height: 200px; border-radius: 30px; overflow: hidden; position: relative; margin: 0 auto; background: #000000; }
-    .curve-shadow { position: absolute; left: 0; width: 100%; height: 80px; z-index: 15; pointer-events: none; }
+    /* 🎰 우측 가챠 머신 패널 */
+    .gacha-machine-panel { flex: 0.8; min-width: 280px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
+    .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--mac-accent); margin: 0; letter-spacing: 6px; text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); }
+    .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 250px; box-sizing: border-box; }
+    .slot-display { width: 100%; height: 210px; border-radius: 32px; overflow: hidden; position: relative; background: #000000; border: 1px solid rgba(255,255,255,0.03); }
+    .curve-shadow { position: absolute; left: 0; width: 100%; height: 85px; z-index: 15; pointer-events: none; }
     .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
     .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
-    .center-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 1px; background: #e2b4bd; box-shadow: 0 0 10px #e2b4bd; transform: translateY(-50%); z-index: 25; pointer-events: none; }
+    .center-line { position: absolute; top: 50%; left: 8%; width: 84%; height: 1px; background: var(--mac-accent); box-shadow: 0 0 12px var(--mac-accent); transform: translateY(-50%); z-index: 25; pointer-events: none; }
     .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
-    .spinning { transition: transform 6.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-    .number { height: 80px; line-height: 80px; font-size: 48px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
-    .final-hit { color: #ff3b30 !important; }
-    .jackpot-hit { color: #e2b4bd !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); animation: softPulse 0.5s infinite alternate; }
+    
+    .spinning { transition: transform 5s cubic-bezier(0.15, 0.85, 0.15, 1); }
+    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    
+    .number { height: 85px; line-height: 85px; font-size: 50px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; transition: color 0.3s; }
+    .final-hit { color: #ff453a !important; }
+    .jackpot-hit { color: var(--mac-accent) !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); }
 
-    .btn-finish { display: none; padding: 12px 40px; background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.2s; }
-    .btn-finish:hover { background: #ffffff; color: #1c1c1e; }
+    .btn-save { display: none; padding: 14px 45px; background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .btn-save:hover { background: #ffffff; color: #1c1c1e; }
+
+    /* 💾 하단 세이브 히스토리 시트 위젯 */
+    .history-sheet {
+      max-width: 1100px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      display: none; flex-direction: column; gap: 14px; backdrop-filter: blur(20px);
+    }
+    .history-title { font-size: 13px; color: #8e8e93; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
+    .history-title::before { content: '📂'; }
+    .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .history-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .history-card .p-info { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .history-card .p-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .history-card .p-score { font-family: 'Space Mono'; font-weight: 700; font-size: 15px; color: #ff453a; }
+    .history-card.jackpot .p-score { color: var(--mac-accent); text-shadow: 0 0 6px var(--mac-accent); }
+    
+    /* 🌐 상단 커넥션 지시등 바 */
+    .network-badge { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8e8e93; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
   </style>
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
+  <div class="network-badge"><div class="network-dot"></div><span>SYNC ONLINE (SHARE ROOM)</span></div>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
-  <div class="sheet-control-panel">
-    <div class="sheet-top-row">
-      <div class="sheet-box">
-        <div class="sheet-box-title">- 최대값 (B3)</div>
-        <input type="number" id="maxValInput" min="1" max="99" value="5">
+  <div class="gacha-main-workspace">
+    <!-- 좌측 보드 패널 -->
+    <div class="sheet-control-panel">
+      <div class="sheet-top-row">
+        <div class="sheet-box">
+          <div class="sheet-box-title">MAX VALUE</div>
+          <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="broadcastData()">
+        </div>
+        <div class="sheet-box">
+          <div class="sheet-box-title">SYSTEM ARCHIVE</div>
+          <button class="btn-reset" onclick="resetGachaGrid(true)">RESET GRID</button>
+        </div>
+        <button class="btn-click" id="clickBtn" onclick="triggerMachineStart()">START GACHA MACHINE</button>
       </div>
-      <div class="sheet-box">
-        <div class="sheet-box-title">초기화 (C3)</div>
-        <button class="btn-reset" onclick="resetGachaGrid()">RESET</button>
+
+      <div class="participant-table">
+        <div class="table-header">
+          <span>PARTICIPANT NAME</span>
+          <center>CHIPS SELECTION</center>
+          <center>SCORE SHEET</center>
+        </div>
+        <div id="tableRowsContainer"></div>
       </div>
-      <button class="btn-click" id="clickBtn" onclick="runGachaMachine()">CLICK (D2)</button>
     </div>
 
-    <div class="participant-table">
-      <div class="table-header">
-        <span>참가자 이름 (B열)</span>
-        <center>지정 색상 (C열)</center>
-        <center>결과값 (D열)</center>
+    <!-- 우측 머신 패널 -->
+    <div class="gacha-machine-panel">
+      <div class="header-box">
+        <h1 class="header-main">NEMO GACHA</h1>
       </div>
-      <div id="tableRowsContainer"></div>
+      <div class="machine-frame">
+        <div class="slot-display">
+          <div class="top-shadow curve-shadow"></div>
+          <div class="bottom-shadow curve-shadow"></div>
+          <div class="center-line"></div>
+          <div id="reel" class="reel"></div>
+        </div>
+      </div>
+      <button id="saveBtn" class="btn-save" onclick="saveGachaResult()">SAVE RESULT</button>
     </div>
   </div>
 
-  <div class="gacha-machine-panel">
-    <div class="header-box">
-      <h1 class="header-main">NEMO GACHA</h1>
-    </div>
-    <div class="machine-frame">
-      <div class="slot-display">
-        <div class="top-shadow curve-shadow"></div>
-        <div class="bottom-shadow curve-shadow"></div>
-        <div class="center-line"></div>
-        <div id="reel" class="reel"></div>
-      </div>
-    </div>
-    <button id="finishBtn" class="btn-finish" onclick="closeGachaApp()">CLOSE WINDOW</button>
+  <!-- 하단 아카이브 시트 -->
+  <div class="history-sheet" id="historySheet">
+    <div class="history-title">SAVED SESSION RECORDS</div>
+    <div class="history-grid" id="historyGrid"></div>
   </div>
 
   <script>
     var reel = document.getElementById('reel');
     var clickBtn = document.getElementById('clickBtn');
-    var finishBtn = document.getElementById('finishBtn');
+    var saveBtn = document.getElementById('saveBtn');
     var skipBtn = document.getElementById('skipBtn');
+    var historySheet = document.getElementById('historySheet');
+    var historyGrid = document.getElementById('historyGrid');
     
     var isSkipped = false;
     var isRunning = false;
-    var ITEM_HEIGHT = 80;
-    var DISPLAY_HEIGHT = 200;
+    var ITEM_HEIGHT = 85;
+    var DISPLAY_HEIGHT = 210;
     var CENTER_OFFSET = (DISPLAY_HEIGHT / 2) - (ITEM_HEIGHT / 2); 
     
-    var colorHexMap = { "빨간색": "#ff3b30", "주황색": "#ff9500", "노랑색": "#ffcc00", "초록색": "#34c759", "파랑색": "#007aff", "보라색": "#af52de" };
+    var colorHexMap = { "빨간색": "#ff453a", "주황색": "#ff9f0a", "노랑색": "#ffd60a", "초록색": "#30d158", "파랑색": "#0a84ff", "보라색": "#bf5af2" };
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
 
-    // 가로 미니 캡슐 세그먼트 형태로 그리드 렌더링
+    // 🌐 실시간 스프레드시트 공유 시스템 (WebRTC/P2P 공용 중계 브로커 활용)
+    var roomName = window.location.pathname.replace(/[^a-zA-Z0-9]/g, '') || 'nemoDefaultRoom';
+    var pubSubUrl = `https://pubsub.pubnub.com/v2/subscribe/sub-c-7b44747c-7d9a-11e5-82b5-0619f8945a4b/${roomName}/0/`;
+    var pubPublishUrl = `https://pubsub.pubnub.com/v1/publish/pub-c-4e8a1f73-b3c1-4bda-a7e8-466d71b3e8ee/sub-c-7b44747c-7d9a-11e5-82b5-0619f8945a4b/0/${roomName}/0`;
+    
+    // 그리드 동적 생성
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
@@ -174,13 +225,13 @@
       
       let segmentsHtml = colorList.map(color => `
         <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
-          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
+          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i}, true)">
           <span>${colorShortMap[color]}</span>
         </label>
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="이름 입력" oninput="activateRow(${i})">
+        <input type="text" id="name-${i}" placeholder="Enter Name" oninput="activateRow(${i}, true)">
         <div class="mac-capsule-control">
           ${segmentsHtml}
         </div>
@@ -189,18 +240,60 @@
       container.appendChild(row);
     }
 
-    function activateRow(idx) {
+    // 🌐 네트워크 리스너 (실시간 수신 연동)
+    function startListening() {
+      var eventSource = new EventSource(pubSubUrl);
+      eventSource.onmessage = function(e) {
+        try {
+          var data = JSON.parse(e.data)[0][0];
+          if(data.sender === myId) return; // 내가 보낸 건 패스
+          
+          if(data.type === 'sync') {
+            data.grid.forEach((item, idx) => {
+              document.getElementById(`name-${idx}`).value = item.name;
+              if(item.color) {
+                var rad = document.querySelector(`input[name="color-${idx}"][value="${item.color}"]`);
+                if(rad) rad.checked = true;
+              } else {
+                var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
+                if(checked) checked.checked = false;
+              }
+              activateRow(idx, false);
+            });
+            document.getElementById("maxValInput").value = data.maxVal;
+          } else if(data.type === 'start') {
+            runGachaMachine(data.seedPool);
+          } else if (data.type === 'reset') {
+            resetGachaGrid(false);
+          }
+        } catch(err) {}
+      };
+    }
+    var myId = Math.random().toString(36).substring(2);
+    setTimeout(startListening, 500);
+
+    function broadcastData() {
+      var gridData = [];
+      for(let i=0; i<6; i++) {
+        var name = document.getElementById(`name-${i}`).value;
+        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
+        gridData.push({ name: name, color: checkedColor ? checkedColor.value : null });
+      }
+      var payload = { sender: myId, type: 'sync', grid: gridData, maxVal: document.getElementById("maxValInput").value };
+      fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).catch(()=>{});
+    }
+
+    function activateRow(idx, shouldBroadcast) {
       var name = document.getElementById(`name-${idx}`).value;
       var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
       var row = document.getElementById(`row-${idx}`);
-      if (name.trim() !== "" && checkedColor) {
-        row.classList.add("active");
-      } else {
-        row.classList.remove("active");
-      }
+      if (name.trim() !== "" && checkedColor) row.classList.add("active");
+      else row.classList.remove("active");
+      
+      if(shouldBroadcast) broadcastData();
     }
 
-    function resetGachaGrid() {
+    function resetGachaGrid(shouldBroadcast) {
       if(isRunning) return;
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
@@ -209,8 +302,34 @@
         document.getElementById(`score-${i}`).innerText = "--";
         document.getElementById(`row-${i}`).className = "table-row";
       }
-      reel.innerHTML = ""; reel.style.transform = "none";
-      finishBtn.style.display = "none"; clickBtn.disabled = false;
+      reel.style.transition = 'none';
+      reel.style.transform = 'none';
+      reel.innerHTML = ""; 
+      saveBtn.style.display = "none"; clickBtn.disabled = false;
+      
+      // 리셋 시 히스토리 보관함까지 모조리 초기화 시키기
+      historyGrid.innerHTML = "";
+      historySheet.style.display = "none";
+
+      if(shouldBroadcast) {
+        var payload = { sender: myId, type: 'reset' };
+        fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).catch(()=>{});
+      }
+    }
+
+    function triggerMachineStart() {
+      // 랜덤 시드풀 생성 후 전송하여 똑같은 결과값 분배 공유
+      var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
+      var seedPool = [];
+      for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
+      for (var i = seedPool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = seedPool[i]; seedPool[i] = seedPool[j]; seedPool[j] = temp;
+      }
+      var payload = { sender: myId, type: 'start', seedPool: seedPool };
+      fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).then(() => {
+        runGachaMachine(seedPool);
+      }).catch(()=>{});
     }
 
     function createNumberElement(max, excludeValue) {
@@ -238,7 +357,7 @@
       });
     }
 
-    async function runGachaMachine() {
+    async function runGachaMachine(seedPool) {
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
       var activeParticipants = [];
 
@@ -254,18 +373,17 @@
         alert("이름과 색상이 지정된 참가자가 없습니다."); return;
       }
 
-      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; reel.innerHTML = "";
+      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
       
-      var scorePool = [];
-      for (var i = 0; i <= maxVal; i++) scorePool.push(i === 0 ? 0 : -i);
-      for (var i = scorePool.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = scorePool[i]; scorePool[i] = scorePool[j]; scorePool[j] = temp;
-      }
+      // 릴 상태 완전 초기화 처리하여 끊김 제거
+      reel.style.transition = 'none';
+      reel.style.transform = 'translateY(0px)';
+      reel.innerHTML = "";
+      isSkipped = false;
 
       var colorScoreMap = {};
       colorList.forEach((color, idx) => {
-        colorScoreMap[color] = scorePool[idx % scorePool.length];
+        colorScoreMap[color] = seedPool[idx % seedPool.length];
       });
 
       activeParticipants.forEach(p => {
@@ -282,7 +400,7 @@
         document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 35; 
+        var spinCount = 30; 
         var startIndex = reel.children.length;
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
@@ -298,10 +416,10 @@
         var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
 
         reel.className = 'reel spinning';
-        var stopOffset = mode === 'B' ? -40 : (mode === 'C' ? 40 : 0);
+        var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        await wait(6000); 
+        await wait(4500); // 릴 도는 시간 최적화 촉진
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
@@ -317,10 +435,14 @@
             targetEl.className = 'number final-hit';
           }
           document.getElementById(`score-${p.id}`).innerText = p.score;
-          await wait(1000);
+          await wait(800);
         }
       }
       showFinalGachaState(activeParticipants);
+    }
+
+    function skipAll() {
+      isSkipped = true;
     }
 
     function showFinalGachaState(activeParticipants) {
@@ -334,7 +456,7 @@
         if (p.score === 0) rowEl.classList.add('jackpot-row');
       });
       document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
-      skipBtn.style.display = 'none'; finishBtn.style.display = 'block'; isRunning = false;
+      skipBtn.style.display = 'none'; saveBtn.style.display = 'block'; isRunning = false;
     }
 
     function triggerJackpotBurst() {
@@ -342,7 +464,7 @@
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       var particles = [];
       for(var i=0; i<80; i++) {
-        particles.push({ x: canvas.width/2 + 100, y: canvas.height/2.2, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
+        particles.push({ x: canvas.width/2 + 160, y: canvas.height/2.5, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
       }
       function animate() {
         if (isSkipped) return; ctx.clearRect(0,0,canvas.width, canvas.height); var alive = false;
@@ -357,8 +479,33 @@
       animate();
     }
 
-    function closeGachaApp() {
-      if(window.parent && window.parent.closeApp) window.parent.closeApp();
+    // 결과 세이브 아카이브 저장 시스템 기능
+    function saveGachaResult() {
+      historySheet.style.display = "flex";
+      
+      for (let i = 0; i < 6; i++) {
+        var name = document.getElementById(`name-${i}`).value;
+        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
+        var scoreText = document.getElementById(`score-${i}`).innerText;
+        
+        if (name.trim() !== "" && checkedColor && scoreText !== "--") {
+          var card = document.createElement("div");
+          card.className = "history-card";
+          if (scoreText === "0") card.classList.add("jackpot");
+          
+          card.innerHTML = `
+            <div class="p-info">
+              <div class="p-dot" style="background: ${colorHexMap[checkedColor.value]}"></div>
+              <span>${name} (${checkedColor.value})</span>
+            </div>
+            <div class="p-score">${scoreText}</div>
+          `;
+          historyGrid.appendChild(card);
+        }
+      }
+      // 세이브 완료 후 가챠 초기 구동 환경 복귀
+      saveBtn.style.display = "none";
+      clickBtn.disabled = false;
     }
   </script>
 </body>
