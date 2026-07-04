@@ -66,13 +66,13 @@
     }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.12); }
     
-    /* ⚡ [리뉴얼] Mac App Store 감성의 가챠머신 실행 버튼 (고급 햅틱 스타일) */
+    /* ⚡ Mac App Store 감성의 가챠머신 실행 버튼 */
     .btn-click {
       flex: 1.4; 
       background: rgba(226, 180, 189, 0.08); 
       color: var(--mac-accent); 
       border: 1px solid rgba(226, 180, 189, 0.35); 
-      border-radius: 26px; /* 맥 캡슐 디자인 */
+      border-radius: 26px; 
       height: 52px; 
       font-size: 15.5px; 
       font-weight: 700; 
@@ -89,7 +89,7 @@
       box-shadow: 0 8px 24px rgba(226, 180, 189, 0.25); 
     }
     .btn-click:active {
-      transform: translateY(0px) scale(0.98); /* 물리적 클릭 효과 */
+      transform: translateY(0px) scale(0.98); 
       box-shadow: 0 4px 12px rgba(226, 180, 189, 0.15);
     }
     .btn-click:disabled { background: #2c2c2e; color: #48484a; border-color: transparent; cursor: default; box-shadow: none; transform: none; }
@@ -100,7 +100,6 @@
     .table-header center { text-align: center; }
     .table-header right-head { text-align: right; padding-right: 12px; }
 
-    /* 🛠️ [image_ad17a3.png 보완]: 하단 마진 배치를 통해 테두리가 겹쳐 두꺼워지는 현상 방지 및 선 독립 분리 */
     .table-row {
       display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; gap: 14px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.04);
@@ -108,7 +107,7 @@
       margin-bottom: 8px; 
       transition: all 0.2s ease; 
     }
-    .table-row:last-child { margin-bottom: 0; } /* 마지막 행 마진 리셋 */
+    .table-row:last-child { margin-bottom: 0; } 
     .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
     .table-row.active-border { border-color: var(--theme-color) !important; }
     
@@ -180,7 +179,6 @@
     .history-card .p-score { font-family: 'Space Mono'; font-weight: 700; font-size: 15px; color: #ff453a; }
     .history-card.jackpot .p-score { color: var(--mac-accent); text-shadow: 0 0 6px var(--mac-accent); }
     
-    /* 🌐 한국어 실시간 텍스트 배지 교체 완료 */
     .network-badge { position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
     .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
@@ -720,7 +718,11 @@
       animate();
     }
 
+    // 🌐 1번 문제 해결: 트랜잭션 레이스 컨디션 및 중복 세이브 방어 로직 패치
     function triggerFirebaseSave() {
+      // 1단계: 클릭되자마자 로컬 단에서 버튼을 즉시 소멸시켜 연속 클릭 차단
+      saveBtn.style.display = "none";
+
       var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
@@ -736,10 +738,19 @@
         }
       }
 
+      // 2단계: 최신 스냅샷을 1회 읽어와 트랜잭션 유효성 검증
       db.once("value", (snapshot) => {
-        var oldHistory = snapshot.val()?.history || [];
+        var serverData = snapshot.val();
+        
+        // 중요: 이미 다른 사람이 저장을 완료해서 파이어베이스 상태가 SAVED라면 중복 처리 스킵
+        if (serverData && serverData.state === STATE.SAVED) {
+          return; 
+        }
+
+        var oldHistory = serverData?.history || [];
         var mergedHistory = [...oldHistory, ...currentGachaData];
         
+        // 최종적으로 파이어베이스 데이터베이스 병합 업데이트 단행
         db.update({
           state: STATE.SAVED,
           history: mergedHistory
