@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>NEMO GACHA SYSTEM</title>
+  
+  <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
     
@@ -24,13 +29,12 @@
     .btn-skip { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #8e8e93; border: 1px solid var(--border-glass); border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: var(--mac-accent); color: #1c1c1e; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
-    /* 🖥️ 메인 컨테이너 (최대화/최소화 대응 유연한 그리드 배치) */
     .gacha-main-workspace {
       display: flex; gap: 35px; align-items: flex-start; justify-content: center;
       max-width: 1100px; width: 100%; z-index: 10; flex-wrap: wrap;
     }
 
-    /* 📊 좌측 컨트롤 패널 (Mac OS 시트 규격) */
+    /* 📊 좌측 컨트롤 패널 */
     .sheet-control-panel {
       flex: 1.2; min-width: 500px; background: var(--bg-glass); border: 1px solid var(--border-glass);
       border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -60,7 +64,6 @@
     .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
     .btn-click:disabled { background: #2c2c2e; color: #48484a; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 등록 테이블 */
     .participant-table { display: flex; flex-direction: column; gap: 12px; }
     .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 10px; font-size: 12px; color: #8e8e93; font-weight: 600; }
     
@@ -77,7 +80,6 @@
     }
     .table-row input[type="text"]:focus { border-bottom-color: #0a84ff; }
     
-    /* MacOS 정석 세그먼트 컨트롤 */
     .mac-capsule-control {
       display: flex; background: rgba(255, 255, 255, 0.04); border-radius: 8px;
       padding: 2px; border: 1px solid rgba(255, 255, 255, 0.02); justify-content: space-between; gap: 2px;
@@ -108,19 +110,19 @@
     .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
     .bottom-shadow { bottom: 0; background: linear-gradient(to top, #000, transparent); }
     .center-line { position: absolute; top: 50%; left: 8%; width: 84%; height: 1px; background: var(--mac-accent); box-shadow: 0 0 12px var(--mac-accent); transform: translateY(-50%); z-index: 25; pointer-events: none; }
-    .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+    .reel { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; align-items: center; }
     
-    .spinning { transition: transform 5s cubic-bezier(0.15, 0.85, 0.15, 1); }
-    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .spinning { transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1); }
+    .snap-smooth, .snap-undershoot, .snap-overshoot { transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
     
-    .number { height: 85px; line-height: 85px; font-size: 50px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; transition: color 0.3s; }
+    .number { height: 85px; line-height: 85px; font-size: 50px; font-family: 'Space Mono', monospace; color: #2c2c2e; font-weight: 700; }
     .final-hit { color: #ff453a !important; }
     .jackpot-hit { color: var(--mac-accent) !important; text-shadow: 0 0 20px rgba(226, 180, 189, 0.6); }
 
     .btn-save { display: none; padding: 14px 45px; background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .btn-save:hover { background: #ffffff; color: #1c1c1e; }
 
-    /* 💾 하단 세이브 히스토리 시트 위젯 */
+    /* 💾 하단 세이브 히스토리 시트 */
     .history-sheet {
       max-width: 1100px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -135,29 +137,27 @@
     .history-card .p-score { font-family: 'Space Mono'; font-weight: 700; font-size: 15px; color: #ff453a; }
     .history-card.jackpot .p-score { color: var(--mac-accent); text-shadow: 0 0 6px var(--mac-accent); }
     
-    /* 🌐 상단 커넥션 지시등 바 */
-    .network-badge { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8e8e93; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .network-badge { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
     .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
   </style>
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <div class="network-badge"><div class="network-dot"></div><span>SYNC ONLINE (SHARE ROOM)</span></div>
+  <div class="network-badge"><div class="network-dot"></div><span>FIREBASE REALTIME ONLINE</span></div>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="skipAll()">»</button>
   
   <div class="gacha-main-workspace">
-    <!-- 좌측 보드 패널 -->
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
           <div class="sheet-box-title">MAX VALUE</div>
-          <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="broadcastData()">
+          <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="pushGridToFirebase()">
         </div>
         <div class="sheet-box">
           <div class="sheet-box-title">SYSTEM ARCHIVE</div>
-          <button class="btn-reset" onclick="resetGachaGrid(true)">RESET GRID</button>
+          <button class="btn-reset" onclick="triggerFirebaseReset()">RESET GRID</button>
         </div>
-        <button class="btn-click" id="clickBtn" onclick="triggerMachineStart()">START GACHA MACHINE</button>
+        <button class="btn-click" id="clickBtn" onclick="triggerFirebaseStart()">START GACHA MACHINE</button>
       </div>
 
       <div class="participant-table">
@@ -170,7 +170,6 @@
       </div>
     </div>
 
-    <!-- 우측 머신 패널 -->
     <div class="gacha-machine-panel">
       <div class="header-box">
         <h1 class="header-main">NEMO GACHA</h1>
@@ -187,13 +186,26 @@
     </div>
   </div>
 
-  <!-- 하단 아카이브 시트 -->
   <div class="history-sheet" id="historySheet">
     <div class="history-title">SAVED SESSION RECORDS</div>
     <div class="history-grid" id="historyGrid"></div>
   </div>
 
   <script>
+    // 🛠️ 보내준 Firebase 정보 연동 완료!
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+      authDomain: "nemotool.firebaseapp.com",
+      databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+      projectId: "nemotool",
+      storageBucket: "nemotool.firebasestorage.app",
+      messagingSenderId: "1003940918420",
+      appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("nemo_gacha_session");
+
     var reel = document.getElementById('reel');
     var clickBtn = document.getElementById('clickBtn');
     var saveBtn = document.getElementById('saveBtn');
@@ -211,12 +223,6 @@
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
 
-    // 🌐 실시간 스프레드시트 공유 시스템 (WebRTC/P2P 공용 중계 브로커 활용)
-    var roomName = window.location.pathname.replace(/[^a-zA-Z0-9]/g, '') || 'nemoDefaultRoom';
-    var pubSubUrl = `https://pubsub.pubnub.com/v2/subscribe/sub-c-7b44747c-7d9a-11e5-82b5-0619f8945a4b/${roomName}/0/`;
-    var pubPublishUrl = `https://pubsub.pubnub.com/v1/publish/pub-c-4e8a1f73-b3c1-4bda-a7e8-466d71b3e8ee/sub-c-7b44747c-7d9a-11e5-82b5-0619f8945a4b/0/${roomName}/0`;
-    
-    // 그리드 동적 생성
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
@@ -225,13 +231,13 @@
       
       let segmentsHtml = colorList.map(color => `
         <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
-          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i}, true)">
+          <input type="radio" name="color-${i}" value="${color}" onchange="activateRow(${i})">
           <span>${colorShortMap[color]}</span>
         </label>
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="Enter Name" oninput="activateRow(${i}, true)">
+        <input type="text" id="name-${i}" placeholder="Enter Name" oninput="activateRow(${i})">
         <div class="mac-capsule-control">
           ${segmentsHtml}
         </div>
@@ -240,61 +246,79 @@
       container.appendChild(row);
     }
 
-    // 🌐 네트워크 리스너 (실시간 수신 연동)
-    function startListening() {
-      var eventSource = new EventSource(pubSubUrl);
-      eventSource.onmessage = function(e) {
-        try {
-          var data = JSON.parse(e.data)[0][0];
-          if(data.sender === myId) return; // 내가 보낸 건 패스
-          
-          if(data.type === 'sync') {
-            data.grid.forEach((item, idx) => {
-              document.getElementById(`name-${idx}`).value = item.name;
-              if(item.color) {
-                var rad = document.querySelector(`input[name="color-${idx}"][value="${item.color}"]`);
-                if(rad) rad.checked = true;
-              } else {
-                var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
-                if(checked) checked.checked = false;
-              }
-              activateRow(idx, false);
-            });
-            document.getElementById("maxValInput").value = data.maxVal;
-          } else if(data.type === 'start') {
-            runGachaMachine(data.seedPool);
-          } else if (data.type === 'reset') {
-            resetGachaGrid(false);
-          }
-        } catch(err) {}
-      };
-    }
-    var myId = Math.random().toString(36).substring(2);
-    setTimeout(startListening, 500);
+    // 🌐 Firebase Realtime 스트리밍 감지기
+    db.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
 
-    function broadcastData() {
+      // 실시간 입력창 동기화
+      if (data.grid && !isRunning) {
+        data.grid.forEach((item, idx) => {
+          const nameInput = document.getElementById(`name-${idx}`);
+          if(nameInput.value !== item.name) nameInput.value = item.name;
+          
+          if(item.color) {
+            var rad = document.querySelector(`input[name="color-${idx}"][value="${item.color}"]`);
+            if(rad && !rad.checked) rad.checked = true;
+          } else {
+            var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
+            if(checked) checked.checked = false;
+          }
+          
+          var row = document.getElementById(`row-${idx}`);
+          if (item.name.trim() !== "" && item.color) row.classList.add("active");
+          else row.classList.remove("active");
+        });
+      }
+      
+      if (data.maxVal && !isRunning) {
+        document.getElementById("maxValInput").value = data.maxVal;
+      }
+
+      // 실시간 머신 동시 작동 시그널
+      if (data.status === "spinning" && !isRunning) {
+        runGachaMachine(data.seedPool);
+      }
+
+      // 실시간 리셋 시그널
+      if (data.status === "reset" && !isRunning) {
+        localResetGrid();
+      }
+    });
+
+    function pushGridToFirebase() {
+      if (isRunning) return;
       var gridData = [];
       for(let i=0; i<6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
         gridData.push({ name: name, color: checkedColor ? checkedColor.value : null });
       }
-      var payload = { sender: myId, type: 'sync', grid: gridData, maxVal: document.getElementById("maxValInput").value };
-      fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).catch(()=>{});
+      db.update({
+        grid: gridData,
+        maxVal: document.getElementById("maxValInput").value,
+        status: "ready"
+      });
     }
 
-    function activateRow(idx, shouldBroadcast) {
+    function activateRow(idx) {
       var name = document.getElementById(`name-${idx}`).value;
       var checkedColor = document.querySelector(`input[name="color-${idx}"]:checked`);
       var row = document.getElementById(`row-${idx}`);
       if (name.trim() !== "" && checkedColor) row.classList.add("active");
       else row.classList.remove("active");
       
-      if(shouldBroadcast) broadcastData();
+      pushGridToFirebase();
     }
 
-    function resetGachaGrid(shouldBroadcast) {
-      if(isRunning) return;
+    function triggerFirebaseReset() {
+      if (isRunning) return;
+      db.update({ status: "reset" }).then(() => {
+        localResetGrid();
+      });
+    }
+
+    function localResetGrid() {
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
         var checked = document.querySelector(`input[name="color-${i}"]:checked`);
@@ -306,30 +330,25 @@
       reel.style.transform = 'none';
       reel.innerHTML = ""; 
       saveBtn.style.display = "none"; clickBtn.disabled = false;
-      
-      // 리셋 시 히스토리 보관함까지 모조리 초기화 시키기
       historyGrid.innerHTML = "";
       historySheet.style.display = "none";
-
-      if(shouldBroadcast) {
-        var payload = { sender: myId, type: 'reset' };
-        fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).catch(()=>{});
-      }
     }
 
-    function triggerMachineStart() {
-      // 랜덤 시드풀 생성 후 전송하여 똑같은 결과값 분배 공유
+    function triggerFirebaseStart() {
+      if (isRunning) return;
       var maxVal = parseInt(document.getElementById("maxValInput").value) || 5;
+      
       var seedPool = [];
       for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
       for (var i = seedPool.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var temp = seedPool[i]; seedPool[i] = seedPool[j]; seedPool[j] = temp;
       }
-      var payload = { sender: myId, type: 'start', seedPool: seedPool };
-      fetch(`${pubPublishUrl}?message=${encodeURIComponent(JSON.stringify(payload))}`).then(() => {
-        runGachaMachine(seedPool);
-      }).catch(()=>{});
+
+      db.update({
+        status: "spinning",
+        seedPool: seedPool
+      });
     }
 
     function createNumberElement(max, excludeValue) {
@@ -353,7 +372,7 @@
         var start = Date.now();
         var timer = setInterval(() => {
           if (isSkipped || (Date.now() - start) >= ms) { clearInterval(timer); resolve(); }
-        }, 40);
+        }, 30);
       });
     }
 
@@ -369,13 +388,10 @@
         }
       }
 
-      if (activeParticipants.length === 0) {
-        alert("이름과 색상이 지정된 참가자가 없습니다."); return;
-      }
+      if (activeParticipants.length === 0) { return; }
 
       isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
       
-      // 릴 상태 완전 초기화 처리하여 끊김 제거
       reel.style.transition = 'none';
       reel.style.transform = 'translateY(0px)';
       reel.innerHTML = "";
@@ -386,9 +402,7 @@
         colorScoreMap[color] = seedPool[idx % seedPool.length];
       });
 
-      activeParticipants.forEach(p => {
-        p.score = colorScoreMap[p.color];
-      });
+      activeParticipants.forEach(p => { p.score = colorScoreMap[p.color]; });
 
       var spacer = document.createElement('div'); spacer.className = 'number'; reel.appendChild(spacer); 
 
@@ -397,10 +411,9 @@
         var p = activeParticipants[i];
         var rowEl = document.getElementById(`row-${p.id}`);
         
-        document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "rgba(255,255,255,0.05)");
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        var spinCount = 30; 
+        var spinCount = 24; 
         var startIndex = reel.children.length;
         appendRandomNumbers(maxVal, spinCount - 1);
         reel.appendChild(createNumberElement(maxVal, p.score));
@@ -410,7 +423,7 @@
         reel.appendChild(createNumberElement(maxVal, p.score));
         appendRandomNumbers(maxVal, 2);
         
-        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 40)));
+        await new Promise(r => requestAnimationFrame(() => setTimeout(r, 20)));
         var targetY = (finalTargetIndex * ITEM_HEIGHT) - CENTER_OFFSET;
         var rand = Math.random();
         var mode = (rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C');
@@ -419,12 +432,12 @@
         var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        await wait(4500); // 릴 도는 시간 최적화 촉진
+        await wait(3800); 
 
         if(!isSkipped) {
           var snapClass = (mode === 'A') ? 'snap-smooth' : (mode === 'B' ? 'snap-undershoot' : 'snap-overshoot');
           reel.className = 'reel ' + snapClass; reel.style.transform = 'translateY(-' + targetY + 'px)';
-          await wait(400); 
+          await wait(300); 
 
           var targetEl = document.getElementById('target-' + i);
           rowEl.classList.add("done");
@@ -435,15 +448,13 @@
             targetEl.className = 'number final-hit';
           }
           document.getElementById(`score-${p.id}`).innerText = p.score;
-          await wait(800);
+          await wait(600);
         }
       }
       showFinalGachaState(activeParticipants);
     }
 
-    function skipAll() {
-      isSkipped = true;
-    }
+    function skipAll() { isSkipped = true; }
 
     function showFinalGachaState(activeParticipants) {
       var canvas = document.getElementById('jackpotCanvas');
@@ -457,13 +468,14 @@
       });
       document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
       skipBtn.style.display = 'none'; saveBtn.style.display = 'block'; isRunning = false;
+      db.update({ status: "done" });
     }
 
     function triggerJackpotBurst() {
       var canvas = document.getElementById('jackpotCanvas'); var ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       var particles = [];
-      for(var i=0; i<80; i++) {
+      for(var i=0; i<60; i++) {
         particles.push({ x: canvas.width/2 + 160, y: canvas.height/2.5, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12 - 4, w: Math.random()*3+1, h: Math.random()*3+1, color: i % 2 === 0 ? '#e2b4bd' : '#ffffff', life: 1.0 });
       }
       function animate() {
@@ -479,10 +491,8 @@
       animate();
     }
 
-    // 결과 세이브 아카이브 저장 시스템 기능
     function saveGachaResult() {
       historySheet.style.display = "flex";
-      
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
         var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
@@ -503,7 +513,6 @@
           historyGrid.appendChild(card);
         }
       }
-      // 세이브 완료 후 가챠 초기 구동 환경 복귀
       saveBtn.style.display = "none";
       clickBtn.disabled = false;
     }
