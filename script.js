@@ -2,12 +2,12 @@ const folderData = {
     pubg: { 
         title: "배틀그라운드", 
         apps: [
-            { id: "pubg-gacha", name: "가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }, 
-            { id: "pubg-bingo", name: "빙고판", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-bingo.html" }
+            { id: "pubg-gacha", name: "가챠머신", icon: "gacha_icon.png", url: "pubg-gacha.html" }, 
+            { id: "pubg-bingo", name: "빙고판", icon: "bingo_icon.png", url: "pubg-bingo.html" }
         ] 
     },
-    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "https://cdn-icons-png.flaticon.com/512/825/825590.png", url: "lol-memo.html" }] },
-    sudden: { title: "서든어택", apps: [{ id: "sudden-aim", name: "서모장", icon: "https://cdn-icons-png.flaticon.com/512/5750/5750226.png", url: "sa-memo.html" }] }
+    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "lmemo_icon.png", url: "lol-memo.html" }] },
+    sudden: { title: "서든어택", apps: [{ id: "sudden-aim", name: "서모장", icon: "smemo_icon.png", url: "sa-memo.html" }] }
 };
 
 let minimizedWindows = {};
