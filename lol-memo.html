@@ -126,23 +126,21 @@
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px; 
-            overflow-x: hidden; 
+            overflow: hidden; 
             position: relative;
         }
         
-        /* 🛠️ [image_af7bff.png 치우침 해결]: 기본 정렬을 center로 세팅해 Bo1, Bo3 균형 유지 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
-            align-items: center; justify-content: center;
+            align-items: center; justify-content: flex-start;
         }
 
-        /* 창이 극단적으로 작아질 때 정렬 보정 대응 */
-        @media (max-width: 1150px) {
-            .result-scroll-core { justify-content: flex-start !important; }
+        .table-wrapper-binder {
+            display: flex; gap: 20px; margin: 0 auto; align-items: center;
         }
 
-        /* 스크롤바 모서리 파괴 방지 및 인라인 슬림 디자인 */
+        /* 스크롤바 인라인 마스킹 */
         .result-scroll-core::-webkit-scrollbar { height: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
@@ -152,7 +150,7 @@
         .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
-        /* 결과 시트 테이블 규격 고정 */
+        /* 결과 시트 테이블 */
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
             border-radius: 12px; overflow: hidden; 
@@ -166,23 +164,27 @@
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
+
+        /* 🛠️ [image_b96c15.png 수평 완치]: 수평 어긋남을 박멸하기 위해 패딩, 높이, 수직 정렬을 칼같이 동기화 */
         .set-table th.sub-hdr {
-            font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
+            font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; 
+            text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
         }
         
-        /* 닉네임 정석 3단계 셀 밀림 파괴 패치 */
+        /* 결과값 닉네임 정석 3단계 셀 */
         .set-table td {
             padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
             width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            letter-spacing: -0.2px;
+            letter-spacing: -0.2px; box-sizing: border-box;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
             background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015); letter-spacing: 0;
         }
 
-        /* 블루 레드 진영 헤더 */
+        /* 블루 레드 진영 테마 단색 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
         
@@ -283,8 +285,10 @@
         <!-- 우측 결과 보드 -->
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
-                <div class="no-result" id="noResultGrid">
-                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                <div class="table-wrapper-binder" id="tableWrapperBinder">
+                    <div class="no-result" id="noResultGrid">
+                        <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -333,11 +337,10 @@
             document.getElementById(`p1_${i}`).value = "";
             document.getElementById(`p2_${i}`).value = "";
         }
-        const scrollCore = document.getElementById("resultScrollCore");
-        scrollCore.style.justifyContent = "center"; // 원점 원복
-        scrollCore.innerHTML = `
+        const binder = document.getElementById("tableWrapperBinder");
+        binder.innerHTML = `
             <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 표시됩니다.</h3>
+                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
             </div>`;
     }
 
@@ -412,15 +415,8 @@
             }
         }
 
-        const scrollCore = document.getElementById("resultScrollCore");
-        scrollCore.innerHTML = ""; 
-        
-        // 🛠️ [Bo5 정렬 우회 패치]: 4개 이상의 세트(즉, Bo5)인 경우에만 강제로 왼쪽 정렬로 밀어 스크롤 트리거 활성화
-        if (totalSets >= 4) {
-            scrollCore.style.justifyContent = "flex-start";
-        } else {
-            scrollCore.style.justifyContent = "center";
-        }
+        const binder = document.getElementById("tableWrapperBinder");
+        binder.innerHTML = ""; 
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
@@ -489,6 +485,7 @@
             let teamAName = (set % 2 === 0) ? "블루팀" : "레드팀";
             let teamBName = (set % 2 === 0) ? "레드팀" : "블루팀";
             
+            // 🛠️ 찌꺼기 수식 수리 완비: 수평 균열 원인이던 스트링 버그를 말끔히 증발시킴
             let htmlPayload = `
                 <thead>
                     <tr>
@@ -514,7 +511,7 @@
             }
             htmlPayload += `</tbody>`;
             table.innerHTML = htmlPayload;
-            scrollCore.appendChild(table);
+            binder.appendChild(table);
         }
     }
 </script>
