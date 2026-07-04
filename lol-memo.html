@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
-    
-    <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        /* 🎨 프리미엄 서체 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
-        
+
         :root {
             --bg-main: #0f0f12;
             --bg-glass-active: rgba(255, 255, 255, 0.04);
@@ -21,655 +19,1170 @@
             --mac-blue: #007aff;
             --mac-red: #ff453a;
         }
-        
-        body {
-            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
-            min-height: 100vh; user-select: none; position: relative;
+
+        * {
+            box-sizing: border-box;
         }
 
-        /* 🛠️ 3번 반영: 가챠머신과 100% 동일 규격의 실시간 네온 배지 인프라 장착 */
-        .network-badge { 
-            position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
-            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
-            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
+        body {
+            background: var(--bg-main);
+            color: #d1d1d6;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 40px 24px;
+            overflow-y: auto;
+            min-height: 100vh;
+            user-select: none;
+            position: relative;
         }
-        .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
+
+        .network-badge {
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #34c759;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .network-dot {
+            width: 6px;
+            height: 6px;
+            background: #34c759;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #34c759;
+        }
 
         .container {
-            max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
+            max-width: 1250px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 10;
         }
 
-        /* 🖥️ 고급 Mac OS 상단 앱 바 타이틀 */
         .mac-app-header {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            width: 100%;
         }
+
         .mac-app-header h1 {
-            font-size: 38px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
-            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
+            font-size: 38px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            letter-spacing: 4px;
+            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.06));
         }
 
         .app-content {
-            display: grid; grid-template-columns: minmax(360px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
+            display: grid;
+            grid-template-columns: minmax(360px, 440px) 1fr;
+            gap: 30px;
+            align-items: start;
+            width: 100%;
         }
 
-        /* 좌측 구성 제어 셋 보드 */
         .setup-box {
-            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px;
+            background: var(--bg-glass-active);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(30px);
+            min-height: 520px;
+            height: 520px;
         }
-        
-        .mode-panel-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
-        }
-        .form-row { 
-            display: flex; flex-direction: column; gap: 6px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
-            border: 1px solid var(--border-glass); box-sizing: border-box; 
-        }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
-        
-        .mac-select {
-            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
-            cursor: pointer; transition: background 0.15s; font-family: inherit; width: 100%; box-sizing: border-box;
-            appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
-            background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
-        }
-        .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
-        .mac-select option { background: #1c1c1e; color: #fff; }
-        .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        /* 매칭 입력 영역 */
-        .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
-        
-        .table-row {
-            display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
-            background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255,255,255,0.03);
-            padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
+        .mode-panel-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
         }
-        .table-row:last-child { margin-bottom: 0; }
-        .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.015);
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8e8e93;
+            letter-spacing: -0.1px;
+        }
+
+        .mac-select {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 6px 24px 6px 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: inherit;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 10px;
+        }
+
+        .mac-select:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .mac-select option {
+            background: #1c1c1e;
+            color: #fff;
+        }
+
+        .mac-select:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .input-table-sheet {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 12px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.008);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .table-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .table-row.fixed-row {
+            background: rgba(255, 214, 10, 0.006);
+            border-color: rgba(255, 214, 10, 0.04);
+        }
 
         .table-row input[type="text"] {
-            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06);
-            color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500; text-align: center;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            font-size: 14px;
+            padding: 4px;
+            outline: none;
+            width: 100%;
+            font-weight: 500;
+            text-align: center;
             font-family: inherit;
         }
-        .table-row input[type="text"]::placeholder { color: #48484a; font-weight: 400; }
-        .table-row input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
-        
-        .vs-divider {
-            text-align: center; font-size: 11px; font-weight: 700; color: #636366; background: rgba(255,255,255,0.03); padding: 3px 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.01); letter-spacing: 0.5px;
-        }
-        .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        /* 하단 액션 버튼 그룹 */
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } 
-        
-        .btn-reset {
-            flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
-            border: 1px solid var(--border-glass); border-radius: 25px; font-weight: 500; font-size: 14px;
-            cursor: pointer; transition: all 0.2s; white-space: nowrap; box-sizing: border-box;
+        .table-row input[type="text"]::placeholder {
+            color: #48484a;
+            font-weight: 400;
         }
-        .btn-reset:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
-        .btn-reset:active { transform: translateY(0px) scale(0.98); }
+
+        .table-row input[type="text"]:focus {
+            border-bottom-color: var(--mac-blue);
+        }
+
+        .vs-divider {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #636366;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 3px 0;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.01);
+            letter-spacing: 0.5px;
+        }
+
+        .fixed-row .vs-divider {
+            color: rgba(255, 214, 10, 0.6);
+            background: rgba(255, 214, 10, 0.04);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .btn-reset {
+            flex: 0.7;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #e5e5ea;
+            border: 1px solid var(--border-glass);
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-reset:active {
+            transform: translateY(0) scale(0.98);
+        }
 
         .btn-assign {
-            flex: 1.3; height: 50px;
-            background: rgba(0, 122, 255, 0.08); color: #007aff; 
-            border: 1px solid rgba(0, 122, 255, 0.35); 
-            border-radius: 25px; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 0.2px;
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box;
+            flex: 1.3;
+            height: 50px;
+            background: rgba(0, 122, 255, 0.08);
+            color: #007aff;
+            border: 1px solid rgba(0, 122, 255, 0.35);
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            white-space: nowrap;
             box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
         }
-        .btn-assign:hover { 
-            background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); 
-            transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35); 
-        }
-        .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 우측 결과 보드 외부 컨테이너 */
+        .btn-assign:hover {
+            background: var(--mac-blue);
+            color: #ffffff;
+            border-color: var(--mac-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+        }
+
+        .btn-assign:active {
+            transform: translateY(0) scale(0.97);
+        }
+
         .result-container {
-            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
-            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
-            backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px; 
-            overflow: hidden; 
+            background: var(--bg-glass-passive);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(30px);
+            min-height: 520px;
+            height: 520px;
+            overflow: hidden;
             position: relative;
         }
-        
+
         .result-scroll-core {
-            width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
-            align-items: center; justify-content: flex-start;
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .table-wrapper-binder {
-            display: flex; gap: 20px; margin: 0 auto; align-items: center;
+            display: flex;
+            gap: 20px;
+            margin: 0 auto;
+            align-items: center;
         }
 
-        /* 스크롤바 인라인 마스킹 */
-        .result-scroll-core::-webkit-scrollbar { height: 6px; }
-        .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
-        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
-        .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
-        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15) !important; }
+        .result-scroll-core::-webkit-scrollbar {
+            height: 6px;
+        }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
+        .result-scroll-core::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-        /* 결과 시트 테이블 */
+        .result-scroll-core::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0);
+            border-radius: 10px;
+        }
+
+        .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .result-scroll-core::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        .no-result {
+            color: #8e8e93;
+            margin: auto;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .no-result h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #48484a;
+        }
+
         .set-table {
-            border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 12px; overflow: hidden; 
-            width: 220px; min-width: 220px; flex: 0 0 auto; 
-            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            overflow: hidden;
+            width: 220px;
+            min-width: 220px;
+            flex: 0 0 auto;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            table-layout: fixed;
         }
-        @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        
+
+        .set-table col.col-lane {
+            width: 44px;
+        }
+
+        .set-table col.col-team {
+            width: 88px;
+        }
+
         .set-table th.set-title {
-            background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
-            padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 10px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            color: #ffffff;
+            letter-spacing: 0.5px;
         }
 
         .set-table th.sub-hdr {
-            font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; 
-            text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 0 4px;
+            height: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #8e8e93;
+            text-transform: uppercase;
+            vertical-align: middle;
+            line-height: 32px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        
-        /* 🛠️ 2번 해결: 드래그를 대체할 macOS 전용 세그먼트 클릭 라인 교체 스타일링 인프라 */
+
+        .set-table td {
+            padding: 10px 4px;
+            text-align: center;
+            font-size: 15px;
+            height: 38px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.015);
+            color: #ffffff !important;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            letter-spacing: -0.2px;
+        }
+
+        .set-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .set-table td.lane-cell {
+            background: rgba(255, 255, 255, 0.005);
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #8e8e93 !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.015);
+            letter-spacing: 0;
+        }
+
         .clickable-swap-row {
             cursor: pointer;
             transition: all 0.15s ease;
         }
+
         .clickable-swap-row:hover {
             background: rgba(255, 255, 255, 0.03);
         }
-        /* 선택 활성화 상태 햅틱 피드백 조명 */
+
         .clickable-swap-row.selected-token {
             background: rgba(0, 122, 255, 0.15) !important;
             outline: 1px solid var(--mac-blue);
         }
 
-        .set-table td {
-            padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
-            border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
-            width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            letter-spacing: -0.2px; box-sizing: border-box;
-        }
-        .set-table tr:last-child td { border-bottom: none; }
-        .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015); letter-spacing: 0;
+        .hdr-blue {
+            background: rgba(0, 122, 255, 0.5) !important;
+            color: #ffffff !important;
         }
 
-        /* 블루 레드 진영 헤더 */
-        .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
-        .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
-        
-        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
-        .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
+        .hdr-red {
+            background: rgba(255, 69, 58, 0.5) !important;
+            color: #ffffff !important;
+        }
 
-        /* Mac OS 스타일 알림창 모달 */
+        .cell-blue {
+            background: rgba(0, 122, 255, 0.03) !important;
+        }
+
+        .cell-red {
+            background: rgba(255, 69, 58, 0.03) !important;
+        }
+
         .mac-alert-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
         }
+
         .mac-alert-modal {
-            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            background: rgba(30, 30, 30, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            width: 270px;
+            padding: 20px 16px 14px;
+            text-align: center;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
-        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
-        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
-        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .mac-alert-btn.cancel:hover { background: rgba(255, 255, 255, 0.15); }
-        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
-        .mac-alert-btn.confirm:hover { background: #148cff; }
+
+        @keyframes macPop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .mac-alert-msg-main {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .mac-alert-msg-sub {
+            font-size: 11.5px;
+            font-weight: 500;
+            color: #a5a5a7;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .mac-alert-btn-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .mac-alert-btn {
+            flex: 1;
+            padding: 7px 0;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .mac-alert-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mac-alert-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .mac-alert-btn.confirm {
+            background: #007aff;
+            color: #ffffff;
+        }
+
+        .mac-alert-btn.confirm:hover {
+            background: #148cff;
+        }
+
+        @media (max-width: 900px) {
+            .app-content {
+                grid-template-columns: 1fr;
+            }
+
+            .setup-box,
+            .result-container {
+                height: auto;
+                min-height: 520px;
+            }
+        }
     </style>
 </head>
+
 <body>
-
-  <!-- 🛠️ 3번 해결: 가챠머신 소스와 완전히 연동되는 실시간 안내 배지 텍스트 장착 완료 -->
-  <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
-
-<div class="container">
-    <div class="mac-app-header">
-        <h1>롤모장</h1>
+    <div class="network-badge">
+        <div class="network-dot"></div>
+        <span>실시간</span>
     </div>
 
-    <div class="mac-alert-overlay" id="macAlertOverlay">
-        <div class="mac-alert-modal">
-            <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
-            <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
-            <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
+    <div class="container">
+        <div class="mac-app-header">
+            <h1>롤모장</h1>
         </div>
-    </div>
 
-    <div class="app-content">
-        <!-- 좌측 보드 -->
-        <div class="setup-box">
-            <div class="mode-panel-row">
-                <div class="form-row">
-                    <span class="form-label">게임 모드</span>
-                    <select id="mapMode" class="mac-select" disabled>
-                        <option value="SR" selected>소환사의 협곡</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">경기 형식</span>
-                    <select id="gameMode" class="mac-select" onchange="pushInputsToFirebase()">
-                        <option value="Bo1">Bo1</option>
-                        <option value="Bo3" selected>Bo3</option>
-                        <option value="Bo5">Bo5</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="input-table-sheet">
-                <div class="table-row">
-                    <input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row fixed-row">
-                    <input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">서폿고정</div>
-                    <input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-            </div>
-
-            <div class="btn-container">
-                <button class="btn btn-reset" onclick="askRollmojangReset()">초기화</button>
-                <button class="btn btn-assign" onclick="runRollmojangAssignment()">팀 배정</button>
+        <div class="mac-alert-overlay" id="macAlertOverlay">
+            <div class="mac-alert-modal">
+                <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
+                <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
+                <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
             </div>
         </div>
 
-        <!-- 우측 결과 보드 -->
-        <div class="result-container" id="resultContainer">
-            <div class="result-scroll-core" id="resultScrollCore">
-                <div class="table-wrapper-binder" id="tableWrapperBinder">
-                    <div class="no-result" id="noResultGrid">
-                        <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+        <div class="app-content">
+            <div class="setup-box">
+                <div class="mode-panel-row">
+                    <div class="form-row">
+                        <span class="form-label">게임 모드</span>
+                        <select id="mapMode" class="mac-select" disabled>
+                            <option value="SR" selected>소환사의 협곡</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <span class="form-label">경기 형식</span>
+                        <select id="gameMode" class="mac-select" onchange="pushInputsToFirebase()">
+                            <option value="Bo1">Bo1</option>
+                            <option value="Bo3" selected>Bo3</option>
+                            <option value="Bo5">Bo5</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-table-sheet">
+                    <div class="table-row">
+                        <input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                        <div class="vs-divider">VS</div>
+                        <input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                    </div>
+
+                    <div class="table-row">
+                        <input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                        <div class="vs-divider">VS</div>
+                        <input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                    </div>
+
+                    <div class="table-row">
+                        <input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                        <div class="vs-divider">VS</div>
+                        <input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                    </div>
+
+                    <div class="table-row">
+                        <input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                        <div class="vs-divider">VS</div>
+                        <input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                    </div>
+
+                    <div class="table-row fixed-row">
+                        <input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                        <div class="vs-divider">서폿고정</div>
+                        <input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn-reset" onclick="askRollmojangReset()">초기화</button>
+                    <button class="btn-assign" onclick="runRollmojangAssignment()">팀 배정</button>
+                </div>
+            </div>
+
+            <div class="result-container">
+                <div class="result-scroll-core" id="resultScrollCore">
+                    <div class="table-wrapper-binder" id="tableWrapperBinder">
+                        <div class="no-result">
+                            <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // 🛠️ Firebase Realtime Database 세션 동기화 개설 완료
-    const firebaseConfig = {
-        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
-        authDomain: "nemotool.firebaseapp.com",
-        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
-        projectId: "nemotool",
-        storageBucket: "nemotool.firebasestorage.app",
-        messagingSenderId: "1003940918420",
-        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database().ref("nemo_lol_memo_session");
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+            authDomain: "nemotool.firebaseapp.com",
+            databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+            projectId: "nemotool",
+            storageBucket: "nemotool.firebasestorage.app",
+            messagingSenderId: "1003940918420",
+            appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+        };
 
-    var globalResultData = null; 
-    var isOperating = false;
+        firebase.initializeApp(firebaseConfig);
 
-    // 🛠️ 2번 과제 인터페이스 스왑 토큰 상태 변수 정의
-    var selectedRowElement = null;
-    var selectedSetIndex = null;
-    var selectedLineIndex = null;
+        const db = firebase.database().ref("nemo_lol_memo_session");
 
-    function pushInputsToFirebase() {
-        if (isOperating) return;
-        let inputs = [];
-        for (let i = 0; i < 5; i++) {
-            inputs.push({
-                p1: document.getElementById(`p1_${i}`).value.trim(),
-                p2: document.getElementById(`p2_${i}`).value.trim()
-            });
+        let globalResultData = null;
+        let isOperating = false;
+
+        let selectedRowElement = null;
+        let selectedSetIndex = null;
+        let selectedLineIndex = null;
+
+        function openMacAlert(title, subText, type = "alert", confirmCallback = null) {
+            const overlay = document.getElementById("macAlertOverlay");
+            const titleEl = document.getElementById("macAlertTitle");
+            const subEl = document.getElementById("macAlertSub");
+            const btnBox = document.getElementById("macAlertBtnBox");
+
+            titleEl.textContent = title;
+            subEl.textContent = subText;
+            btnBox.innerHTML = "";
+
+            const closeAlert = () => {
+                overlay.style.display = "none";
+            };
+
+            if (type === "confirm") {
+                const cancelBtn = document.createElement("button");
+                cancelBtn.className = "mac-alert-btn cancel";
+                cancelBtn.textContent = "취소";
+                cancelBtn.onclick = closeAlert;
+
+                const confirmBtn = document.createElement("button");
+                confirmBtn.className = "mac-alert-btn confirm";
+                confirmBtn.textContent = "확인";
+                confirmBtn.onclick = async () => {
+                    closeAlert();
+
+                    if (typeof confirmCallback === "function") {
+                        await confirmCallback();
+                    }
+                };
+
+                btnBox.appendChild(cancelBtn);
+                btnBox.appendChild(confirmBtn);
+            } else {
+                const okBtn = document.createElement("button");
+                okBtn.className = "mac-alert-btn confirm";
+                okBtn.textContent = "확인";
+                okBtn.onclick = closeAlert;
+                btnBox.appendChild(okBtn);
+            }
+
+            overlay.style.display = "flex";
         }
-        db.update({
-            inputs: inputs,
-            gameMode: document.getElementById("gameMode").value
-        });
-    }
 
-    db.on("value", (snapshot) => {
-        const data = snapshot.val();
-        if (!data) {
-            // 원격 노드가 부재할 시 돔 공백 리셋 트리거
-            localHardResetUI();
-            return;
-        }
-
-        isOperating = true;
-        if (data.inputs) {
-            data.inputs.forEach((item, idx) => {
-                if(document.getElementById(`p1_${idx}`).value !== item.p1) document.getElementById(`p1_${idx}`).value = item.p1;
-                if(document.getElementById(`p2_${idx}`).value !== item.p2) document.getElementById(`p2_${idx}`).value = item.p2;
-            });
-        }
-        if (data.gameMode) {
-            document.getElementById("gameMode").value = data.gameMode;
-        }
-
-        if (data.results) {
-            globalResultData = data.results;
-            renderResultTables(data.results);
-        } else {
-            globalResultData = null;
-            document.getElementById("tableWrapperBinder").innerHTML = `
-                <div class="no-result" id="noResultGrid">
-                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-                </div>`;
-        }
-        isOperating = false;
-    });
-
-    // 🛠️ 1번 해결: 먹통이 되던 단방향 초기화 대신 트랜잭션 방식으로 원격 노드 동시 소멸 동기화 구현 완료
-    function askRollmojangReset() {
-        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
-            db.set({
+        function getEmptySessionData() {
+            return {
                 gameMode: "Bo3",
-                inputs: [ {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""} ],
+                inputs: Array.from({ length: 5 }, () => ({
+                    p1: "",
+                    p2: ""
+                })),
                 results: null
-            });
-        });
-    }
-
-    function localHardResetUI() {
-        for(let i=0; i<5; i++) {
-            document.getElementById(`p1_${i}`).value = "";
-            document.getElementById(`p2_${i}`).value = "";
-        }
-        document.getElementById("tableWrapperBinder").innerHTML = `
-            <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-            </div>`;
-        selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
-    }
-
-    function customShuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    function runRollmojangAssignment() {
-        for (let i = 0; i < 5; i++) {
-            let p1Val = document.getElementById(`p1_${i}`).value.trim();
-            let p2Val = document.getElementById(`p2_${i}`).value.trim();
-            if (!p1Val || !p2Val) {
-                openMacAlert("배정 실패", "참가자 닉네임이 모두 입력되지 않았습니다.", "alert");
-                return;
-            }
-            if (p1Val.length > 4) document.getElementById(`p1_${i}`).value = p1Val.slice(0, 4);
-            if (p2Val.length > 4) document.getElementById(`p2_${i}`).value = p2Val.slice(0, 4);
+            };
         }
 
-        const gameMode = document.getElementById("gameMode").value;
-        let totalSets = 1;
-        if (gameMode === "Bo1") totalSets = 1;
-        if (gameMode === "Bo3") totalSets = 3;
-        if (gameMode === "Bo5") totalSets = 5;
-
-        const rawData = [];
-        for (let i = 0; i < 5; i++) {
-            rawData.push([
-                document.getElementById(`p1_${i}`).value.trim().slice(0, 4),
-                "",
-                document.getElementById(`p2_${i}`).value.trim().slice(0, 4)
-            ]);
-        }
-
-        let fixedPositions = Array(5).fill(null);
-        let flexiblePairs = [];
-
-        for (let i = 0; i < rawData.length; i++) {
-            let pairInfo = { p1: rawData[i][0], p2: rawData[i][2] };
-            if (i === 4) {
-                fixedPositions[i] = pairInfo; 
-            } else {
-                flexiblePairs.push(pairInfo); 
-            }
-        }
-
-        customShuffleArray(flexiblePairs);
-
-        let firstSetPairs = [];
-        let flexIndex = 0;
-        for (let j = 0; j < 5; j++) {
-            if (fixedPositions[j] !== null) {
-                firstSetPairs.push(fixedPositions[j]);
-            } else {
-                firstSetPairs.push(flexiblePairs[flexIndex]);
-                flexIndex++;
-            }
-        }
-
-        let establishedMatchups = [];
-        for (let k = 0; k < firstSetPairs.length; k++) {
-            let isLineFixed = (k === 4);
-            let bPlayer = firstSetPairs[k].p1;
-            let rPlayer = firstSetPairs[k].p2;
-
-            if (Math.random() < 0.5) {
-                establishedMatchups.push({ id: k, blue: bPlayer, red: rPlayer, isFixed: isLineFixed, history: [] });
-            } else {
-                establishedMatchups.push({ id: k, blue: rPlayer, red: bPlayer, isFixed: isLineFixed, history: [] });
-            }
-        }
-
-        let serializedResults = [];
-
-        for (let set = 0; set < totalSets; set++) {
-            let blueResult = Array(5).fill(null);
-            let redResult = Array(5).fill(null);
-
-            if (set === 0) {
-                for (let m = 0; m < 5; m++) {
-                    blueResult[m] = establishedMatchups[m].blue;
-                    redResult[m] = establishedMatchups[m].red;
-                    establishedMatchups[m].history.push(m);
-                }
-            } else {
-                let flexMatchups = [];
-                let flexLineIndices = [];
-
-                for (let m = 0; m < 5; m++) {
-                    if (establishedMatchups[m].isFixed) {
-                        blueResult[m] = establishedMatchups[m].blue;
-                        redResult[m] = establishedMatchups[m].red;
-                        establishedMatchups[m].history.push(m);
-                    } else {
-                        flexMatchups.push(establishedMatchups[m]);
-                        flexLineIndices.push(m);
-                    }
-                }
-
-                let matchSuccess = false;
-                for (let attempt = 0; attempt < 100; attempt++) {
-                    customShuffleArray(flexMatchups);
-                    let hasOverlap = false;
-
-                    for (let idx = 0; idx < flexMatchups.length; idx++) {
-                        let currentLine = flexLineIndices[idx];
-                        let currentGroup = flexMatchups[idx];
-
-                        if (currentGroup.history.indexOf(currentLine) !== -1) {
-                            hasOverlap = true;
-                            break;
-                        }
-                    }
-                    if (!hasOverlap) {
-                        matchSuccess = true;
-                        break;
-                    }
-                }
-
-                for (let idx = 0; idx < flexMatchups.length; idx++) {
-                    let targetLine = flexLineIndices[idx];
-                    let finalGroup = flexMatchups[idx];
-
-                    blueResult[targetLine] = finalGroup.blue;
-                    redResult[targetLine] = finalGroup.red;
-                    finalGroup.history.push(targetLine);
-                }
+        function clearSwapSelection() {
+            if (selectedRowElement) {
+                selectedRowElement.classList.remove("selected-token");
             }
 
-            let setLineArray = [];
-            let laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
-            for(let r=0; r<5; r++) {
-                setLineArray.push({
-                    lane: laneNames[r],
-                    blue: blueResult[r],
-                    red: redResult[r],
-                    isFixed: (r === 4)
+            selectedRowElement = null;
+            selectedSetIndex = null;
+            selectedLineIndex = null;
+        }
+
+        function renderEmptyResult() {
+            document.getElementById("tableWrapperBinder").innerHTML = `
+                <div class="no-result">
+                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+                </div>
+            `;
+        }
+
+        function localHardResetUI() {
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(`p1_${i}`).value = "";
+                document.getElementById(`p2_${i}`).value = "";
+            }
+
+            document.getElementById("gameMode").value = "Bo3";
+
+            globalResultData = null;
+            clearSwapSelection();
+            renderEmptyResult();
+        }
+
+        function pushInputsToFirebase() {
+            if (isOperating) return;
+
+            const inputs = [];
+
+            for (let i = 0; i < 5; i++) {
+                inputs.push({
+                    p1: document.getElementById(`p1_${i}`).value.trim(),
+                    p2: document.getElementById(`p2_${i}`).value.trim()
                 });
             }
-            serializedResults.push({ setIndex: set, lines: setLineArray });
-        }
 
-        db.update({ results: serializedResults });
-    }
-
-    function renderResultTables(results) {
-        const binder = document.getElementById("tableWrapperBinder");
-        binder.innerHTML = ""; 
-
-        results.forEach((setObj, sIdx) => {
-            let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
-            let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
-            let teamACellClass = (setObj.setIndex % 2 === 0) ? "cell-blue" : "cell-red";
-            let teamBCellClass = (setObj.setIndex % 2 === 0) ? "cell-red" : "cell-blue";
-
-            const table = document.createElement("table");
-            table.className = "set-table";
-
-            let teamAName = (setObj.setIndex % 2 === 0) ? "블루팀" : "레드팀";
-            let teamBName = (setObj.setIndex % 2 === 0) ? "레드팀" : "블루팀";
-            
-            let htmlPayload = `
-                <thead>
-                    <tr>
-                        <th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th>
-                    </tr>
-                    <tr>
-                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px;">라인</th>
-                        <th class="sub-hdr ${teamAHdrClass}">${teamAName}</th>
-                        <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
-                    </tr>
-                </thead>
-                <tbody data-set="${sIdx}">
-            `;
-
-            setObj.lines.forEach((lineObj, lIdx) => {
-                // 🛠️ 2번 과제 리뉴얼: 피로도 높은 드래그를 소멸시키고 원클릭 크로스 매칭 스위처 라인업 트리거 연동
-                let rowClass = lineObj.isFixed ? '' : 'class="clickable-swap-row" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"';
-                htmlPayload += `
-                    <tr ${rowClass}>
-                        <td class="lane-cell">${lineObj.lane}</td>
-                        <td class="${teamACellClass}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}">${lineObj.red}</td>
-                    </tr>
-                `;
+            db.update({
+                inputs,
+                gameMode: document.getElementById("gameMode").value
+            }).catch((error) => {
+                console.error("입력 동기화 실패:", error);
             });
-
-            htmlPayload += `</tbody>`;
-            table.innerHTML = htmlPayload;
-            binder.appendChild(table);
-        });
-        
-        // 정렬 상태 캐시 보정 리포지셔닝 복원
-        const scrollCore = document.getElementById("resultScrollCore");
-        if (results.length >= 4) {
-            scrollCore.style.justifyContent = "flex-start";
-        } else {
-            scrollCore.style.justifyContent = "center";
-        }
-    }
-
-    // 🛠️ 2번 정석 해결: 원클릭 스왑 오케스트레이션 알고리즘 설계 단 가동
-    function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
-        // 이미 다른 세트의 토큰이 켜져 있는 상태에서 다른 세트 테이블을 누르면 선택권 전격 리셋 전환
-        if (selectedRowElement && selectedSetIndex !== setIdx) {
-            selectedRowElement.classList.remove("selected-token");
-            selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
         }
 
-        // 첫 번째 라인 선택 트리거링
-        if (!selectedRowElement) {
-            selectedRowElement = element;
-            selectedSetIndex = setIdx;
-            selectedLineIndex = lineDocsIdx;
-            element.classList.add("selected-token");
-        } else {
-            // 두 번째 라인 선택 완료 시점 -> 즉시 1초의 딜레이도 없이 고속 수평 교환 연산 처리
-            let firstLineIdx = selectedLineIndex;
-            let secondLineIdx = lineDocsIdx;
+        db.on("value", (snapshot) => {
+            const data = snapshot.val();
 
-            if (firstLineIdx === secondLineIdx) {
-                // 본인 셀 연속 두번 누르면 선택 해제 처리
-                element.classList.remove("selected-token");
-                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+            if (!data) {
+                isOperating = true;
+                localHardResetUI();
+                isOperating = false;
                 return;
             }
 
-            if (globalResultData && globalResultData[setIdx]) {
-                let linesArray = globalResultData[setIdx].lines;
+            isOperating = true;
 
-                // 중요: 드래그 버그 원인이던 서폿고정 침범을 완벽하게 차단하기 위해 유효성 검증 레이어 가동
-                if (linesArray[firstLineIdx].isFixed || linesArray[secondLineIdx].isFixed) {
-                    selectedRowElement.classList.remove("selected-token");
-                    selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+            if (Array.isArray(data.inputs)) {
+                for (let i = 0; i < 5; i++) {
+                    const item = data.inputs[i] || { p1: "", p2: "" };
+
+                    const p1Input = document.getElementById(`p1_${i}`);
+                    const p2Input = document.getElementById(`p2_${i}`);
+
+                    if (p1Input.value !== (item.p1 || "")) {
+                        p1Input.value = item.p1 || "";
+                    }
+
+                    if (p2Input.value !== (item.p2 || "")) {
+                        p2Input.value = item.p2 || "";
+                    }
+                }
+            }
+
+            if (data.gameMode) {
+                document.getElementById("gameMode").value = data.gameMode;
+            }
+
+            if (Array.isArray(data.results) && data.results.length > 0) {
+                globalResultData = data.results;
+                clearSwapSelection();
+                renderResultTables(data.results);
+            } else {
+                globalResultData = null;
+                clearSwapSelection();
+                renderEmptyResult();
+            }
+
+            isOperating = false;
+        });
+
+        function askRollmojangReset() {
+            openMacAlert(
+                "라인업 초기화",
+                "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?",
+                "confirm",
+                async () => {
+                    try {
+                        isOperating = true;
+
+                        const emptyData = getEmptySessionData();
+
+                        await db.set(emptyData);
+
+                        localHardResetUI();
+                    } catch (error) {
+                        console.error("초기화 실패:", error);
+
+                        openMacAlert(
+                            "초기화 실패",
+                            "데이터 저장 중 오류가 발생했습니다. 다시 시도해주세요.",
+                            "alert"
+                        );
+                    } finally {
+                        isOperating = false;
+                    }
+                }
+            );
+        }
+
+        function customShuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function runRollmojangAssignment() {
+            for (let i = 0; i < 5; i++) {
+                let p1Val = document.getElementById(`p1_${i}`).value.trim();
+                let p2Val = document.getElementById(`p2_${i}`).value.trim();
+
+                if (!p1Val || !p2Val) {
+                    openMacAlert(
+                        "배정 실패",
+                        "참가자 닉네임이 모두 입력되지 않았습니다.",
+                        "alert"
+                    );
                     return;
                 }
 
-                // 블루 레드 선수 쌍 단위 일괄 크로스 스위칭 단행
-                let holdBlue = linesArray[firstLineIdx].blue;
-                let holdRed = linesArray[firstLineIdx].red;
+                p1Val = p1Val.slice(0, 4);
+                p2Val = p2Val.slice(0, 4);
 
-                linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
-                linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
-
-                linesArray[secondLineIdx].blue = holdBlue;
-                linesArray[secondLineIdx].red = holdRed;
-
-                // 선택 조명 이펙트 제거 및 원격 동기화 일괄 파이어
-                selectedRowElement.classList.remove("selected-token");
-                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
-
-                db.update({ results: globalResultData });
+                document.getElementById(`p1_${i}`).value = p1Val;
+                document.getElementById(`p2_${i}`).value = p2Val;
             }
+
+            const gameMode = document.getElementById("gameMode").value;
+
+            let totalSets = 1;
+
+            if (gameMode === "Bo3") totalSets = 3;
+            if (gameMode === "Bo5") totalSets = 5;
+
+            const rawPairs = [];
+
+            for (let i = 0; i < 5; i++) {
+                rawPairs.push({
+                    p1: document.getElementById(`p1_${i}`).value.trim().slice(0, 4),
+                    p2: document.getElementById(`p2_${i}`).value.trim().slice(0, 4),
+                    isFixed: i === 4
+                });
+            }
+
+            const flexiblePairs = rawPairs
+                .filter((pair) => !pair.isFixed)
+                .map((pair) => ({ ...pair }));
+
+            const fixedPair = rawPairs.find((pair) => pair.isFixed);
+
+            customShuffleArray(flexiblePairs);
+
+            const firstSetPairs = [
+                flexiblePairs[0],
+                flexiblePairs[1],
+                flexiblePairs[2],
+                flexiblePairs[3],
+                fixedPair
+            ];
+
+            const establishedMatchups = firstSetPairs.map((pair, index) => {
+                const isBlueFirst = Math.random() < 0.5;
+
+                return {
+                    id: index,
+                    blue: isBlueFirst ? pair.p1 : pair.p2,
+                    red: isBlueFirst ? pair.p2 : pair.p1,
+                    isFixed: pair.isFixed,
+                    history: []
+                };
+            });
+
+            const serializedResults = [];
+            const laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
+
+            for (let set = 0; set < totalSets; set++) {
+                const blueResult = Array(5).fill("");
+                const redResult = Array(5).fill("");
+
+                if (set === 0) {
+                    for (let i = 0; i < 5; i++) {
+                        blueResult[i] = establishedMatchups[i].blue;
+                        redResult[i] = establishedMatchups[i].red;
+                        establishedMatchups[i].history.push(i);
+                    }
+                } else {
+                    const flexibleMatchups = [];
+                    const flexibleLineIndices = [];
+
+                    for (let i = 0; i < 5; i++) {
+                        if (establishedMatchups[i].isFixed) {
+                            blueResult[i] = establishedMatchups[i].blue;
+                            redResult[i] = establishedMatchups[i].red;
+                            establishedMatchups[i].history.push(i);
+                        } else {
+                            flexibleMatchups.push(establishedMatchups[i]);
+                            flexibleLineIndices.push(i);
+                        }
+                    }
+
+                    let orderedMatchups = null;
+
+                    for (let attempt = 0; attempt < 300; attempt++) {
+                        const candidate = [...flexibleMatchups];
+                        customShuffleArray(candidate);
+
+                        const hasOverlap = candidate.some((matchup, index) => {
+                            const targetLine = flexibleLineIndices[index];
+                            return matchup.history.includes(targetLine);
+                        });
+
+                        if (!hasOverlap) {
+                            orderedMatchups = candidate;
+                            break;
+                        }
+                    }
+
+                    if (!orderedMatchups) {
+                        orderedMatchups = [...flexibleMatchups];
+                        customShuffleArray(orderedMatchups);
+                    }
+
+                    orderedMatchups.forEach((matchup, index) => {
+                        const targetLine = flexibleLineIndices[index];
+
+                        blueResult[targetLine] = matchup.blue;
+                        redResult[targetLine] = matchup.red;
+                        matchup.history.push(targetLine);
+                    });
+                }
+
+                const lines = laneNames.map((lane, lineIndex) => ({
+                    lane,
+                    blue: blueResult[lineIndex],
+                    red: redResult[lineIndex],
+                    isFixed: lineIndex === 4
+                }));
+
+                serializedResults.push({
+                    setIndex: set,
+                    lines
+                });
+            }
+
+            clearSwapSelection();
+
+            db.update({
+                inputs: rawPairs.map((pair) => ({
+                    p1: pair.p1,
+                    p2: pair.p2
+                })),
+                gameMode,
+                results: serializedResults
+            }).catch((error) => {
+                console.error("팀 배정 저장 실패:", error);
+
+                openMacAlert(
+                    "팀 배정 실패",
+                    "배정 결과를 저장하지 못했습니다. 다시 시도해주세요.",
+                    "alert"
+                );
+            });
         }
-    }
-</script>
+
+        function renderResultTables(results) {
+            const binder = document.getElementById("tableWrapperBinder");
+            binder.innerHTML = "";
+
+            results.forEach((setObj, sIdx) => {
+                const isBlueFirst = setObj.setIndex % 2 === 0;
+
+                const teamAHdrClass = isBlueFirst ? "hdr-blue" : "hdr-red";
+                const teamBHdrClass = isBlueFirst ? "hdr-red" : "hdr-blue";
+
+                const teamACellClass = isBlueFirst ? "cell-blue" : "cell-red";
+                const teamBCellClass = isBlueFirst ? "cell-red" : "cell-blue";
+
+                const teamAName = isBlueFirst ? "블루팀" : "레드팀";
+                const teamBName = isBlueFirst ? "레드팀" : "블루팀";
+
+                const table = document.createElement("table");
+                table.className = "set-table";
+
+                let html = `
+                    <colgroup>
+                        <col class="col-lane">
+                        <col class="col-team">
+                        <col class="col-team">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th>
+                        </tr>
+                        <tr>
+                            <th class="sub-hdr">라인</th>
+                            <th class="sub-hdr ${teamAHdrClass}">${teamAName}</th>
+                            <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                setObj.lines.forEach((lineObj, lIdx) => {
+                    const rowClass = lineObj.isFixed ? "" : "clickable-swap-row";
+
+                    html += `
+                        <tr
+                            class="${rowClass}"
+                            data-set-index="${sIdx}"
+                            data-line-index="${lIdx}"
+                        >
+                            <td class="lane-cell">${lineObj.lane}</td>
+                            <td class="${teamACellClass}">${lineObj.blue}</td>
+                            <td class="${teamBCellClass}">${lineObj.red}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                    </tbody>
+                `;
+
+                table.innerHTML = html;
+
+                table.querySelectorAll(".clickable-swap-row").forEach((row) => {
+                    row.addEventListener("click", () => {
+                        triggerRowTokenSelection(
+                            row,
+                            Number(row.dataset.setIndex),
+                            Number(row.dataset.lineIndex)
+                        );
+                    });
+                });
+
+                binder.appendChild(table);
+            });
+
+            const scrollCore = document.getElementById("resultScrollCore");
+            scrollCore.style.justifyContent =
+                results.length >= 4 ? "flex-start" : "center";
+        }
+
+        function triggerRowTokenSelection(element, setIdx, lineIdx) {
+            if (!globalResultData || !globalResultData[setIdx]) return;
+
+            const targetLine = globalResultData[setIdx].lines[lineIdx];
+
+            if (!targetLine || targetLine.isFixed) return;
+
+            if (!selectedRowElement) {
+                selectedRowElement = element;
+                selectedSetIndex = setIdx;
+                selectedLineIndex = lineIdx;
+                element.classList.add("selected-token");
+                return;
+            }
+
+            if (selectedSetIndex !== setIdx) {
+                clearSwapSelection();
+
+                selectedRowElement = element;
+                selectedSetIndex = setIdx;
+                selectedLineIndex = lineIdx;
+                element.classList.add("selected-token");
+                return;
+            }
+
+            if (selectedLineIndex === lineIdx) {
+                clearSwapSelection();
+                return;
+            }
+
+            const firstLineIndex = selectedLineIndex;
+            const secondLineIndex = lineIdx;
+
+            const firstLine = globalResultData[setIdx].lines[firstLineIndex];
+            const secondLine = globalResultData[setIdx].lines[secondLineIndex];
+
+            if (!firstLine || !secondLine || firstLine.isFixed || secondLine.isFixed) {
+                clearSwapSelection();
+                return;
+            }
+
+            const nextResults = JSON.parse(JSON.stringify(globalResultData));
+            const lines = nextResults[setIdx].lines;
+
+            const firstPair = {
+                blue: lines[firstLineIndex].blue,
+                red: lines[firstLineIndex].red
+            };
+
+            lines[firstLineIndex].blue = lines[secondLineIndex].blue;
+            lines[firstLineIndex].red = lines[secondLineIndex].red;
+
+            lines[secondLineIndex].blue = firstPair.blue;
+            lines[secondLineIndex].red = firstPair.red;
+
+            globalResultData = nextResults;
+            clearSwapSelection();
+
+            db.update({
+                results: nextResults
+            }).catch((error) => {
+                console.error("라인 스왑 저장 실패:", error);
+
+                openMacAlert(
+                    "라인 교체 실패",
+                    "변경 내용을 저장하지 못했습니다. 다시 시도해주세요.",
+                    "alert"
+                );
+            });
+        }
+    </script>
 </body>
 </html>
