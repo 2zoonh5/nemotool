@@ -165,7 +165,7 @@
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <div class="network-badge"><div class="network-dot"></div><span>파이어베이스 실시간 엔진 연결됨</span></div>
+  <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerLocalSkip()">»</button>
   
   <div class="gacha-main-workspace">
@@ -215,7 +215,6 @@
     </div>
   </div>
 
-  <!-- 하단 결과 기록 (휴지통 기능 연동 완료) -->
   <div class="history-sheet" id="historySheet">
     <div class="history-header-row">
       <div class="history-title">가챠 결과 기록</div>
@@ -435,7 +434,6 @@
       });
     }
 
-    // 🛠️ 하단 가챠 결과 기록 독자적 전역 파괴 휴지통 함수 추가
     function triggerTrashHistoryClear() {
       db.update({
         state: STATE.SAVED,
