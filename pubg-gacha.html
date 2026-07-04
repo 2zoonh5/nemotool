@@ -157,7 +157,7 @@
 
     /* 💾 하단 결과 기록 시트 */
     .history-sheet {
-      max-width: 1200px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
+      max-width: 1200px; width: 100%; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
       display: none; flex-direction: column; gap: 14px; backdrop-filter: blur(20px); box-sizing: border-box; margin-top: 10px;
     }
@@ -368,6 +368,7 @@
       overlay.style.display = "flex";
     }
 
+    // 최대값 스텝퍼 조절
     function stepMaxVal(amount) {
       if (isRunning) return;
       var input = document.getElementById("maxValInput");
@@ -517,7 +518,6 @@
       });
     }
 
-    // 결과 아카이브 삭제
     function askTrashHistoryClear() {
       openMacAlert("결과 기록 삭제", "저장된 가챠 결과 기록을 모두 삭제하시겠습니까?", "confirm", () => {
         db.update({
@@ -567,11 +567,10 @@
         colorScoreMap[color] = seedPool[idx % seedPool.length];
       });
 
-      var fullReelSequence = [0]; 
+      var fullReelSequence = []; 
       var modeSequence = [];
-      var spinCount = 24;
 
-      // 🛠️ [정밀 필터 인프라]: 중복 연달아 인접 차단용 안전 난수 생성 헬퍼 함수
+      // 🛠️ [버그 차단]: 전체 범위에서 안전하게 난수를 뽑도록 필터 헬퍼 함수 대수선
       function getFilteredRandomNum(max, lastNum, forbiddenList) {
         let val;
         let attempts = 0;
@@ -585,49 +584,38 @@
         return val;
       }
 
-      // 이전 참가자들이 획득한 기확정 스코어들을 담아둘 리스트
-      var accumulatedScores = [];
+      let lastNum = null;
 
       activeParticipants.forEach((p, pIdx) => {
         p.score = colorScoreMap[p.color];
         
-        // 🛠️ 1번 문제 보완: 타겟 값 바로 직전(위)과 직후(아래) 칸 스포일러 방지 필터 셋
-        // 타겟의 위아래에는 현재 내 결과(p.score)와 이전 사람들의 누적 결과(accumulatedScores) 진입 금지
-        let spoilerForbidden = [p.score, ...accumulatedScores];
-
-        let lastNum = fullReelSequence[fullReelSequence.length - 1];
-
-        // 1. 타겟 앞단까지의 일반 회전 난수 채우기
-        for(var k=0; k < spinCount - 2; k++) {
-          let num = getFilteredRandomNum(maxVal, lastNum);
-          fullReelSequence.push(num);
-          lastNum = num;
-        }
-
-        // 2. 타겟 직전(바로 위 칸) 숫자 생성 (스포일러 금지 필터 작동)
-        let immediateBeforeNum = getFilteredRandomNum(maxVal, lastNum, spoilerForbidden);
-        fullReelSequence.push(immediateBeforeNum);
-
-        // 3. 타겟 결과 숫자 안착
-        fullReelSequence.push(p.score);
-
-        // 4. 타겟 직후(바로 아래 칸) 숫자 생성 (스포일러 금지 필터 작동)
-        let immediateAfterNum = getFilteredRandomNum(maxVal, p.score, spoilerForbidden);
-        fullReelSequence.push(immediateAfterNum);
-        lastNum = immediateAfterNum;
-        
         var rand = Math.random();
-        modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); 
-        
-        // 5. 오버슛 연출용 완충 지대 버퍼 난수 생성
-        for(var k=0; k < 1; k++) {
-          let num = getFilteredRandomNum(maxVal, lastNum);
-          fullReelSequence.push(num);
-          lastNum = num;
-        }
+        modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C'));
 
-        // 현재 판이 끝나면 내 스코어도 금지 리스트에 누적 축적
-        accumulatedScores.push(p.score);
+        // 🛠️ 버그 차단: 이전 참가자들의 누적값을 완전히 배제하고, 오직 현재 참가자의 당첨값(p.score)만 스포일러 금지 필터에 적용!!
+        let spoilerForbidden = [p.score];
+
+        // 27칸 고정 슬롯 블록 생성
+        for (let k = 0; k < 27; k++) {
+          if (k === 0 && pIdx === 0) {
+            fullReelSequence.push(0);
+            lastNum = 0;
+          } else if (k === 24) {
+            // 정확히 24번째 칸에 기확정 결과값 안착
+            fullReelSequence.push(p.score);
+            lastNum = p.score;
+          } else if (k === 23 || k === 25) {
+            // 🛠️ 6번째 사람도 무조건 숫자가 풍족하도록 전체 0~최대값 범위 내에서 본인의 당첨값만 쏙 피해서 위아래 연출 난수 매핑! (고갈 버그 해결)
+            let num = getFilteredRandomNum(maxVal, lastNum, spoilerForbidden);
+            fullReelSequence.push(num);
+            lastNum = num;
+          } else {
+            // 그 외 지나가는 일반 회전 영역은 연속 중복만 피해서 넉넉하게 무작위 난수 배치!
+            let num = getFilteredRandomNum(maxVal, lastNum);
+            fullReelSequence.push(num);
+            lastNum = num;
+          }
+        }
       });
 
       db.update({
@@ -659,7 +647,8 @@
         var div = document.createElement('div');
         div.className = 'number';
         div.innerText = val;
-        if (idx % 27 === 24 && idx > 0) {
+        
+        if (idx > 0 && idx % 27 === 24) {
           var pIdx = Math.floor(idx / 27);
           div.id = 'target-' + pIdx;
         }
