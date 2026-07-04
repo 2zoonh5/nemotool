@@ -1,14 +1,13 @@
 const folderData = {
     pubg: { 
-        title: "배틀그라운드 매니저", 
+        title: "배틀그라운드", 
         apps: [
-            { id: "pubg-stat", name: "전적 검색", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-stat.html" }, 
-            // [체크] 이 url 이름이 아래 생성할 파일명과 글자 토씨 하나 안 틀리고 똑같아야 합니다!
-            { id: "pubg-gacha", name: "네모 가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }
+            { id: "pubg-gacha", name: "가챠머신", icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png", url: "pubg-gacha.html" }, 
+            { id: "pubg-bingo", name: "빙고판", icon: "https://cdn-icons-png.flaticon.com/512/2893/2893051.png", url: "pubg-bingo.html" }
         ] 
     },
-    lol: { title: "리그오브레전드 매니저", apps: [{ id: "lol-memo", name: "롤모장 (맞밸)", icon: "https://cdn-icons-png.flaticon.com/512/825/825590.png", url: "lol-memo.html" }] },
-    sudden: { title: "서든어택 매니저", apps: [{ id: "sudden-aim", name: "에임 조준선", icon: "https://cdn-icons-png.flaticon.com/512/5750/5750226.png", url: "sudden-aim.html" }] }
+    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "https://cdn-icons-png.flaticon.com/512/825/825590.png", url: "lol-memo.html" }] },
+    sudden: { title: "서든어택", apps: [{ id: "sudden-aim", name: "서모장", icon: "https://cdn-icons-png.flaticon.com/512/5750/5750226.png", url: "sa-memo.html" }] }
 };
 
 let minimizedWindows = {};
