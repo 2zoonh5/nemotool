@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
-    // 바탕화면 클릭 시 창을 끄지 않고 '최소화'
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         const folderWindow = document.getElementById("folderWindow");
@@ -173,7 +172,6 @@ function minimizeWindow(windowId) {
         else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
     }
 
-    // iframe 리로드를 막기 위해 src 재설정 없이 display만 숨김
     targetWindow.style.display = "none";
     if (minimizedWindows[uniqueKey]) return;
     
@@ -238,7 +236,6 @@ function closeApp() {
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
     
-    // 완전히 끌 때는 주소를 비워줘서 다음에 열 때 깨끗하게 열리게 함
     document.getElementById("appFrame").src = "";
     
     removeFromDock(`appWindow-${actualTitle}`);
