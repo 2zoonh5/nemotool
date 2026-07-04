@@ -22,10 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
+    // 바탕화면 클릭 시 창을 끄지 않고 '최소화' 하도록 변경
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
-        closeFolder();
-        closeApp();
+        const folderWindow = document.getElementById("folderWindow");
+        const appWindow = document.getElementById("appWindow");
+        
+        if (appWindow && appWindow.style.display === "flex") {
+            minimizeWindow('appWindow');
+        }
+        if (folderWindow && folderWindow.style.display === "flex") {
+            minimizeWindow('folderWindow');
+        }
     });
 
     startMacClock();
@@ -152,7 +160,18 @@ function openFolder(type) {
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
-    const useIcon = targetWindow.getAttribute("data-icon") || "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+    
+    // 앱 아이콘 혹은 기본 폴더 아이콘 가져오기
+    let useIcon = targetWindow.getAttribute("data-icon");
+    if (!useIcon || useIcon.includes("flaticon")) {
+        // 폴더 윈도우인 경우 현재 열린 게임에 맞는 바탕화면 아이콘을 매핑
+        const currentFolder = targetWindow.getAttribute("data-current-folder");
+        if (currentFolder === "pubg") useIcon = "pubg_icon.png";
+        else if (currentFolder === "lol") useIcon = "lol_icon.png";
+        else if (currentFolder === "sudden") useIcon = "sa-icon.png";
+        else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+    }
+
     targetWindow.style.display = "none";
     if (minimizedWindows[windowId]) return;
     minimizedWindows[windowId] = true;
@@ -186,15 +205,14 @@ function closeFolder() {
 }
 
 function openApp(url, name, icon) {
+    // 앱을 열 때 폴더를 완전히 끄는 대신 display만 숨겨서 기존 최소화된 독바 상태들을 보호
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
     windowPopup.setAttribute("data-icon", icon);
     document.getElementById("appFrame").src = url;
     document.getElementById("windowTitle").innerText = name; 
     
-    // 앱을 열 때 자동으로 최대화(maximized) 클래스 추가
     windowPopup.classList.add("maximized");
-    
     windowPopup.style.display = "flex";
 }
 
