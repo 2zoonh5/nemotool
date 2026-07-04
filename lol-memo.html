@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
-        /* 🎨 Apple 샌프란시스코 서체 감성의 가독성 높은 국산 웹폰트 바인딩 */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
             --bg-main: #0f0f12;
@@ -14,6 +13,7 @@
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
             --mac-red: #ff453a;
+            --text-accent: #e2b4bd;
         }
         
         body {
@@ -23,18 +23,20 @@
         }
 
         .container {
-            max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px; z-index: 10;
+            max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
         }
 
-        /* 🖥️ 고급 Mac OS 상단 앱 바 타이틀 */
+        /* 🖥️ [리뉴얼] 1, 3번 반영: 가챠머신 무드를 그대로 가져온 시네마틱 하이엔드 로고 헤더 */
         .mac-app-header {
-            display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 5px; width: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; width: 100%;
         }
-        .mac-app-header img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(255,255,255,0.08)); }
+        .mac-app-header img { width: 28px; height: 28px; object-fit: contain; opacity: 0.8; }
         .mac-app-header h1 {
-            font-size: 24px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: -0.5px;
+            font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--text-accent); margin: 0; letter-spacing: 6px; 
+            text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); text-transform: uppercase;
         }
 
+        /* 📋 균형 잡힌 고정 높이 2열 데스크탑 아키텍처 */
         .app-content {
             display: grid; grid-template-columns: 440px 1fr; gap: 30px; align-items: start; width: 100%;
         }
@@ -44,9 +46,9 @@
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
+            min-height: 520px; height: 520px; /* 🛠️ 높이 상호 일체 고정화 */
         }
         
-        /* 🖥️ [리뉴얼] 경기 형식 & 게임 모드 나란히 배치하는 쌍둥이 Mac OS 제어 툴바 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -55,9 +57,8 @@
             background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
             border: 1px solid var(--border-glass); box-sizing: border-box; 
         }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; text-transform: uppercase; }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
         
-        /* macOS 정석 컴포넌트 드롭다운 커스텀 텍스처 스타일링 */
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
             border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
@@ -68,7 +69,6 @@
         }
         .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
         .mac-select option { background: #1c1c1e; color: #fff; }
-        .mac-select:disabled { cursor: not-allowed; opacity: 0.6; }
 
         /* 매칭 입력 영역 */
         .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
@@ -76,7 +76,7 @@
         .table-row {
             display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
             background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255,255,255,0.03);
-            padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
+            padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
         }
         .table-row:last-child { margin-bottom: 0; }
         .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
@@ -95,7 +95,7 @@
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
         /* 하단 액션 버튼 그룹 */
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: 4px; }
+        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } /* 하단 밀착 */
         
         .btn-reset {
             flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
@@ -118,41 +118,48 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🖥️ Bo3 한 화면 최적 밀착화 정렬 그리드 컨테이너 */
+        /* 🖥️ [디자인 리뉴얼] 2번 반영: 높이 고정 및 가로 스크롤 격할 유도 스크롤러 컨테이너 */
         .result-container {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 22px; min-height: 432px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
+            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; align-items: start;
+            min-height: 520px; height: 520px; /* 좌측 보드와 크기 일치 고정 */
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start;
         }
-        .no-result { color: #8e8e93; margin: auto; text-align: center; grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;}
-        .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; letter-spacing: -0.2px; }
+        /* 가로 스크롤바 세련되게 세팅 */
+        .result-container::-webkit-scrollbar { height: 8px; }
+        .result-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .result-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(0,0,0,0.2); }
+        .result-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.1); }
+
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         /* 결과 시트 테이블 */
         .set-table {
-            border-collapse: collapse; background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 10px; overflow: hidden; width: 100%; box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-collapse: collapse; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.04); 
+            border-radius: 12px; overflow: hidden; width: 210px; min-width: 210px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
         }
         .set-table th.set-title {
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
-            padding: 10px; font-size: 13.5px; font-weight: 700; text-align: center; color: #ffffff;
+            padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
         .set-table th.sub-hdr {
-            font-size: 10.5px; font-weight: 700; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
+            font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
         }
         .set-table td {
-            padding: 8px 6px; text-align: center; font-size: 13px; height: 30px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #d1d1d6; font-weight: 500;
+            padding: 11px 6px; text-align: center; font-size: 13.5px; height: 32px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #e5e5ea; font-weight: 500;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.005); font-size: 11px; font-weight: 700; width: 42px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
+            background: rgba(255, 255, 255, 0.005); font-size: 11px; font-weight: 700; width: 44px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
         }
 
-        /* 블루 레드 진영 스타일 */
+        /* 블루 레드 매칭 디자인 고선명화 패치 */
         .hdr-blue { background: rgba(0, 122, 255, 0.45) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.45) !important; color: #ffffff !important; }
-        .cell-blue { background: rgba(0, 122, 255, 0.04) !important; color: #9cd4ff !important; font-weight: 600 !important; }
-        .cell-red { background: rgba(255, 69, 58, 0.04) !important; color: #ff9d96 !important; font-weight: 600 !important; }
+        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; color: #7ec2ff !important; font-weight: 700 !important; }
+        .cell-red { background: rgba(255, 69, 58, 0.03) !important; color: #ff8e85 !important; font-weight: 700 !important; }
 
         /* Mac OS 스타일 알림창 모달 */
         .mac-alert-overlay {
@@ -181,7 +188,7 @@
 <div class="container">
     <div class="mac-app-header">
         <img src="l_memo_icon.png" alt="롤모장 아이콘">
-        <h1>롤모장</h1>
+        <h1>Nemo Team Balancer</h1>
     </div>
 
     <div class="mac-alert-overlay" id="macAlertOverlay">
@@ -196,7 +203,6 @@
         <!-- 좌측 보드 -->
         <div class="setup-box">
             <div class="mode-panel-row">
-                <!-- 경기 형식 탭 -->
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
                     <select id="gameMode" class="mac-select">
@@ -205,7 +211,6 @@
                         <option value="Bo5">Bo5</option>
                     </select>
                 </div>
-                <!-- 게임 모드 탭 (소환사의 협곡 드롭박스로 리인프라 구현) -->
                 <div class="form-row">
                     <span class="form-label">게임 모드</span>
                     <select id="mapMode" class="mac-select" disabled>
@@ -248,7 +253,7 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (Bo3 3열 그리드 밀착 자동 안착 패치 완료) -->
+        <!-- 우측 결과 보드 (안정된 컨테이너 가로 큐브 보정 배정 완료) -->
         <div class="result-container" id="resultContainer">
             <div class="no-result" id="noResultGrid">
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
@@ -313,7 +318,6 @@
         }
     }
 
-    // 🛠️ 버그 완전 해결: 무응답을 발생시키던 인라인 백그라운드 문자열 수식을 소멸시키고 정밀 클래스로 이식 완비
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             const p1 = document.getElementById(`p1_${i}`).value.trim();
@@ -434,7 +438,6 @@
                 }
             }
 
-            // 고정 상수 클래스로 안전 결합 트리거 포지셔닝
             let teamAHdrClass = (set % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (set % 2 === 0) ? "hdr-red" : "hdr-blue";
             let teamACellClass = (set % 2 === 0) ? "cell-blue" : "cell-red";
@@ -453,7 +456,7 @@
                         <th colspan="3" class="set-title">${set + 1}세트</th>
                     </tr>
                     <tr>
-                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:42px;">라인</th>
+                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px;">라인</th>
                         <th class="sub-hdr ${teamAHdrClass}">${teamAName}</th>
                         <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
                     </tr>
