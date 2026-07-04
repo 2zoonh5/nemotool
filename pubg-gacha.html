@@ -65,10 +65,13 @@
     .btn-click:disabled { background: #2c2c2e; color: #48484a; cursor: default; box-shadow: none; transform: none; }
 
     .participant-table { display: flex; flex-direction: column; gap: 12px; }
-    .table-header { display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; padding: 0 10px; font-size: 12px; color: #8e8e93; font-weight: 600; }
-    
+    .table-header { display: grid; grid-template-columns: repeat(6, 1fr); padding: 0 10px; font-size: 12px; color: #8e8e93; font-weight: 600; text-align: center; margin-bottom: -6px; }
+    .table-header span:first-child { grid-column: span 2; text-align: left; }
+    .table-header span:nth-child(2) { grid-column: span 3; }
+    .table-header span:last-child { grid-column: span 1; text-align: right; padding-right: 12px; }
+
     .table-row {
-      display: grid; grid-template-columns: 1.2fr 2.3fr 0.7fr; gap: 16px; align-items: center;
+      display: grid; grid-template-columns: 2fr 3fr 1fr; gap: 16px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.04);
       padding: 12px; border-radius: 12px; transition: all 0.2s ease;
     }
@@ -89,19 +92,20 @@
       display: flex; background: rgba(255, 255, 255, 0.04); border-radius: 8px;
       padding: 2px; border: 1px solid rgba(255, 255, 255, 0.02); justify-content: space-between; gap: 2px;
     }
-    .capsule-chip-label {
+    
+    /* 🛠️ 버그 해결: 라디오 태그 명세를 완전히 걷어내고 일반 커스텀 칩 스타일 버튼 설계 */
+    .capsule-chip-btn {
       flex: 1; text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0;
       border-radius: 6px; cursor: pointer; color: #8e8e93; position: relative;
-      transition: color 0.15s, background 0.15s;
+      transition: color 0.15s, background 0.15s, box-shadow 0.15s;
     }
-    .capsule-chip-label input[type="radio"] { display: none; }
-    .capsule-chip-label:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
-    .capsule-chip-label:has(input[type="radio"]:checked) {
+    .capsule-chip-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
+    .capsule-chip-btn.checked {
       color: #fff; background: var(--theme-color);
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: center; color: #48484a; }
+    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: right; padding-right: 14px; color: #48484a; }
     .table-row.active .result-score { color: #8e8e93; }
     .table-row.done .result-score { color: #ff453a; }
     .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
@@ -168,8 +172,8 @@
       <div class="participant-table">
         <div class="table-header">
           <span>PARTICIPANT NAME</span>
-          <center>CHIPS SELECTION</center>
-          <center>SCORE SHEET</center>
+          <span>CHIPS SELECTION</span>
+          <span>SCORE SHEET</span>
         </div>
         <div id="tableRowsContainer"></div>
       </div>
@@ -237,24 +241,25 @@
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
 
+    // 임시 로컬 활성화 상태 보관용 메모리 객체
+    var activeColorsState = ["", "", "", "", "", ""];
+
     var container = document.getElementById("tableRowsContainer");
     for (let i = 0; i < 6; i++) {
       let row = document.createElement("div");
       row.className = "table-row";
       row.id = `row-${i}`;
       
-      // 🛠️ 버그 해결: 라디오 버튼 클릭 전 기존 상태를 임시 기억하기 위한 mousedown 처리 및 click 제어 트릭 추가
+      // 🛠️ 버그 해결: autocomplete="off"를 추가하여 브라우저 자동완성 팝업 차단
+      // 🛠️ 버그 해결: input 태그 명세 해제 후 div 기반 정밀 원터치 가상 토글 칩으로 재편성
       let segmentsHtml = colorList.map(color => `
-        <label class="capsule-chip-label" style="--theme-color: ${colorHexMap[color]};">
-          <input type="radio" name="color-${i}" value="${color}" 
-            onmousedown="this.setAttribute('data-was-checked', this.checked);"
-            onclick="handleRadioToggle(this, ${i})">
+        <div class="capsule-chip-btn color-btn-${i}" data-color="${color}" style="--theme-color: ${colorHexMap[color]};" onclick="toggleColorBtn(${i}, '${color}')">
           <span>${colorShortMap[color]}</span>
-        </label>
+        </div>
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="Enter Name" oninput="activateRow(${i})">
+        <input type="text" id="name-${i}" placeholder="Enter Name" autocomplete="off" oninput="activateRow(${i})">
         <div class="mac-capsule-control">
           ${segmentsHtml}
         </div>
@@ -263,14 +268,29 @@
       container.appendChild(row);
     }
 
-    // 🛠️ 핵심 추가: 라디오 버튼 한 번 더 누르면 선택 해제되는 커스텀 토글러 기능
-    function handleRadioToggle(radioEl, idx) {
-      var wasChecked = radioEl.getAttribute('data-was-checked') === 'true';
-      if (wasChecked) {
-        radioEl.checked = false;
-        radioEl.removeAttribute('data-was-checked');
+    // 🛠️ 2번 문제 해결: 같은 컬러 칩 한 번 더 누르면 완벽하게 토글 해제 처리하는 커스텀 트리거
+    function toggleColorBtn(rowIdx, color) {
+      if (isRunning) return;
+      
+      if (activeColorsState[rowIdx] === color) {
+        activeColorsState[rowIdx] = ""; // 한 번 더 누르면 선택 해제!
+      } else {
+        activeColorsState[rowIdx] = color; // 신규 선택
       }
-      activateRow(idx);
+      
+      // 로컬 UI 반영
+      renderCapsuleChips(rowIdx, activeColorsState[rowIdx]);
+      activateRow(rowIdx);
+    }
+
+    function renderCapsuleChips(rowIdx, activeColor) {
+      document.querySelectorAll(`.color-btn-${rowIdx}`).forEach(btn => {
+        if (btn.getAttribute("data-color") === activeColor) {
+          btn.classList.add("checked");
+        } else {
+          btn.classList.remove("checked");
+        }
+      });
     }
 
     function hardResetUI() {
@@ -297,18 +317,14 @@
       const data = snapshot.val();
       if (!data) return;
 
+      // 실시간 입력 보드 데이터 동기화 연동
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
           if(nameInput.value !== item.name) nameInput.value = item.name;
           
-          if(item.color) {
-            var rad = document.querySelector(`input[name="color-${idx}"][value="${item.color}"]`);
-            if(rad && !rad.checked) rad.checked = true;
-          } else {
-            var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
-            if(checked) checked.checked = false;
-          }
+          activeColorsState[idx] = item.color || "";
+          renderCapsuleChips(idx, activeColorsState[idx]);
           
           var row = document.getElementById(`row-${idx}`);
           row.classList.remove("active");
@@ -354,8 +370,7 @@
       var gridData = [];
       for(let i=0; i<6; i++) {
         var name = document.getElementById(`name-${i}`).value;
-        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
-        gridData.push({ name: name, color: checkedColor ? checkedColor.value : null });
+        gridData.push({ name: name, color: activeColorsState[i] || null });
       }
       db.update({
         grid: gridData,
@@ -367,8 +382,8 @@
     function activateRow(idx) {
       var nameVal = document.getElementById(`name-${idx}`).value;
       if (nameVal.trim() === "") {
-        var checked = document.querySelector(`input[name="color-${idx}"]:checked`);
-        if (checked) checked.checked = false;
+        activeColorsState[idx] = ""; // 이름 지워서 빈칸되면 색상도 자동 해제 유지
+        renderCapsuleChips(idx, "");
       }
       pushGridToFirebase();
     }
@@ -376,8 +391,8 @@
     function triggerFirebaseReset() {
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
-        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-        if(checked) checked.checked = false;
+        activeColorsState[i] = "";
+        renderCapsuleChips(i, "");
       }
       var gridData = [];
       for(let i=0; i<6; i++) {
@@ -393,8 +408,8 @@
     function localResetGrid() {
       hardResetUI();
       for (let i = 0; i < 6; i++) {
-        var checked = document.querySelector(`input[name="color-${i}"]:checked`);
-        if(checked) checked.checked = false;
+        activeColorsState[i] = "";
+        renderCapsuleChips(i, "");
       }
       historyGrid.innerHTML = "";
       historySheet.style.display = "none";
@@ -409,9 +424,9 @@
 
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
-        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
-        if (name.trim() !== "" && checkedColor) {
-          activeParticipants.push({ id: i, name: name, color: checkedColor.value, score: null });
+        var useColor = activeColorsState[i];
+        if (name.trim() !== "" && useColor) {
+          activeParticipants.push({ id: i, name: name, color: useColor, score: null });
         }
       }
 
@@ -587,13 +602,13 @@
       var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
-        var checkedColor = document.querySelector(`input[name="color-${i}"]:checked`);
+        var useColor = activeColorsState[i];
         var scoreText = document.getElementById(`score-${i}`).innerText;
         
-        if (name.trim() !== "" && checkedColor && scoreText !== "--") {
+        if (name.trim() !== "" && useColor && scoreText !== "--") {
           currentGachaData.push({
             name: name,
-            color: checkedColor.value,
+            color: useColor,
             score: scoreText
           });
         }
