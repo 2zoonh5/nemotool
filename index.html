@@ -75,6 +75,7 @@
         </div>
     </div>
 
+    <!-- 폴더창 -->
     <div class="window-popup" id="folderWindow">
         <div class="window-header">
             <div class="nav-buttons">
@@ -95,25 +96,72 @@
         <div class="window-body folder-content" id="folderContent"></div>
     </div>
 
-    <div class="window-popup" id="appWindow">
+    <!-- 1. 배그 가챠머신 윈도우 -->
+    <div class="window-popup app-window" id="pubg-gacha-Window" data-icon="p_gacha_icon.png">
         <div class="window-header">
             <div class="nav-buttons">
-                <button class="nav-btn back-btn" onclick="backToFolder()">
+                <button class="nav-btn back-btn" onclick="backToFolder('pubg-gacha-Window')">
                     <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
                 <button class="nav-btn forward-btn disabled">
                     <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
             </div>
-            <span class="window-title" id="windowTitle">프로그램</span>
+            <span class="window-title">가챠머신</span>
             <div class="mac-buttons">
-                <button class="window-btn minimize-btn" onclick="minimizeWindow('appWindow')"></button>
-                <button class="window-btn maximize-btn" onclick="toggleMaximize('appWindow')"></button>
-                <button class="window-btn close-btn" onclick="closeApp()"></button>
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('pubg-gacha-Window')"></button>
+                <button class="window-btn maximize-btn" onclick="toggleMaximize('pubg-gacha-Window')"></button>
+                <button class="window-btn close-btn" onclick="closeApp('pubg-gacha-Window')"></button>
             </div>
         </div>
         <div class="window-body">
-            <iframe id="appFrame" src="" frameborder="0"></iframe>
+            <iframe src="pubg-gacha.html" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- 2. 롤 롤모장 윈도우 -->
+    <div class="window-popup app-window" id="lol-memo-Window" data-icon="l_memo_icon.png">
+        <div class="window-header">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn" onclick="backToFolder('lol-memo-Window')">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="nav-btn forward-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+            <span class="window-title">롤모장</span>
+            <div class="mac-buttons">
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('lol-memo-Window')"></button>
+                <button class="window-btn maximize-btn" onclick="toggleMaximize('lol-memo-Window')"></button>
+                <button class="window-btn close-btn" onclick="closeApp('lol-memo-Window')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <iframe src="lol-memo.html" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- 3. 서든 서모장 윈도우 -->
+    <div class="window-popup app-window" id="sa-memo-Window" data-icon="s_memo_icon.png">
+        <div class="window-header">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn" onclick="backToFolder('sa-memo-Window')">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="nav-btn forward-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+            <span class="window-title">서모장</span>
+            <div class="mac-buttons">
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('sa-memo-Window')"></button>
+                <button class="window-btn maximize-btn" onclick="toggleMaximize('sa-memo-Window')"></button>
+                <button class="window-btn close-btn" onclick="closeApp('sa-memo-Window')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <iframe src="sa-memo.html" frameborder="0"></iframe>
         </div>
     </div>
 
