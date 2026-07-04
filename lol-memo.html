@@ -621,19 +621,15 @@
   </div>
 
   <script>
-    /*
-      기존 Firebase 설정값을 여기에 그대로 넣어.
-      아래 예시는 구조만 남긴 것이다.
-    */
       const firebaseConfig = {
-    apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
-    authDomain: "nemotool.firebaseapp.com",
-    databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
-    projectId: "nemotool",
-    storageBucket: "nemotool.firebasestorage.app",
-    messagingSenderId: "1003940918420",
-    appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
-  };
+        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+        authDomain: "nemotool.firebaseapp.com",
+        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+        projectId: "nemotool",
+        storageBucket: "nemotool.firebasestorage.app",
+        messagingSenderId: "1003940918420",
+        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+      };
 
     firebase.initializeApp(firebaseConfig);
 
@@ -910,10 +906,9 @@
               class="${rowClass}"
               data-set-index="${setIndex}"
               data-line-index="${lineIndex}"
-              title="${lineObj.isFixed ? "서폿 라인은 고정되어 교체할 수 없습니다." : "다른 라인을 선택하면 두 라인의 매치업 쌍이 교체됩니다."}"
             >
               <td class="lane-cell">
-                ${lineObj.lane}${lineObj.isFixed ? '<span class="lock-icon">⌁</span>' : ""}
+                ${lineObj.lane}
               </td>
               <td class="${firstCellClass}">${firstPlayer}</td>
               <td class="${secondCellClass}">${secondPlayer}</td>
