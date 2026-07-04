@@ -161,18 +161,9 @@ function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (!targetWindow || targetWindow.style.display === "none") return;
 
-    // 폴더 창(folderWindow)은 숨기기만 처리
     if (windowId === 'folderWindow') {
         targetWindow.style.display = "none";
         return;
-    }
-
-    // 🛠️ 스포일러 방지: 가챠 머신 창이 최소화될 때 내부 가챠 로직에 스킵 명령 하달
-    if (windowId === 'pubg-gacha-Window') {
-        const iframe = targetWindow.querySelector("iframe");
-        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.triggerLocalSkip === "function") {
-            iframe.contentWindow.triggerLocalSkip();
-        }
     }
 
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
