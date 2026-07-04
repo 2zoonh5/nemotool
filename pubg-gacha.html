@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>NEMO GACHA SYSTEM</title>
   
-  <!-- Firebase SDK 라이브러리 탑재 -->
+  <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -182,7 +182,7 @@
           <div id="reel" class="reel"></div>
         </div>
       </div>
-      <button id="saveBtn" class="btn-save" onclick="triggerFirebaseSave()">SAVE</button>
+      <button id="saveBtn" class="btn-save" onclick="triggerFirebaseSave()">SAVE RESULT</button>
     </div>
   </div>
 
@@ -361,24 +361,22 @@
         colorScoreMap[color] = seedPool[idx % seedPool.length];
       });
 
-      var fullReelSequence = [0]; // 최초 공백 spacer 대용
+      var fullReelSequence = [0]; 
       var modeSequence = [];
       var spinCount = 24;
 
       activeParticipants.forEach(p => {
         p.score = colorScoreMap[p.color];
         
-        // 중간 난수 완벽 일치 고정화
         for(var k=0; k < spinCount - 1; k++) {
           var tmp = Math.floor(Math.random() * (maxVal + 1));
           fullReelSequence.push(tmp === 0 ? 0 : -tmp);
         }
-        fullReelSequence.push(p.score); // 타겟 점수 정밀 매핑
+        fullReelSequence.push(p.score); 
         
         var rand = Math.random();
-        modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); // 스냅 연출 고정
+        modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); 
         
-        // 오버슛 버퍼 난수 매핑
         for(var k=0; k < 3; k++) {
           var tmp = Math.floor(Math.random() * (maxVal + 1));
           fullReelSequence.push(tmp === 0 ? 0 : -tmp);
@@ -406,29 +404,36 @@
       isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
       isSkipped = false;
 
-      // 🎨 클래스 잔상 완전 청소 버그 해결
+      // 🎨 클래스 잔상 및 보드 청소
       document.querySelectorAll(".table-row").forEach(r => {
         r.classList.remove("done", "jackpot-row");
         r.style.borderColor = "";
       });
 
-      // 릴 완전 초기화 로드
+      // 1. 강제 transition 차단 상태로 릴 도메인 내부 초기화 후 삽입
       reel.style.transition = 'none';
       reel.style.transform = 'translateY(0px)';
       reel.innerHTML = "";
 
-      // Firebase에서 동기화된 모든 시퀀스 노드를 기반으로 릴 사전에 일괄 빌드
+      // Firebase 데이터 기반 릴 그리기
       fullReelSequence.forEach((val, idx) => {
         var div = document.createElement('div');
         div.className = 'number';
         div.innerText = val;
-        // 인덱싱을 활용하여 타겟 아이디 동적 설정
         if (idx % 27 === 24 && idx > 0) {
           var pIdx = Math.floor(idx / 27);
           div.id = 'target-' + pIdx;
         }
         reel.appendChild(div);
       });
+
+      // 🛠️ 버그 해결: 인라인에 박힌 'transition = none' 제거하기!
+      reel.style.removeProperty("transition");
+
+      // 🛠️ 버그 해결: 브라우저가 위에서 생성된 원점(0px) 상태를 먼저 온전히 그리도록 가상 Reflow 유도
+      reel.offsetHeight;
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise(resolve => requestAnimationFrame(resolve));
 
       var spinCount = 24;
 
@@ -438,10 +443,9 @@
         var rowEl = document.getElementById(`row-${p.id}`);
         var mode = modeSequence[i];
         
-        // 현재 차례 테두리 컬러 안내 연출
         rowEl.style.borderColor = colorHexMap[p.color];
 
-        // 덮어쓰기 병합 방지 프레임 안전장치 이중 삽입
+        // 합성 버림 방지용 비동기 애니메이션 보정 프레임 트리거
         await new Promise(r => requestAnimationFrame(r));
         reel.className = 'reel spinning';
         await new Promise(r => requestAnimationFrame(r));
@@ -452,7 +456,7 @@
         
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
         
-        // ⏰ 타임아웃 끊김 해결 (T: 4s -> Wait: 4.05s 마진 적용)
+        // 🛠️ 버그 해결: 트랜지션 타임(4000ms)보다 미세하게 더 많이 기다리도록 보정 (3800ms -> 4050ms)
         await wait(4050); 
 
         if(!isSkipped) {
@@ -461,7 +465,7 @@
           reel.style.transform = 'translateY(-' + targetY + 'px)';
           await wait(550); 
 
-          // 핑크 글씨 누적 버그 청산 및 정밀 하이라이트 매핑
+          // 🛠️ 버그 해결: 예전 핑크색 하이라이트 글자 전부 초기화시키기
           document.querySelectorAll(".jackpot-hit, .final-hit").forEach(e => e.className = "number");
 
           var targetEl = document.getElementById('target-' + i);
@@ -501,6 +505,7 @@
       skipBtn.style.display = 'none'; 
       saveBtn.style.display = 'block'; 
       isRunning = false;
+      db.update({ status: "done" });
     }
 
     function triggerJackpotBurst() {
@@ -523,7 +528,6 @@
       animate();
     }
 
-    // 🌐 실시간 전체 공유 세이브 트리거
     function triggerFirebaseSave() {
       var historyData = [];
       for (let i = 0; i < 6; i++) {
@@ -547,7 +551,7 @@
 
     function renderHistoryList(historyData) {
       historySheet.style.display = "flex";
-      historyGrid.innerHTML = ""; // 초기화 리렌더링
+      historyGrid.innerHTML = ""; 
       
       historyData.forEach(item => {
         var card = document.createElement("div");
