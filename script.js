@@ -191,6 +191,10 @@ function openApp(url, name, icon) {
     windowPopup.setAttribute("data-icon", icon);
     document.getElementById("appFrame").src = url;
     document.getElementById("windowTitle").innerText = name; 
+    
+    // 앱을 열 때 자동으로 최대화(maximized) 클래스 추가
+    windowPopup.classList.add("maximized");
+    
     windowPopup.style.display = "flex";
 }
 
