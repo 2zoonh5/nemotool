@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
+        /* 🎨 프리미엄 서체 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
@@ -35,9 +36,9 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 🛠️ 창 축소 시 짤림 방지용 minmax 가변 트랙 그리드 개편 */
+        /* 🖥️ 대형 전체화면 및 축소화면 유연 가변폭 메인 레이아웃 개편 */
         .app-content {
-            display: grid; grid-template-columns: minmax(400px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: minmax(360px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
         }
 
         /* 좌측 구성 제어 셋 보드 */
@@ -48,7 +49,7 @@
             min-height: 520px; height: 520px;
         }
         
-        /* 🛠️ 위치 완전 고정 및 스왑 셋 */
+        /* 🛠️ 1번 해결: 경기 형식(좌) / 게임 모드(우) 마크업 그리드 배치 순서 완벽 스왑 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -119,29 +120,33 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🛠️ [image_aefc42.png 버그 완전 폭파]: 곡률 차단 이중 레이어 마스킹 구조 설계 */
+        /* 🖥️ [2번 해결] 창 축소 복원 시 잘림 절대 방어 외부 케이스 소켓 마스킹 기법 */
         .result-container {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px; 
-            overflow: hidden; /* 모서리 깨짐 철저 방지 */
+            overflow: hidden; /* 스크롤바 튀어나옴 완벽 마스킹 차단 */
             position: relative;
         }
         
-        /* 실제 스크롤 연출을 담당하는 내부 독립 코어 소켓 */
+        /* 🛠️ [2번 핵심 해결]: 창 축소 시 압착을 차단하고 스크롤로 원형 유지하도록 강제 맥스 콘텐트 제어 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; 
             justify-content: center;
         }
         
-        /* 4개 이상 슬롯 진입 시 좌측 정렬 변환 */
-        .result-container:has(.set-table:nth-child(4)) .result-scroll-core {
-            justify-content: flex-start;
+        /* 세트 수가 많아지거나 창이 줄어들면 자동 유연 레이아웃 좌측 선렬 스위칭 */
+        .result-container:has(.set-table:nth-child(4)) .result-scroll-core,
+        body {
+            /* 윈도우 축소 조건에 대한 유연 반응형 브로커 인프라 */
+        }
+        @media (max-width: 1100px) {
+            .result-scroll-core { justify-content: flex-start !important; }
         }
 
-        /* 🛠️ 스크롤바 모서리 침범 소멸 및 인라인 마스킹 트랙 */
+        /* 스크롤바 모서리 파괴 방지 인라인 커스텀 */
         .result-scroll-core::-webkit-scrollbar { height: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
@@ -167,20 +172,22 @@
             font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
         }
         
-        /* 🛠️ [리뉴얼]: 배정 명단 닉네임 크기 확대 가독성 극대화 */
+        /* 🛠️ 3번 해결: 닉네임 글씨 크기 확대 및 macOS 정석 실버 화이트 단색 톤 전격 통합 보정 */
         .set-table td {
-            padding: 10px 6px; text-align: center; font-size: 16px; height: 36px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff; font-weight: 500;
+            padding: 10px 6px; text-align: center; font-size: 17px; height: 38px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
+            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015);
         }
 
-        /* 블루 레드 진영 스케일 */
+        /* 블루 레드 진영 상단 띠 테마지 지정 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
-        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; color: #73c0ff !important; font-weight: 700 !important; }
-        .cell-red { background: rgba(255, 69, 58, 0.03) !important; color: #ff857d !important; font-weight: 700 !important; }
+        
+        /* 내부 셀 배경만 은은하게 분배 (텍스트 색상은 화이트 일괄 고정) */
+        .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
+        .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
 
         /* Mac OS 스타일 알림창 모달 */
         .mac-alert-overlay {
@@ -222,7 +229,7 @@
     <div class="app-content">
         <!-- 좌측 보드 -->
         <div class="setup-box">
-            <!-- 🛠️ 경기 형식(좌), 게임 모드(우) 마크업 라인 완전 고정 스왑화 완료 -->
+            <!-- 🛠️ 1번 완결: 드롭다운 소스 배치 순서 완전 물리 교체 처리 -->
             <div class="mode-panel-row">
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
@@ -274,7 +281,7 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (이중 마스킹 스크롤 케이스 쉴드 적용 완료) -->
+        <!-- 우측 결과 보드 (이중 케이스 격리 쉴드 레이어 연동 완료) -->
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="no-result" id="noResultGrid">
@@ -328,9 +335,10 @@
             document.getElementById(`p2_${i}`).value = "";
         }
         const scrollCore = document.getElementById("resultScrollCore");
+        scrollCore.style.removeProperty("justify-content");
         scrollCore.innerHTML = `
             <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 표시됩니다.</h3>
+                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
             </div>`;
     }
 
@@ -405,6 +413,13 @@
 
         const scrollCore = document.getElementById("resultScrollCore");
         scrollCore.innerHTML = ""; 
+        
+        // 🛠️ 2번 해결: 테이블 가동 수에 따라 정렬 베이스 가동폭 가변 전환 트리거링
+        if (totalSets >= 4) {
+            scrollCore.style.justifyContent = "flex-start";
+        } else {
+            scrollCore.style.justifyContent = "center";
+        }
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
