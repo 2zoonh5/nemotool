@@ -74,6 +74,12 @@
     }
     .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
     
+    /* 🛠️ 버그 해결: 인라인 보더 대신 정석 테두리 바인딩 클래스 설계 */
+    .table-row.active-border {
+      border-color: var(--theme-color) !important;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
+    }
+
     .table-row input[type="text"] {
       background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.08);
       color: #fff; font-size: 13.5px; padding: 4px; outline: none; width: 100%; box-sizing: border-box;
@@ -143,14 +149,14 @@
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <div class="network-badge"><div class="network-dot"></div><span>FIREBASE REALTIME ONLINE</span></div>
-  <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerFirebaseSkip()">»</button>
+  <div class="network-badge"><div class="network-dot"></div><span>FIREBASE STATE MACHINE ENGINE</span></div>
+  <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerLocalSkip()">»</button>
   
   <div class="gacha-main-workspace">
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
         <div class="sheet-box">
-          <div class="sheet-box-title">최대값</div>
+          <div class="sheet-box-title">MAX VALUE</div>
           <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="pushGridToFirebase()">
         </div>
         <div class="sheet-box">
@@ -205,6 +211,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("nemo_gacha_session");
 
+    // 🔷 정석 STATE MACHINE 정의 단일화
+    const STATE = {
+      IDLE: "idle",
+      READY: "ready",
+      SPINNING: "spinning",
+      SKIP: "skip",
+      RESULT: "result",
+      SAVED: "saved",
+      RESET: "reset"
+    };
+
     var reel = document.getElementById('reel');
     var clickBtn = document.getElementById('clickBtn');
     var saveBtn = document.getElementById('saveBtn');
@@ -245,12 +262,33 @@
       container.appendChild(row);
     }
 
-    // 🌐 Firebase 통합 단방향 리얼타임 리스너
+    // 🛠️ 1번 문제 해결: UI 단일 하드 리셋 마스터 기능 구현
+    function hardResetUI() {
+      document.querySelectorAll(".table-row").forEach(r => {
+        r.className = "table-row";
+        r.style.borderColor = "";
+      });
+      document.querySelectorAll(".number").forEach(n => {
+        n.className = "number";
+      });
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`score-${i}`).innerText = "--";
+      }
+      reel.style.transition = 'none';
+      reel.style.transform = 'translateY(0px)';
+      reel.innerHTML = ""; 
+      
+      saveBtn.style.display = "none";
+      clickBtn.disabled = true;
+      skipBtn.style.display = "none";
+    }
+
+    // 🌐 Firebase Value Listener ➔ 오직 상태 반영 및 UI 동기화만 담당 (로직 완전 배제)
     db.on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // 1. 실시간 입력창 동기화 (가챠가 안 돌아갈 때만 수신)
+      // 1. 단순 보드 데이터 동기화 (가챠 가동 중이 아닐 때만)
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
@@ -265,7 +303,7 @@
           }
           
           var row = document.getElementById(`row-${idx}`);
-          row.classList.remove("active", "done", "jackpot-row");
+          row.classList.remove("active");
           if (item.name.trim() !== "" && item.color) row.classList.add("active");
         });
       }
@@ -274,28 +312,35 @@
         document.getElementById("maxValInput").value = data.maxVal;
       }
 
-      // 2. 상태 기반 이벤트 수신 연동
-      if (data.status === "spinning" && !isRunning) {
-        runGachaMachine(data.fullReelSequence, data.activeParticipants, data.modeSequence);
-      }
-
-      // 🛠️ 1번 문제 해결: 스킵 상태 전역 실시간 반영 수신
-      if (data.status === "skip") {
-        isSkipped = true;
-      }
-
-      if (data.status === "reset") {
-        localResetGrid();
-      }
-
-      // 🛠️ 4번 문제 해결: 병합 축적된 내역 렌더링 수신
-      if (data.history) {
-        renderHistoryList(data.history);
-      } else {
-        historyGrid.innerHTML = "";
-        historySheet.style.display = "none";
-      }
+      // 2. 단일 상태(State) 분기 핸들러 작동
+      handleSystemState(data);
     });
+
+    function handleSystemState(data) {
+      switch(data.state) {
+        case STATE.READY:
+          if (!isRunning) {
+            clickBtn.disabled = false;
+            saveBtn.style.display = "none";
+            skipBtn.style.display = "none";
+          }
+          break;
+        case STATE.SPINNING:
+          if (!isRunning) {
+            runGachaMachine(data.fullReelSequence, data.activeParticipants, data.modeSequence);
+          }
+          break;
+        case STATE.SKIP:
+          isSkipped = true;
+          break;
+        case STATE.RESET:
+          localResetGrid();
+          break;
+        case STATE.SAVED:
+          if (data.history) renderHistoryList(data.history);
+          break;
+      }
+    }
 
     function pushGridToFirebase() {
       if (isRunning) return;
@@ -308,7 +353,7 @@
       db.update({
         grid: gridData,
         maxVal: document.getElementById("maxValInput").value,
-        status: "ready"
+        state: STATE.READY
       });
     }
 
@@ -317,26 +362,19 @@
     }
 
     function triggerFirebaseReset() {
-      db.update({ status: "reset", history: null });
+      db.update({ state: STATE.RESET, history: null });
     }
 
     function localResetGrid() {
+      hardResetUI();
       for (let i = 0; i < 6; i++) {
         document.getElementById(`name-${i}`).value = "";
         var checked = document.querySelector(`input[name="color-${i}"]:checked`);
         if(checked) checked.checked = false;
-        document.getElementById(`score-${i}`).innerText = "--";
-        
-        var row = document.getElementById(`row-${i}`);
-        row.className = "table-row";
-        row.style.borderColor = "";
       }
-      reel.style.transition = 'none';
-      reel.style.transform = 'none';
-      reel.innerHTML = ""; 
-      saveBtn.style.display = "none"; clickBtn.disabled = false; skipBtn.style.display = "none";
       historyGrid.innerHTML = "";
       historySheet.style.display = "none";
+      clickBtn.disabled = false;
       isRunning = false;
     }
 
@@ -357,6 +395,7 @@
         alert("이름과 색상이 지정된 참가자가 없습니다."); return;
       }
 
+      // 전역 상태 난수 시퀀스 사전 획정
       var seedPool = [];
       for (var i = 0; i <= maxVal; i++) seedPool.push(i === 0 ? 0 : -i);
       for (var i = seedPool.length - 1; i > 0; i--) {
@@ -375,16 +414,13 @@
 
       activeParticipants.forEach(p => {
         p.score = colorScoreMap[p.color];
-        
         for(var k=0; k < spinCount - 1; k++) {
           var tmp = Math.floor(Math.random() * (maxVal + 1));
           fullReelSequence.push(tmp === 0 ? 0 : -tmp);
         }
         fullReelSequence.push(p.score); 
-        
         var rand = Math.random();
         modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); 
-        
         for(var k=0; k < 3; k++) {
           var tmp = Math.floor(Math.random() * (maxVal + 1));
           fullReelSequence.push(tmp === 0 ? 0 : -tmp);
@@ -392,16 +428,15 @@
       });
 
       db.update({
-        status: "spinning",
+        state: STATE.SPINNING,
         activeParticipants: activeParticipants,
         fullReelSequence: fullReelSequence,
         modeSequence: modeSequence
       });
     }
 
-    // 🛠️ 1번 문제 해결: 스킵 버튼 클릭 시 파이어베이스 전역 전송
-    function triggerFirebaseSkip() {
-      db.update({ status: "skip" });
+    function triggerLocalSkip() {
+      db.update({ state: STATE.SKIP });
     }
 
     function wait(ms) {
@@ -414,19 +449,9 @@
     }
 
     async function runGachaMachine(fullReelSequence, activeParticipants, modeSequence) {
-      isRunning = true; clickBtn.disabled = true; skipBtn.style.display = "block"; 
-      isSkipped = false;
-
-      // 🛠️ 2번 및 3번 문제 복합 해결: 구동 시작 시 이전 테두리/결과값 잔상 및 클래스 완전 제거
-      document.querySelectorAll(".table-row").forEach(r => {
-        r.classList.remove("done", "jackpot-row");
-        r.style.borderColor = "";
-      });
-
-      // 릴 내부 완전 초기화 후 새로 주입
-      reel.style.transition = 'none';
-      reel.style.transform = 'translateY(0px)';
-      reel.innerHTML = "";
+      // 🛠️ 1, 3번 복합 버그 해결: 무조건 구동 진입 첫 프레임 하드 리셋 UI 가동
+      hardResetUI();
+      isRunning = true;
 
       fullReelSequence.forEach((val, idx) => {
         var div = document.createElement('div');
@@ -439,7 +464,7 @@
         reel.appendChild(div);
       });
 
-      // 인라인 transition 속성 파괴 후 렌더 프레임 보장
+      // Reflow 제어 및 안정적 트랜지션 진입 확보
       reel.style.removeProperty("transition");
       reel.offsetHeight;
       await new Promise(resolve => requestAnimationFrame(resolve));
@@ -453,9 +478,10 @@
         var rowEl = document.getElementById(`row-${p.id}`);
         var mode = modeSequence[i];
         
-        // 🛠️ 3번 문제 해결: 루프가 돌 때 '이전 사람'의 테두리 컬러를 싹 다 지우고 현재 차례만 highlight
-        document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
-        rowEl.style.borderColor = colorHexMap[p.color];
+        // 🛠️ 2번 문제 해결: 이전 테두리 완전 격리 청소 및 단일 라벨 보더 변수 주입
+        document.querySelectorAll(".table-row").forEach(r => r.classList.remove("active-border"));
+        rowEl.style.setProperty('--theme-color', colorHexMap[p.color]);
+        rowEl.classList.add("active-border");
 
         await new Promise(r => requestAnimationFrame(r));
         reel.className = 'reel spinning';
@@ -466,7 +492,6 @@
         var stopOffset = mode === 'B' ? -35 : (mode === 'C' ? 35 : 0);
         
         reel.style.transform = 'translateY(-' + (targetY + stopOffset) + 'px)';
-        
         await wait(4050); 
 
         if(!isSkipped) {
@@ -475,7 +500,6 @@
           reel.style.transform = 'translateY(-' + targetY + 'px)';
           await wait(550); 
 
-          // 🛠️ 2번 문제 해결: 클래스 부여 전 기존에 흔적이 남아있던 모든 색상 클래스 일제 완전 초기화
           document.querySelectorAll(".jackpot-hit, .final-hit").forEach(e => e.className = "number");
 
           var targetEl = document.getElementById('target-' + i);
@@ -509,13 +533,15 @@
         if (p.score === 0) rowEl.classList.add('jackpot-row');
       });
       
-      document.querySelectorAll(".table-row").forEach(r => r.style.borderColor = "");
+      document.querySelectorAll(".table-row").forEach(r => r.classList.remove("active-border"));
+      
       skipBtn.style.display = 'none'; 
       saveBtn.style.display = 'block'; 
+      clickBtn.disabled = false;
       isRunning = false;
       
-      // 구동 완료 후 상태 변경 (스킵 신호 초기화 목적)
-      db.update({ status: "done" });
+      // 구동 종료 선언을 파이어베이스에 업로드 (스킵 원복 및 상태 RESULT 고정)
+      db.update({ state: STATE.RESULT });
     }
 
     function triggerJackpotBurst() {
@@ -538,7 +564,7 @@
       animate();
     }
 
-    // 🛠️ 4번 문제 해결: 누적 통합 데이터 구조 업데이트 병합 방식 도입 (방법 B 적용)
+    // 🛠️ 4번 문제 해결: 완벽하게 정비된 데이터 병합 구조의 전역 SAVE 시스템
     function triggerFirebaseSave() {
       var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
@@ -555,14 +581,12 @@
         }
       }
 
-      // 파이어베이스에 한 번 빨아들여 기존 데이터 유무를 확인 후 스택 축적 병합
       db.once("value", (snapshot) => {
         var oldHistory = snapshot.val()?.history || [];
-        // 기존 아카이브 배열 뒤에 신규 스냅 데이터 결합
         var mergedHistory = [...oldHistory, ...currentGachaData];
         
         db.update({
-          status: "saved",
+          state: STATE.SAVED,
           history: mergedHistory
         });
       });
@@ -587,6 +611,7 @@
         historyGrid.appendChild(card);
       });
 
+      // 🛠️ 3번 문제 해결: 세이브 렌더링 시점에 상태 확정으로 꼬임 방지
       saveBtn.style.display = "none";
       clickBtn.disabled = false;
     }
