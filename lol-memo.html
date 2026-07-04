@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
+        /* 🎨 프리미엄 서체 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
             --bg-main: #0f0f12;
-            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-active: rgba(255, 255, 255, 0.04);
+            --bg-glass-passive: rgba(255, 255, 255, 0.015);
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
             --mac-red: #ff453a;
@@ -35,20 +37,19 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 🖥️ 대형 전체화면 및 축소화면 유연 가변폭 메인 레이아웃 개편 */
         .app-content {
             display: grid; grid-template-columns: minmax(360px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
         }
 
-        /* 좌측 구성 제어 셋 보드 */
+        /* 🛠️ 3번 반영: 설정 보드의 배경 불투명도를 높여 시각적 위계 확립 */
         .setup-box {
-            background: var(--bg-glass); border: 1px solid var(--border-glass);
+            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px;
         }
         
-        /* 🛠️ 1번 해결: 경기 형식(좌) / 게임 모드(우) 마크업 그리드 배치 순서 완벽 스왑 */
+        /* 🛠️ 1번 반영: 게임 모드(좌) / 경기 형식(우) 정렬 구조 전격 교체 및 정렬 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -69,7 +70,7 @@
         }
         .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
         .mac-select option { background: #1c1c1e; color: #fff; }
-        .mac-select:disabled { cursor: not-allowed; opacity: 0.6; }
+        .mac-select:disabled { cursor: default; opacity: 0.7; }
 
         /* 매칭 입력 영역 */
         .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
@@ -106,46 +107,39 @@
         .btn-reset:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
         .btn-reset:active { transform: translateY(0px) scale(0.98); }
 
+        /* 🛠️ 3번 반영: 팀 배정 버튼에 고급스러운 프리미엄 블루 네온 글로우 추가 */
         .btn-assign {
             flex: 1.3; height: 50px;
             background: rgba(0, 122, 255, 0.08); color: #007aff; 
             border: 1px solid rgba(0, 122, 255, 0.35); 
             border-radius: 25px; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 0.2px;
             transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
         }
         .btn-assign:hover { 
             background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); 
-            transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25); 
+            transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35); 
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🖥️ [2번 해결] 창 축소 복원 시 잘림 절대 방어 외부 케이스 소켓 마스킹 기법 */
+        /* 🛠️ 2, 3번 반영: 결과창의 배경 투명도를 낮추고 짤림 현상을 영구 차단하는 가로 인라인 마스킹 */
         .result-container {
-            background: var(--bg-glass); border: 1px solid var(--border-glass);
+            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px; 
-            overflow: hidden; /* 스크롤바 튀어나옴 완벽 마스킹 차단 */
+            overflow-x: hidden; /* 필수 수정 3 반영: 돌출 방지 마스킹 고정 */
             position: relative;
         }
         
-        /* 🛠️ [2번 핵심 해결]: 창 축소 시 압착을 차단하고 스크롤로 원형 유지하도록 강제 맥스 콘텐트 제어 */
+        /* 🛠️ 필수 수정 1 반영: 플렉스 무력화 현상 완치 및 스크롤 코어 안정화 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; align-items: center; 
-            justify-content: center;
-        }
-        
-        /* 세트 수가 많아지거나 창이 줄어들면 자동 유연 레이아웃 좌측 선렬 스위칭 */
-        .result-container:has(.set-table:nth-child(4)) .result-scroll-core,
-        body {
-            /* 윈도우 축소 조건에 대한 유연 반응형 브로커 인프라 */
-        }
-        @media (max-width: 1100px) {
-            .result-scroll-core { justify-content: flex-start !important; }
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
+            align-items: flex-start; justify-content: flex-start;
         }
 
-        /* 스크롤바 모서리 파괴 방지 인라인 커스텀 */
+        /* 스크롤바 모서리 파괴 방지 및 인라인 슬림 디자인 */
         .result-scroll-core::-webkit-scrollbar { height: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
@@ -155,10 +149,12 @@
         .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
-        /* 결과 시트 테이블 컴팩트 최적화 */
+        /* 🛠️ 필수 수정 2 반영: 가로 220px 완전 고정 격리 및 압착 방지 처리 */
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 12px; overflow: hidden; width: 215px; min-width: 215px; flex-shrink: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border-radius: 12px; overflow: hidden; 
+            width: 220px; min-width: 220px; flex: 0 0 auto; 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
             animation: tableFadeIn 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
         @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -171,20 +167,22 @@
             font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
         }
         
-        /* 🛠️ 3번 해결: 닉네임 글씨 크기 확대 및 macOS 정석 실버 화이트 단색 톤 전격 통합 보정 */
+        /* 🛠️ 4번 반영: 닉네임 정석 3단계 셀 밀림 파괴 패치 (eSports 고가독성 스타일 컴팩트 보정) */
         .set-table td {
-            padding: 10px 6px; text-align: center; font-size: 17px; height: 38px; border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
+            padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
+            border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
+            width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            letter-spacing: -0.2px;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015);
+            background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015); letter-spacing: 0;
         }
 
-        /* 블루 레드 진영 상단 띠 테마지 지정 */
+        /* 블루 레드 진영 헤더 동기화 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
         
-        /* 내부 셀 배경만 은은하게 분배 (텍스트 색상은 화이트 일괄 고정) */
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
         .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
 
@@ -228,19 +226,20 @@
     <div class="app-content">
         <!-- 좌측 보드 -->
         <div class="setup-box">
+            <!-- 🛠️ 1번 해결: 게임 모드(좌) / 경기 형식(우) 정렬 구조 전격 교체 마크업 배치 -->
             <div class="mode-panel-row">
+                <div class="form-row">
+                    <span class="form-label">게임 모드</span>
+                    <select id="mapMode" class="mac-select" disabled>
+                        <option value="SR" selected>소환사의 협곡</option>
+                    </select>
+                </div>
                 <div class="form-row">
                     <span class="form-label">경기 형식</span>
                     <select id="gameMode" class="mac-select">
                         <option value="Bo1">Bo1</option>
                         <option value="Bo3" selected>Bo3</option>
                         <option value="Bo5">Bo5</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">게임 모드</span>
-                    <select id="mapMode" class="mac-select" disabled>
-                        <option value="SR" selected>소환사의 협곡</option>
                     </select>
                 </div>
             </div>
@@ -279,11 +278,11 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (이중 케이스 격리 쉴드 레이어 연동 완료) -->
+        <!-- 우측 결과 보드 (필수 수정 1, 2, 3이 완벽 탑재된 크래시 제로 컨테이너) -->
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="no-result" id="noResultGrid">
-                    <h3>배정 결과가 여기에 표시됩니다.</h3>
+                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
                 </div>
             </div>
         </div>
@@ -333,7 +332,6 @@
             document.getElementById(`p2_${i}`).value = "";
         }
         const scrollCore = document.getElementById("resultScrollCore");
-        scrollCore.style.removeProperty("justify-content");
         scrollCore.innerHTML = `
             <div class="no-result" id="noResultGrid">
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
@@ -348,13 +346,16 @@
     }
 
     function runRollmojangAssignment() {
+        // 🛠️ 4번 반영: 닉네임 파싱 단에서 4글자 초과 시 자동 클립 슬라이스 자름 제어 장치 탑재
         for (let i = 0; i < 5; i++) {
-            const p1 = document.getElementById(`p1_${i}`).value.trim();
-            const p2 = document.getElementById(`p2_${i}`).value.trim();
-            if (!p1 || !p2) {
+            let p1Val = document.getElementById(`p1_${i}`).value.trim();
+            let p2Val = document.getElementById(`p2_${i}`).value.trim();
+            if (!p1Val || !p2Val) {
                 openMacAlert("배정 실패", "참가자 닉네임이 모두 입력되지 않았습니다.", "alert");
                 return;
             }
+            if (p1Val.length > 4) document.getElementById(`p1_${i}`).value = p1Val.slice(0, 4);
+            if (p2Val.length > 4) document.getElementById(`p2_${i}`).value = p2Val.slice(0, 4);
         }
 
         const gameMode = document.getElementById("gameMode").value;
@@ -365,9 +366,9 @@
         const rawData = [];
         for (let i = 0; i < 5; i++) {
             rawData.push([
-                document.getElementById(`p1_${i}`).value.trim(),
+                document.getElementById(`p1_${i}`).value.trim().slice(0, 4),
                 "",
-                document.getElementById(`p2_${i}`).value.trim()
+                document.getElementById(`p2_${i}`).value.trim().slice(0, 4)
             ]);
         }
 
@@ -411,13 +412,6 @@
 
         const scrollCore = document.getElementById("resultScrollCore");
         scrollCore.innerHTML = ""; 
-        
-        // 🛠️ 2번 해결: 테이블 가동 수에 따라 정렬 베이스 가동폭 가변 전환 트리거링
-        if (totalSets >= 4) {
-            scrollCore.style.justifyContent = "flex-start";
-        } else {
-            scrollCore.style.justifyContent = "center";
-        }
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
