@@ -29,62 +29,70 @@
     .btn-skip { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: #8e8e93; border: 1px solid var(--border-glass); border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 100; backdrop-filter: blur(10px); }
     .btn-skip:hover { background: var(--mac-accent); color: #1c1c1e; box-shadow: 0 0 15px rgba(226, 180, 189, 0.4); }
 
+    /* 🖥️ 메인 워크스페이스 반응형 및 최대화 배율 최적화 패치 */
     .gacha-main-workspace {
       display: flex; gap: 35px; align-items: flex-start; justify-content: center;
-      max-width: 1100px; width: 100%; z-index: 10; flex-wrap: wrap;
+      max-width: 1200px; width: 100%; z-index: 10; flex-wrap: wrap;
     }
 
-    /* 📊 좌측 컨트롤 패널 */
+    /* 📊 좌측 컨트롤 보드 시트 */
     .sheet-control-panel {
-      flex: 1.2; min-width: 500px; background: var(--bg-glass); border: 1px solid var(--border-glass);
+      flex: 1.3; min-width: 480px; background: var(--bg-glass); border: 1px solid var(--border-glass);
       border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-      display: flex; flex-direction: column; gap: 24px; backdrop-filter: blur(30px);
+      display: flex; flex-direction: column; gap: 24px; backdrop-filter: blur(30px); box-sizing: border-box;
     }
-    .sheet-top-row { display: flex; gap: 14px; align-items: center; }
-    .sheet-box { 
-      background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass); 
-      border-radius: 10px; padding: 10px 14px; text-align: center; flex: 1;
+    .sheet-top-row { display: flex; gap: 16px; align-items: center; width: 100%; }
+    
+    /* 🖥️ Mac OS 스타일 양방향 스텝퍼 컴포넌트 */
+    .mac-stepper-box {
+      background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); 
+      border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; gap: 12px; height: 52px; box-sizing: border-box;
     }
-    .sheet-box-title { font-size: 11px; color: #8e8e93; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
-    .sheet-box input[type="number"] {
-      width: 70px; background: transparent; border: none; color: #ff453a; font-family: 'Space Mono';
-      font-size: 20px; font-weight: 700; text-align: center; outline: none;
+    .stepper-label-group { display: flex; flex-direction: column; text-align: left; }
+    .mac-stepper-box input[type="number"] {
+      width: 45px; background: transparent; border: none; color: #ff453a; font-family: 'Space Mono';
+      font-size: 22px; font-weight: 700; text-align: center; outline: none; -moz-appearance: textfield;
     }
+    .mac-stepper-box input[type="number"]::-webkit-outer-spin-button,
+    .mac-stepper-box input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    
+    .stepper-buttons { display: flex; flex-direction: column; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); width: 22px; }
+    .stepper-btn { background: transparent; border: none; color: #fff; font-size: 10px; cursor: pointer; height: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .stepper-btn:hover { background: rgba(255,255,255,0.15); }
+    .stepper-btn:first-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
+
     .btn-reset {
       background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); color: #fff;
-      font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background 0.2s;
+      font-size: 13px; font-weight: 600; padding: 0 20px; border-radius: 10px; cursor: pointer; transition: background 0.2s; height: 52px; box-sizing: border-box; white-space: nowrap;
     }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.12); }
     
+    /* ⚡ Mac 스타일 럭셔리 대형 CLICK 버튼 */
     .btn-click {
-      flex: 1.6; background: var(--mac-accent); color: #1c1c1e; border: none; border-radius: 10px;
-      padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
-      transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(226, 180, 189, 0.2);
+      flex: 1.4; background: var(--mac-accent); color: #1c1c1e; border: none; border-radius: 12px;
+      height: 52px; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 6px 20px rgba(226, 180, 189, 0.25); white-space: nowrap;
     }
-    .btn-click:hover { background: #f2f2f7; transform: translateY(-1px); }
+    .btn-click:hover { background: #f2f2f7; transform: translateY(-1.5px); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
     .btn-click:disabled { background: #2c2c2e; color: #48484a; cursor: default; box-shadow: none; transform: none; }
 
+    /* 참가자 리스트 정밀 분할 및 자름 방지 크기 고정 */
     .participant-table { display: flex; flex-direction: column; gap: 12px; }
-    .table-header { display: grid; grid-template-columns: repeat(6, 1fr); padding: 0 10px; font-size: 12px; color: #8e8e93; font-weight: 600; text-align: center; margin-bottom: -6px; }
-    .table-header span:first-child { grid-column: span 2; text-align: left; }
-    .table-header span:nth-child(2) { grid-column: span 3; }
-    .table-header span:last-child { grid-column: span 1; text-align: right; padding-right: 12px; }
+    .table-header { display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; padding: 0 12px; font-size: 12.5px; color: #8e8e93; font-weight: 700; letter-spacing: 0.5px; }
+    .table-header center { text-align: center; }
+    .table-header right-head { text-align: right; padding-right: 12px; }
 
     .table-row {
-      display: grid; grid-template-columns: 2fr 3fr 1fr; gap: 16px; align-items: center;
+      display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; gap: 14px; align-items: center;
       background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.04);
-      padding: 12px; border-radius: 12px; transition: all 0.2s ease;
+      padding: 10px 14px; border-radius: 12px; transition: all 0.2s ease;
     }
     .table-row.active { background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
+    .table-row.active-border { border-color: var(--theme-color) !important; }
     
-    .table-row.active-border {
-      border-color: var(--theme-color) !important;
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
-    }
-
     .table-row input[type="text"] {
       background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.08);
-      color: #fff; font-size: 13.5px; padding: 4px; outline: none; width: 100%; box-sizing: border-box;
+      color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500;
     }
     .table-row input[type="text"]:focus { border-bottom-color: #0a84ff; }
     
@@ -92,28 +100,23 @@
       display: flex; background: rgba(255, 255, 255, 0.04); border-radius: 8px;
       padding: 2px; border: 1px solid rgba(255, 255, 255, 0.02); justify-content: space-between; gap: 2px;
     }
-    
-    /* 🛠️ 버그 해결: 라디오 태그 명세를 완전히 걷어내고 일반 커스텀 칩 스타일 버튼 설계 */
     .capsule-chip-btn {
-      flex: 1; text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0;
-      border-radius: 6px; cursor: pointer; color: #8e8e93; position: relative;
+      flex: 1; text-align: center; font-size: 11px; font-weight: 700; padding: 6px 0;
+      border-radius: 6px; cursor: pointer; color: #8e8e93; position: relative; min-width: 24px;
       transition: color 0.15s, background 0.15s, box-shadow 0.15s;
     }
     .capsule-chip-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
-    .capsule-chip-btn.checked {
-      color: #fff; background: var(--theme-color);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
+    .capsule-chip-btn.checked { color: #fff; background: var(--theme-color); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 
-    .result-score { font-family: 'Space Mono'; font-size: 16px; font-weight: 700; text-align: right; padding-right: 14px; color: #48484a; }
+    .result-score { font-family: 'Space Mono'; font-size: 17px; font-weight: 700; text-align: right; padding-right: 12px; color: #48484a; }
     .table-row.active .result-score { color: #8e8e93; }
     .table-row.done .result-score { color: #ff453a; }
     .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
 
-    /* 🎰 우측 가챠 머신 패널 */
-    .gacha-machine-panel { flex: 0.8; min-width: 280px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
+    /* 🎰 우측 가챠 머신 프레임 */
+    .gacha-machine-panel { flex: 0.7; min-width: 260px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--mac-accent); margin: 0; letter-spacing: 6px; text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); }
-    .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 250px; box-sizing: border-box; }
+    .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 245px; box-sizing: border-box; }
     .slot-display { width: 100%; height: 210px; border-radius: 32px; overflow: hidden; position: relative; background: #000000; border: 1px solid rgba(255,255,255,0.03); }
     .curve-shadow { position: absolute; left: 0; width: 100%; height: 85px; z-index: 15; pointer-events: none; }
     .top-shadow { top: 0; background: linear-gradient(to bottom, #000, transparent); }
@@ -133,13 +136,23 @@
 
     /* 💾 하단 세이브 히스토리 시트 */
     .history-sheet {
-      max-width: 1100px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
+      max-width: 1200px; width: 100%; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-      display: none; flex-direction: column; gap: 14px; backdrop-filter: blur(20px);
+      display: none; flex-direction: column; gap: 16px; backdrop-filter: blur(20px); box-sizing: border-box; margin-top: 10px;
     }
-    .history-title { font-size: 13px; color: #8e8e93; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
+    .history-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 10px; }
+    .history-title { font-size: 13.5px; color: #8e8e93; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
     .history-title::before { content: '📂'; }
-    .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    
+    /* 🛠️ 휴지통 쓰레기통 모양 삭제 보강 버튼 */
+    .btn-trash-clear {
+      background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 6px; transition: background 0.15s; padding: 0;
+    }
+    .btn-trash-clear:hover { background: rgba(255,69,58,0.15); }
+    .btn-trash-clear svg { width: 18px; height: 18px; fill: #ff453a; }
+
+    .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; width: 100%; }
     .history-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .history-card .p-info { display: flex; align-items: center; gap: 8px; font-weight: 600; }
     .history-card .p-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -152,33 +165,40 @@
 </head>
 <body>
   <canvas id="jackpotCanvas"></canvas>
-  <div class="network-badge"><div class="network-dot"></div><span>FIREBASE STATE MACHINE ENGINE</span></div>
+  <div class="network-badge"><div class="network-dot"></div><span>파이어베이스 실시간 엔진 연결됨</span></div>
   <button class="btn-skip" id="skipBtn" style="display:none;" onclick="triggerLocalSkip()">»</button>
   
   <div class="gacha-main-workspace">
+    <!-- 좌측 보드 -->
     <div class="sheet-control-panel">
       <div class="sheet-top-row">
-        <div class="sheet-box">
-          <div class="sheet-box-title">MAX VALUE</div>
-          <input type="number" id="maxValInput" min="1" max="99" value="5" oninput="pushGridToFirebase()">
+        <!-- 🛠️ 한국어 패치 및 Mac OS 정석 스텝퍼 바인딩 개편 -->
+        <div class="mac-stepper-box">
+          <div class="stepper-label-group">
+            <span class="sheet-box-title" style="margin-bottom:2px;">최대값</span>
+          </div>
+          <input type="number" id="maxValInput" min="1" max="99" value="5" readonly>
+          <div class="stepper-buttons">
+            <button class="stepper-btn" onclick="stepMaxVal(1)">▲</button>
+            <button class="stepper-btn" onclick="stepMaxVal(-1)">▼</button>
+          </div>
         </div>
-        <div class="sheet-box">
-          <div class="sheet-box-title">SYSTEM ARCHIVE</div>
-          <button class="btn-reset" onclick="triggerFirebaseReset()">RESET GRID</button>
-        </div>
-        <button class="btn-click" id="clickBtn" onclick="triggerFirebaseStart()">START GACHA MACHINE</button>
+        
+        <button class="btn-reset" onclick="triggerFirebaseReset()">명단 초기화</button>
+        <button class="btn-click" id="clickBtn" onclick="triggerFirebaseStart()">CLICK</button>
       </div>
 
       <div class="participant-table">
         <div class="table-header">
-          <span>PARTICIPANT NAME</span>
-          <span>CHIPS SELECTION</span>
-          <span>SCORE SHEET</span>
+          <span>닉네임</span>
+          <center>색상</center>
+          <right-head>마이너스 값</right-head>
         </div>
         <div id="tableRowsContainer"></div>
       </div>
     </div>
 
+    <!-- 우측 가챠 머신 -->
     <div class="gacha-machine-panel">
       <div class="header-box">
         <h1 class="header-main">NEMO GACHA</h1>
@@ -195,8 +215,16 @@
     </div>
   </div>
 
+  <!-- 하단 결과 기록 (휴지통 기능 연동 완료) -->
   <div class="history-sheet" id="historySheet">
-    <div class="history-title">SAVED SESSION RECORDS</div>
+    <div class="history-header-row">
+      <div class="history-title">가챠 결과 기록</div>
+      <button class="btn-trash-clear" title="기록 전체 삭제" onclick="triggerTrashHistoryClear()">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+        </svg>
+      </button>
+    </div>
     <div class="history-grid" id="historyGrid"></div>
   </div>
 
@@ -241,7 +269,6 @@
     var colorList = ["빨간색", "주황색", "노랑색", "초록색", "파랑색", "보라색"];
     var colorShortMap = { "빨간색": "빨", "주황색": "주", "노랑색": "노", "초록색": "초", "파랑색": "파", "보라색": "보" };
 
-    // 임시 로컬 활성화 상태 보관용 메모리 객체
     var activeColorsState = ["", "", "", "", "", ""];
 
     var container = document.getElementById("tableRowsContainer");
@@ -250,8 +277,6 @@
       row.className = "table-row";
       row.id = `row-${i}`;
       
-      // 🛠️ 버그 해결: autocomplete="off"를 추가하여 브라우저 자동완성 팝업 차단
-      // 🛠️ 버그 해결: input 태그 명세 해제 후 div 기반 정밀 원터치 가상 토글 칩으로 재편성
       let segmentsHtml = colorList.map(color => `
         <div class="capsule-chip-btn color-btn-${i}" data-color="${color}" style="--theme-color: ${colorHexMap[color]};" onclick="toggleColorBtn(${i}, '${color}')">
           <span>${colorShortMap[color]}</span>
@@ -259,7 +284,7 @@
       `).join('');
 
       row.innerHTML = `
-        <input type="text" id="name-${i}" placeholder="Enter Name" autocomplete="off" oninput="activateRow(${i})">
+        <input type="text" id="name-${i}" placeholder="이름을 입력하세요" autocomplete="off" oninput="activateRow(${i})">
         <div class="mac-capsule-control">
           ${segmentsHtml}
         </div>
@@ -268,28 +293,31 @@
       container.appendChild(row);
     }
 
-    // 🛠️ 2번 문제 해결: 같은 컬러 칩 한 번 더 누르면 완벽하게 토글 해제 처리하는 커스텀 트리거
+    // 🛠️ Mac 스텝퍼 전용 증감 인터랙션 스크립트 함수
+    function stepMaxVal(amount) {
+      if (isRunning) return;
+      var input = document.getElementById("maxValInput");
+      var current = parseInt(input.value) || 5;
+      var next = current + amount;
+      if (next >= 1 && next <= 99) {
+        input.value = next;
+        pushGridToFirebase();
+      }
+    }
+
     function toggleColorBtn(rowIdx, color) {
       if (isRunning) return;
+      if (activeColorsState[rowIdx] === color) activeColorsState[rowIdx] = "";
+      else activeColorsState[rowIdx] = color;
       
-      if (activeColorsState[rowIdx] === color) {
-        activeColorsState[rowIdx] = ""; // 한 번 더 누르면 선택 해제!
-      } else {
-        activeColorsState[rowIdx] = color; // 신규 선택
-      }
-      
-      // 로컬 UI 반영
       renderCapsuleChips(rowIdx, activeColorsState[rowIdx]);
       activateRow(rowIdx);
     }
 
     function renderCapsuleChips(rowIdx, activeColor) {
       document.querySelectorAll(`.color-btn-${rowIdx}`).forEach(btn => {
-        if (btn.getAttribute("data-color") === activeColor) {
-          btn.classList.add("checked");
-        } else {
-          btn.classList.remove("checked");
-        }
+        if (btn.getAttribute("data-color") === activeColor) btn.classList.add("checked");
+        else btn.classList.remove("checked");
       });
     }
 
@@ -317,7 +345,6 @@
       const data = snapshot.val();
       if (!data) return;
 
-      // 실시간 입력 보드 데이터 동기화 연동
       if (data.grid && !isRunning) {
         data.grid.forEach((item, idx) => {
           const nameInput = document.getElementById(`name-${idx}`);
@@ -361,6 +388,10 @@
           break;
         case STATE.SAVED:
           if (data.history) renderHistoryList(data.history);
+          else {
+            historyGrid.innerHTML = "";
+            historySheet.style.display = "none";
+          }
           break;
       }
     }
@@ -382,7 +413,7 @@
     function activateRow(idx) {
       var nameVal = document.getElementById(`name-${idx}`).value;
       if (nameVal.trim() === "") {
-        activeColorsState[idx] = ""; // 이름 지워서 빈칸되면 색상도 자동 해제 유지
+        activeColorsState[idx] = ""; 
         renderCapsuleChips(idx, "");
       }
       pushGridToFirebase();
@@ -400,8 +431,15 @@
       }
       db.update({ 
         grid: gridData,
-        state: STATE.RESET, 
-        history: null 
+        state: STATE.RESET
+      });
+    }
+
+    // 🛠️ 하단 가챠 결과 기록 독자적 전역 파괴 휴지통 함수 추가
+    function triggerTrashHistoryClear() {
+      db.update({
+        state: STATE.SAVED,
+        history: null
       });
     }
 
@@ -411,8 +449,6 @@
         activeColorsState[i] = "";
         renderCapsuleChips(i, "");
       }
-      historyGrid.innerHTML = "";
-      historySheet.style.display = "none";
       clickBtn.disabled = false;
       isRunning = false;
     }
@@ -431,7 +467,7 @@
       }
 
       if (activeParticipants.length === 0) {
-        alert("이름과 색상이 지정된 참가자가 없습니다."); return;
+        alert("닉네임과 색상이 지정된 참가자가 없습니다."); return;
       }
 
       var seedPool = [];
