@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     <style>
-        /* 🛠️ 1번 반영: 고급스럽고 세련된 프리미엄 서체 바인딩 */
+        /* 🎨 Apple 샌프란시스코 서체 감성의 가독성 높은 국산 웹폰트 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
@@ -46,33 +46,29 @@
             display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
         }
         
-        /* 🛠️ 3번 반영: 게임 모드 및 기본 소환사의 협곡 레이블을 포함한 Mac 제어창 아키텍처 */
+        /* 🖥️ [리뉴얼] 경기 형식 & 게임 모드 나란히 배치하는 쌍둥이 Mac OS 제어 툴바 */
         .mode-panel-row {
-            display: flex; gap: 12px; width: 100%; box-sizing: border-box;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
         .form-row { 
-            flex: 1.2; display: flex; justify-content: space-between; align-items: center; 
+            display: flex; flex-direction: column; gap: 6px;
             background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
             border: 1px solid var(--border-glass); box-sizing: border-box; 
         }
-        .map-guide-row {
-            flex: 0.8; display: flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.01); border-radius: 10px; border: 1px solid var(--border-glass);
-            font-size: 12.5px; font-weight: 700; color: #8e8e93; letter-spacing: -0.2px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-        .form-label { font-size: 13px; font-weight: 700; color: #8e8e93; letter-spacing: -0.3px; }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; text-transform: uppercase; }
         
-        /* 🛠️ 3번 반영: macOS 기본 셀렉트 컴포넌트 커스텀 텍스처 스타일링 */
+        /* macOS 정석 컴포넌트 드롭다운 커스텀 텍스처 스타일링 */
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 24px 6px 12px; font-size: 12.5px; font-weight: 700; outline: none; 
-            cursor: pointer; transition: background 0.15s; font-family: inherit;
+            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
+            cursor: pointer; transition: background 0.15s; font-family: inherit; width: 100%; box-sizing: border-box;
             appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aeaea2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
         .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
         .mac-select option { background: #1c1c1e; color: #fff; }
+        .mac-select:disabled { cursor: not-allowed; opacity: 0.6; }
 
         /* 매칭 입력 영역 */
         .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
@@ -98,7 +94,7 @@
         }
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        /* 하단 컨트롤 단 액션 캡슐 소켓 */
+        /* 하단 액션 버튼 그룹 */
         .btn-container { display: flex; gap: 14px; width: 100%; margin-top: 4px; }
         
         .btn-reset {
@@ -122,7 +118,7 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🛠️ 2번 반영: 가로 스크롤 완전 척결 및 Bo3 대응 3열 밀착 배치 결과 컨테이너 구조 */
+        /* 🖥️ Bo3 한 화면 최적 밀착화 정렬 그리드 컨테이너 */
         .result-container {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; min-height: 432px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
@@ -132,7 +128,7 @@
         .no-result { color: #8e8e93; margin: auto; text-align: center; grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;}
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; letter-spacing: -0.2px; }
 
-        /* 🛠️ 2번 반영: 가독성이 극대화된 정교한 macOS 테마 시트 결과 테이블 */
+        /* 결과 시트 테이블 */
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.04); 
             border-radius: 10px; overflow: hidden; width: 100%; box-shadow: 0 8px 25px rgba(0,0,0,0.2);
@@ -152,7 +148,7 @@
             background: rgba(255, 255, 255, 0.005); font-size: 11px; font-weight: 700; width: 42px; color: #8e8e93; border-right: 1px solid rgba(255,255,255,0.015);
         }
 
-        /* 🎨 2번 반영: 고대비 및 눈의 피로를 유발하지 않는 은은한 정석 진영 컬러 서식 분리 */
+        /* 블루 레드 진영 스타일 */
         .hdr-blue { background: rgba(0, 122, 255, 0.45) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.45) !important; color: #ffffff !important; }
         .cell-blue { background: rgba(0, 122, 255, 0.04) !important; color: #9cd4ff !important; font-weight: 600 !important; }
@@ -200,16 +196,22 @@
         <!-- 좌측 보드 -->
         <div class="setup-box">
             <div class="mode-panel-row">
+                <!-- 경기 형식 탭 -->
                 <div class="form-row">
-                    <span class="form-label">게임 모드</span>
+                    <span class="form-label">경기 형식</span>
                     <select id="gameMode" class="mac-select">
                         <option value="Bo1">Bo1</option>
                         <option value="Bo3" selected>Bo3</option>
                         <option value="Bo5">Bo5</option>
                     </select>
                 </div>
-                <!-- 🛠️ 3번 반영: 기본 맵 설정 소환사의 협곡 표기 완료 -->
-                <div class="map-guide-row">소환사의 협곡</div>
+                <!-- 게임 모드 탭 (소환사의 협곡 드롭박스로 리인프라 구현) -->
+                <div class="form-row">
+                    <span class="form-label">게임 모드</span>
+                    <select id="mapMode" class="mac-select" disabled>
+                        <option value="SR" selected>소환사의 협곡</option>
+                    </select>
+                </div>
             </div>
 
             <div class="input-table-sheet">
@@ -249,7 +251,7 @@
         <!-- 우측 결과 보드 (Bo3 3열 그리드 밀착 자동 안착 패치 완료) -->
         <div class="result-container" id="resultContainer">
             <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 표시됩니다.</h3>
+                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
             </div>
         </div>
     </div>
@@ -311,6 +313,7 @@
         }
     }
 
+    // 🛠️ 버그 완전 해결: 무응답을 발생시키던 인라인 백그라운드 문자열 수식을 소멸시키고 정밀 클래스로 이식 완비
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             const p1 = document.getElementById(`p1_${i}`).value.trim();
@@ -431,6 +434,7 @@
                 }
             }
 
+            // 고정 상수 클래스로 안전 결합 트리거 포지셔닝
             let teamAHdrClass = (set % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (set % 2 === 0) ? "hdr-red" : "hdr-blue";
             let teamACellClass = (set % 2 === 0) ? "cell-blue" : "cell-red";
@@ -451,7 +455,7 @@
                     <tr>
                         <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:42px;">라인</th>
                         <th class="sub-hdr ${teamAHdrClass}">${teamAName}</th>
-                        <th class="sub-hdr ${teamBHdrClass} ${r !== 4 ? '' : ''}">${teamBName}</th>
+                        <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
                     </tr>
                 </thead>
                 <tbody>
