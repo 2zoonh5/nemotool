@@ -161,13 +161,20 @@ function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (!targetWindow || targetWindow.style.display === "none") return;
 
-    // 폴더 창(folderWindow)은 독바 왼쪽에 고정 아이콘이 이미 있으므로 우측에 새로 슬롯을 만들지 않고 숨기기만 처리!
+    // 폴더 창(folderWindow)은 숨기기만 처리
     if (windowId === 'folderWindow') {
         targetWindow.style.display = "none";
         return;
     }
 
-    // 개별 게임 앱 창들만 독바 우측 최소화 목록에 추가함
+    // 🛠️ 스포일러 방지: 가챠 머신 창이 최소화될 때 내부 가챠 로직에 스킵 명령 하달
+    if (windowId === 'pubg-gacha-Window') {
+        const iframe = targetWindow.querySelector("iframe");
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.triggerLocalSkip === "function") {
+            iframe.contentWindow.triggerLocalSkip();
+        }
+    }
+
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     let useIcon = targetWindow.getAttribute("data-icon") || "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
 
