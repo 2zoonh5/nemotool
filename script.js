@@ -161,8 +161,7 @@ function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     
-    // 앱 고유 식별을 위해 창 ID 뒤에 현재 타이틀(이름)을 조합한 고유 키 생성
-    // (이걸 안 해주면 롤모장과 가챠머신이 같은 'appWindow'라 중복 처리됨)
+    // 앱 고유 식별을 위한 키
     const uniqueKey = windowId === 'appWindow' ? `${windowId}-${actualTitle}` : windowId;
 
     let useIcon = targetWindow.getAttribute("data-icon");
@@ -170,20 +169,11 @@ function minimizeWindow(windowId) {
         const currentFolder = targetWindow.getAttribute("data-current-folder");
         if (currentFolder === "pubg") useIcon = "pubg_icon.png";
         else if (currentFolder === "lol") useIcon = "lol_icon.png";
-        else if (currentFolder === "sudden") useIcon = "sa_icon.png";
+        else if (currentFolder === "sudden") useIcon = "sa-icon.png";
         else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
     }
 
-    // 최소화할 때 현재 창의 데이터를 백업 (나중에 복원할 때 필요)
-    let appData = null;
-    if (windowId === 'appWindow') {
-        appData = {
-            url: document.getElementById("appFrame").src,
-            name: actualTitle,
-            icon: useIcon
-        };
-    }
-
+    // iframe 리로드를 막기 위해 src 재설정 없이 display만 숨김
     targetWindow.style.display = "none";
     if (minimizedWindows[uniqueKey]) return;
     
@@ -191,26 +181,20 @@ function minimizeWindow(windowId) {
     const minimizedList = document.getElementById("minimizedList");
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
-    dockItem.id = `dock-slot-${uniqueKey.replace(/[^a-zA-Z0-9-]/g, '')}`; // 특수문자 제거 안전한 ID 생성
+    dockItem.id = `dock-slot-${uniqueKey.replace(/[^a-zA-Z0-9-]/g, '')}`;
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
     
     dockItem.addEventListener("click", (e) => { 
         e.stopPropagation(); 
-        restoreWindow(windowId, uniqueKey, appData); 
+        restoreWindow(windowId, uniqueKey); 
     });
     minimizedList.appendChild(dockItem);
 }
 
-function restoreWindow(windowId, uniqueKey, appData) {
+function restoreWindow(windowId, uniqueKey) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
-        // 앱 창을 복원할 때는 백업해둔 해당 앱의 URL과 이름, 아이콘을 다시 로드
-        if (windowId === 'appWindow' && appData) {
-            document.getElementById("appFrame").src = appData.url;
-            document.getElementById("windowTitle").innerText = appData.name;
-            targetWindow.setAttribute("data-icon", appData.icon);
-            targetWindow.classList.add("maximized");
-        }
+        // 기존에 세팅된 iframe과 창 크기 상태(maximized 유무)를 전혀 건드리지 않고 화면에 표시만 함
         targetWindow.style.display = "flex";
     }
     removeFromDock(uniqueKey);
@@ -234,11 +218,17 @@ function closeFolder() {
 function openApp(url, name, icon) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
-    windowPopup.setAttribute("data-icon", icon);
-    document.getElementById("appFrame").src = url;
-    document.getElementById("windowTitle").innerText = name; 
     
-    windowPopup.classList.add("maximized");
+    // 만약 완전히 다른 신규 앱을 여는 경우에만 iframe 주소를 새로고침함
+    // 독바에서 복원할 때는 이 함수를 안 타므로 내용이 유지됨
+    if (document.getElementById("appFrame").src !== window.location.origin + "/" + url && 
+        !document.getElementById("appFrame").src.endsWith(url)) {
+        document.getElementById("appFrame").src = url;
+        windowPopup.classList.add("maximized"); // 새 창으로 열 때는 기본 최대화로 시작
+    }
+    
+    windowPopup.setAttribute("data-icon", icon);
+    document.getElementById("windowTitle").innerText = name; 
     windowPopup.style.display = "flex";
 }
 
@@ -248,7 +238,9 @@ function closeApp() {
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
     
-    // 닫을 때 해당 앱 이름으로 등록된 독바 슬롯을 제거
+    // 완전히 끌 때는 주소를 비워줘서 다음에 열 때 깨끗하게 열리게 함
+    document.getElementById("appFrame").src = "";
+    
     removeFromDock(`appWindow-${actualTitle}`);
     lastClosedApp = null;
     closeFolder(); 
