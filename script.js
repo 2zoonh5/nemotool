@@ -1,14 +1,11 @@
 const folderData = {
-    pubg: { title: "배틀그라운드", apps: [{ id: "pubg-gacha", name: "가챠머신", icon: "p_gacha_icon.png", url: "pubg-gacha.html" }] },
-    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "l_memo_icon.png", url: "lol-memo.html" }] },
-    sudden: { title: "서든어택", apps: [{ id: "sa-memo", name: "서모장", icon: "s_memo_icon.png", url: "sa-memo.html" }] }
+    pubg: { title: "배틀그라운드", apps: [{ id: "pubg-gacha", name: "가챠머신", icon: "p_gacha_icon.png", targetId: "pubg-gacha-Window" }] },
+    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "l_memo_icon.png", targetId: "lol-memo-Window" }] },
+    sudden: { title: "서든어택", apps: [{ id: "sa-memo", name: "서모장", icon: "s_memo_icon.png", targetId: "sa-memo-Window" }] }
 };
 
 let minimizedWindows = {};
 let lastClosedApp = null; 
-
-// 각 앱별 iframe 내부의 데이터나 입력값을 저장해 둘 가상 메모리 공간
-let appSessions = {};
 
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
@@ -25,18 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
-    // 바탕화면 클릭 시 창을 끄지 않고 '최소화'
+    // 바탕화면 클릭 시 켜져 있는 창들을 모두 독바로 최소화
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         const folderWindow = document.getElementById("folderWindow");
-        const appWindow = document.getElementById("appWindow");
-        
-        if (appWindow && appWindow.style.display === "flex") {
-            minimizeWindow('appWindow');
-        }
         if (folderWindow && folderWindow.style.display === "flex") {
             minimizeWindow('folderWindow');
         }
+        document.querySelectorAll(".app-window").forEach(appWin => {
+            if (appWin.style.display === "flex") {
+                minimizeWindow(appWin.id);
+            }
+        });
     });
 
     startMacClock();
@@ -152,7 +149,7 @@ function openFolder(type) {
         iconDiv.innerHTML = `<img src="${app.icon}"> <span class="icon-name">${app.name}</span>`;
         iconDiv.addEventListener("dblclick", (e) => { 
             e.stopPropagation(); 
-            openApp(app.url, app.name, app.icon); 
+            openApp(app.targetId); 
         });
         content.appendChild(iconDiv);
     });
@@ -160,38 +157,12 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
-function saveCurrentAppSession() {
-    const currentName = document.getElementById("windowTitle").innerText;
-    const iframe = document.getElementById("appFrame");
-    
-    // 현재 열려있는 앱이 있고, iframe에 주소가 할당되어 있을 때 데이터 세이브
-    if (currentName && iframe && iframe.src) {
-        let textValues = [];
-        try {
-            // iframe 내부의 모든 input과 textarea 입력값을 추출해서 저장
-            const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
-            inputs.forEach((input, index) => {
-                textValues.push({ index: index, value: input.value });
-            });
-        } catch (e) {
-            // 크로스 도메인 이슈 등이 발생할 경우 대비 안전장치
-        }
-
-        appSessions[currentName] = {
-            url: iframe.src,
-            isMaximized: document.getElementById("appWindow").classList.contains("maximized"),
-            icon: document.getElementById("appWindow").getAttribute("data-icon"),
-            inputs: textValues
-        };
-    }
-}
-
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
+    if (!targetWindow || targetWindow.style.display === "none") return;
+
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     
-    const uniqueKey = windowId === 'appWindow' ? `${windowId}-${actualTitle}` : windowId;
-
     let useIcon = targetWindow.getAttribute("data-icon");
     if (!useIcon || useIcon.includes("flaticon")) {
         const currentFolder = targetWindow.getAttribute("data-current-folder");
@@ -201,64 +172,34 @@ function minimizeWindow(windowId) {
         else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
     }
 
-    // 최소화하기 직전의 세션 데이터를 메모리에 완벽하게 세이브!
-    if (windowId === 'appWindow') {
-        saveCurrentAppSession();
-    }
-
     targetWindow.style.display = "none";
-    if (minimizedWindows[uniqueKey]) return;
+    if (minimizedWindows[windowId]) return;
     
-    minimizedWindows[uniqueKey] = true;
+    minimizedWindows[windowId] = true;
     const minimizedList = document.getElementById("minimizedList");
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
-    dockItem.id = `dock-slot-${uniqueKey.replace(/[^a-zA-Z0-9-]/g, '')}`;
+    dockItem.id = `dock-slot-${windowId}`;
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
     
     dockItem.addEventListener("click", (e) => { 
         e.stopPropagation(); 
-        restoreWindow(windowId, uniqueKey, actualTitle); 
+        restoreWindow(windowId); 
     });
     minimizedList.appendChild(dockItem);
 }
 
-function restoreWindow(windowId, uniqueKey, appName) {
+function restoreWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
-        if (windowId === 'appWindow' && appSessions[appName]) {
-            // 현재 활성화된 앱 세션을 먼저 백업해두고
-            saveCurrentAppSession();
-            
-            // 독바에서 누른 그 앱의 데이터와 URL, 화면 상태를 정밀 복원
-            const session = appSessions[appName];
-            document.getElementById("appFrame").src = session.url;
-            document.getElementById("windowTitle").innerText = appName;
-            targetWindow.setAttribute("data-icon", session.icon);
-            
-            if (session.isMaximized) targetWindow.classList.add("maximized");
-            else targetWindow.classList.remove("maximized");
-
-            // iframe 로드가 완전히 끝난 직후 텍스트 복원
-            const iframe = document.getElementById("appFrame");
-            iframe.onload = () => {
-                try {
-                    const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
-                    session.inputs.forEach(item => {
-                        if (inputs[item.index]) inputs[item.index].value = item.value;
-                    });
-                } catch(e){}
-            };
-        }
         targetWindow.style.display = "flex";
     }
-    removeFromDock(uniqueKey);
+    removeFromDock(windowId);
 }
 
-function removeFromDock(uniqueKey) {
-    delete minimizedWindows[uniqueKey];
-    const safeId = uniqueKey.replace(/[^a-zA-Z0-9-]/g, '');
-    const slot = document.getElementById(`dock-slot-${safeId}`);
+function removeFromDock(windowId) {
+    delete minimizedWindows[windowId];
+    const slot = document.getElementById(`dock-slot-${windowId}`);
     if (slot) slot.remove();
 }
 
@@ -270,74 +211,52 @@ function closeFolder() {
     updateForwardButtonState();
 }
 
-function openApp(url, name, icon) {
-    // 새 앱을 열기 전에 기존 열려있던 앱 세션을 최종 백업
-    saveCurrentAppSession();
-
+function openApp(windowId) {
     document.getElementById("folderWindow").style.display = "none"; 
-    const windowPopup = document.getElementById("appWindow");
+    const windowPopup = document.getElementById(windowId);
     
-    // 이전에 켰던 세션이 메모리에 이미 존재한다면 그 상태 그대로 로드
-    if (appSessions[name]) {
-        const session = appSessions[name];
-        document.getElementById("appFrame").src = session.url;
-        if (session.isMaximized) windowPopup.classList.add("maximized");
-        else windowPopup.classList.remove("maximized");
-
-        const iframe = document.getElementById("appFrame");
-        iframe.onload = () => {
-            try {
-                const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
-                session.inputs.forEach(item => {
-                    if (inputs[item.index]) inputs[item.index].value = item.value;
-                });
-            } catch(e){}
-        };
-    } else {
-        // 아예 처음 여는 생짜 새 앱이라면 초기화 로드
-        document.getElementById("appFrame").src = url;
-        windowPopup.classList.add("maximized"); 
+    // 이전에 세팅한 크기 상태(최소화 축소 상태 등)가 없다면 기본적으로 처음 켤 땐 최대화 실행
+    if (!windowPopup.classList.contains("maximized") && windowPopup.style.display !== "none" && !minimizedWindows[windowId]) {
+        windowPopup.classList.add("maximized");
     }
     
-    windowPopup.setAttribute("data-icon", icon);
-    document.getElementById("windowTitle").innerText = name; 
     windowPopup.style.display = "flex";
 }
 
-function closeApp() {
-    const windowPopup = document.getElementById("appWindow");
-    const actualTitle = document.getElementById("windowTitle").innerText;
+function closeApp(windowId) {
+    const windowPopup = document.getElementById(windowId);
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
     
-    document.getElementById("appFrame").src = "";
+    // 닫았을 때 iframe을 리프레시하여 완전 종료 처리
+    const iframe = windowPopup.querySelector("iframe");
+    if (iframe) {
+        const currentSrc = iframe.src;
+        iframe.src = currentSrc;
+    }
     
-    // 앱을 완전히 종료(X)할 때는 메모리 세션도 함께 깔끔히 증발시킴
-    delete appSessions[actualTitle];
-    
-    removeFromDock(`appWindow-${actualTitle}`);
+    removeFromDock(windowId);
     lastClosedApp = null;
     closeFolder(); 
 }
 
-function backToFolder() {
-    const windowPopup = document.getElementById("appWindow");
-    const actualTitle = document.getElementById("windowTitle").innerText;
-    
-    saveCurrentAppSession();
-    
+function backToFolder(windowId) {
+    const windowPopup = document.getElementById(windowId);
     if (windowPopup.style.display !== "none") {
-        lastClosedApp = { url: document.getElementById("appFrame").src, name: actualTitle, icon: windowPopup.getAttribute("data-icon") };
+        const iframe = windowPopup.querySelector("iframe");
+        lastClosedApp = { 
+            targetId: windowId
+        };
         windowPopup.style.display = "none";
     }
-    removeFromDock(`appWindow-${actualTitle}`);
+    removeFromDock(windowId);
     document.getElementById("folderWindow").style.display = "flex";
     updateForwardButtonState();
 }
 
 function forwardToApp() {
     if (!lastClosedApp) return;
-    openApp(lastClosedApp.url, lastClosedApp.name, lastClosedApp.icon);
+    openApp(lastClosedApp.targetId);
     lastClosedApp = null; 
     updateForwardButtonState();
 }
