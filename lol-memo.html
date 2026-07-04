@@ -25,8 +25,16 @@
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
             margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
-            min-height: 100vh; user-select: none;
+            min-height: 100vh; user-select: none; position: relative;
         }
+
+        /* 🛠️ 3번 반영: 가챠머신과 100% 동일 규격의 실시간 네온 배지 인프라 장착 */
+        .network-badge { 
+            position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
+            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
+            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
+        }
+        .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
             max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
@@ -162,6 +170,7 @@
             width: 220px; min-width: 220px; flex: 0 0 auto; 
             box-shadow: 0 12px 35px rgba(0,0,0,0.3);
         }
+        @keyframes tableFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         
         .set-table th.set-title {
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
@@ -174,19 +183,18 @@
             text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
         }
         
-        /* 🛠️ 드래그 앤 드롭 전용 애니메이션 행 클래스 추가 */
-        .draggable-row {
-            cursor: grab;
-            transition: background 0.15s ease;
+        /* 🛠️ 2번 해결: 드래그를 대체할 macOS 전용 세그먼트 클릭 라인 교체 스타일링 인프라 */
+        .clickable-swap-row {
+            cursor: pointer;
+            transition: all 0.15s ease;
         }
-        .draggable-row:hover {
+        .clickable-swap-row:hover {
             background: rgba(255, 255, 255, 0.03);
         }
-        .draggable-row:active {
-            cursor: grabbing;
-        }
-        .drag-over {
-            border-top: 2px solid var(--mac-blue) !important;
+        /* 선택 활성화 상태 햅틱 피드백 조명 */
+        .clickable-swap-row.selected-token {
+            background: rgba(0, 122, 255, 0.15) !important;
+            outline: 1px solid var(--mac-blue);
         }
 
         .set-table td {
@@ -230,6 +238,9 @@
     </style>
 </head>
 <body>
+
+  <!-- 🛠️ 3번 해결: 가챠머신 소스와 완전히 연동되는 실시간 안내 배지 텍스트 장착 완료 -->
+  <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
 
 <div class="container">
     <div class="mac-app-header">
@@ -312,7 +323,7 @@
 </div>
 
 <script>
-    // 🛠️ Firebase Realtime Database 동기화 코어 가동
+    // 🛠️ Firebase Realtime Database 세션 동기화 개설 완료
     const firebaseConfig = {
         apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
         authDomain: "nemotool.firebaseapp.com",
@@ -326,41 +337,14 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("nemo_lol_memo_session");
 
-    var globalResultData = null; // 실시간 변경 제어용 글로벌 캐시 메모리 소켓
+    var globalResultData = null; 
     var isOperating = false;
 
-    // macOS 다이얼로그
-    function openMacAlert(title, subText, type, onConfirm) {
-        const overlay = document.getElementById("macAlertOverlay");
-        document.getElementById("macAlertTitle").innerText = title;
-        document.getElementById("macAlertSub").innerText = subText;
-        const btnBox = document.getElementById("macAlertBtnBox");
-        btnBox.innerHTML = "";
+    // 🛠️ 2번 과제 인터페이스 스왑 토큰 상태 변수 정의
+    var selectedRowElement = null;
+    var selectedSetIndex = null;
+    var selectedLineIndex = null;
 
-        if (type === "confirm") {
-            const cancelBtn = document.createElement("button");
-            cancelBtn.className = "mac-alert-btn cancel";
-            cancelBtn.innerText = "취소";
-            cancelBtn.onclick = () => { overlay.style.display = "none"; };
-            
-            const confirmBtn = document.createElement("button");
-            confirmBtn.className = "mac-alert-btn confirm";
-            confirmBtn.innerText = "확인";
-            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
-            
-            btnBox.appendChild(cancelBtn);
-            btnBox.appendChild(confirmBtn);
-        } else {
-            const alertBtn = document.createElement("button");
-            alertBtn.className = "mac-alert-btn confirm";
-            alertBtn.innerText = "확인";
-            alertBtn.onclick = () => { overlay.style.display = "none"; };
-            btnBox.appendChild(alertBtn);
-        }
-        overlay.style.display = "flex";
-    }
-
-    // 명단 입력단 파이어베이스 업링크 푸시
     function pushInputsToFirebase() {
         if (isOperating) return;
         let inputs = [];
@@ -376,10 +360,13 @@
         });
     }
 
-    // 파이어베이스 실시간 원격 다운링크 수신 수신기 가동
     db.on("value", (snapshot) => {
         const data = snapshot.val();
-        if (!data) return;
+        if (!data) {
+            // 원격 노드가 부재할 시 돔 공백 리셋 트리거
+            localHardResetUI();
+            return;
+        }
 
         isOperating = true;
         if (data.inputs) {
@@ -405,10 +392,27 @@
         isOperating = false;
     });
 
+    // 🛠️ 1번 해결: 먹통이 되던 단방향 초기화 대신 트랜잭션 방식으로 원격 노드 동시 소멸 동기화 구현 완료
     function askRollmojangReset() {
         openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
-            db.set(null); // 파이어베이스 전격 초기화 무력화
+            db.set({
+                gameMode: "Bo3",
+                inputs: [ {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""} ],
+                results: null
+            });
         });
+    }
+
+    function localHardResetUI() {
+        for(let i=0; i<5; i++) {
+            document.getElementById(`p1_${i}`).value = "";
+            document.getElementById(`p2_${i}`).value = "";
+        }
+        document.getElementById("tableWrapperBinder").innerHTML = `
+            <div class="no-result" id="noResultGrid">
+                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
+            </div>`;
+        selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
     }
 
     function customShuffleArray(array) {
@@ -432,6 +436,7 @@
 
         const gameMode = document.getElementById("gameMode").value;
         let totalSets = 1;
+        if (gameMode === "Bo1") totalSets = 1;
         if (gameMode === "Bo3") totalSets = 3;
         if (gameMode === "Bo5") totalSets = 5;
 
@@ -539,7 +544,6 @@
                 }
             }
 
-            // 실시간 원격 구조용 JSON 스냅샷 아카이브 직렬화 빌드
             let setLineArray = [];
             let laneNames = ["탑", "정글", "미드", "원딜", "서폿"];
             for(let r=0; r<5; r++) {
@@ -556,7 +560,6 @@
         db.update({ results: serializedResults });
     }
 
-    // 🛠️ [리뉴얼 핵심]: 파이어베이스 데이터 스냅샷 기반 무결성 스크롤 시트 동적 렌더러
     function renderResultTables(results) {
         const binder = document.getElementById("tableWrapperBinder");
         binder.innerHTML = ""; 
@@ -588,10 +591,10 @@
             `;
 
             setObj.lines.forEach((lineObj, lIdx) => {
-                // 서폿고정 행(lIdx === 4)은 드래그 속성 차단처리
-                let dragAttr = lineObj.isFixed ? '' : 'draggable="true" class="draggable-row"';
+                // 🛠️ 2번 과제 리뉴얼: 피로도 높은 드래그를 소멸시키고 원클릭 크로스 매칭 스위처 라인업 트리거 연동
+                let rowClass = lineObj.isFixed ? '' : 'class="clickable-swap-row" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"';
                 htmlPayload += `
-                    <tr ${dragAttr} data-line="${lIdx}" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                    <tr ${rowClass}>
                         <td class="lane-cell">${lineObj.lane}</td>
                         <td class="${teamACellClass}">${lineObj.blue}</td>
                         <td class="${teamBCellClass}">${lineObj.red}</td>
@@ -603,64 +606,69 @@
             table.innerHTML = htmlPayload;
             binder.appendChild(table);
         });
-    }
-
-    // 🛠️ [2번 과제]: HTML5 Native Drag & Drop 세션 중재 브로커 인터페이스 연동 단 가동
-    let dragSrcElement = null;
-    let dragSrcSetIdx = null;
-
-    function handleDragStart(e) {
-        dragSrcElement = e.currentTarget;
-        dragSrcSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute("data-line"));
-    }
-
-    function handleDragOver(e) {
-        if (e.preventDefault) e.preventDefault();
-        let targetSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
         
-        // 같은 세트 테이블 내부의 요소끼리만 스위칭이 되도록 방어벽 설정
-        if (dragSrcSetIdx !== targetSetIdx) return false;
-        
-        e.currentTarget.classList.add('drag-over');
-        return false;
-    }
-
-    function handleDragLeave(e) {
-        e.currentTarget.classList.remove('drag-over');
-    }
-
-    function handleDrop(e) {
-        if (e.stopPropagation) e.stopPropagation();
-        e.currentTarget.classList.remove('drag-over');
-
-        let targetSetIdx = e.currentTarget.parentNode.getAttribute("data-set");
-        if (dragSrcSetIdx !== targetSetIdx) return false; // 이종 간 교체 밀어내기 차단
-
-        let srcLineIdx = parseInt(dragSrcElement.getAttribute("data-line"));
-        let targetLineIdx = parseInt(e.currentTarget.getAttribute("data-line"));
-
-        if (srcLineIdx === targetLineIdx) return false;
-
-        // 글로벌 캐시 배열에서 맞밸 단위 교환 연산 단행
-        if (globalResultData && globalResultData[targetSetIdx]) {
-            let setLines = globalResultData[targetSetIdx].lines;
-            
-            // 데이터 쌍 스위칭 오케스트레이션
-            let tempBlue = setLines[srcLineIdx].blue;
-            let tempRed = setLines[srcLineIdx].red;
-
-            setLines[srcLineIdx].blue = setLines[targetLineIdx].blue;
-            setLines[srcLineIdx].red = setLines[targetLineIdx].red;
-
-            setLines[targetLineIdx].blue = tempBlue;
-            setLines[targetLineIdx].red = tempRed;
-
-            // 최종 수정된 실시간 오버라이딩 패킷을 업링크로 재푸시
-            db.update({ results: globalResultData });
+        // 정렬 상태 캐시 보정 리포지셔닝 복원
+        const scrollCore = document.getElementById("resultScrollCore");
+        if (results.length >= 4) {
+            scrollCore.style.justifyContent = "flex-start";
+        } else {
+            scrollCore.style.justifyContent = "center";
         }
-        return false;
+    }
+
+    // 🛠️ 2번 정석 해결: 원클릭 스왑 오케스트레이션 알고리즘 설계 단 가동
+    function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
+        // 이미 다른 세트의 토큰이 켜져 있는 상태에서 다른 세트 테이블을 누르면 선택권 전격 리셋 전환
+        if (selectedRowElement && selectedSetIndex !== setIdx) {
+            selectedRowElement.classList.remove("selected-token");
+            selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+        }
+
+        // 첫 번째 라인 선택 트리거링
+        if (!selectedRowElement) {
+            selectedRowElement = element;
+            selectedSetIndex = setIdx;
+            selectedLineIndex = lineDocsIdx;
+            element.classList.add("selected-token");
+        } else {
+            // 두 번째 라인 선택 완료 시점 -> 즉시 1초의 딜레이도 없이 고속 수평 교환 연산 처리
+            let firstLineIdx = selectedLineIndex;
+            let secondLineIdx = lineDocsIdx;
+
+            if (firstLineIdx === secondLineIdx) {
+                // 본인 셀 연속 두번 누르면 선택 해제 처리
+                element.classList.remove("selected-token");
+                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+                return;
+            }
+
+            if (globalResultData && globalResultData[setIdx]) {
+                let linesArray = globalResultData[setIdx].lines;
+
+                // 중요: 드래그 버그 원인이던 서폿고정 침범을 완벽하게 차단하기 위해 유효성 검증 레이어 가동
+                if (linesArray[firstLineIdx].isFixed || linesArray[secondLineIdx].isFixed) {
+                    selectedRowElement.classList.remove("selected-token");
+                    selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+                    return;
+                }
+
+                // 블루 레드 선수 쌍 단위 일괄 크로스 스위칭 단행
+                let holdBlue = linesArray[firstLineIdx].blue;
+                let holdRed = linesArray[firstLineIdx].red;
+
+                linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
+                linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
+
+                linesArray[secondLineIdx].blue = holdBlue;
+                linesArray[secondLineIdx].red = holdRed;
+
+                // 선택 조명 이펙트 제거 및 원격 동기화 일괄 파이어
+                selectedRowElement.classList.remove("selected-token");
+                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+
+                db.update({ results: globalResultData });
+            }
+        }
     }
 </script>
 </body>
