@@ -161,16 +161,15 @@ function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     if (!targetWindow || targetWindow.style.display === "none") return;
 
-    const actualTitle = targetWindow.querySelector('.window-title').innerText;
-    
-    let useIcon = targetWindow.getAttribute("data-icon");
-    if (!useIcon || useIcon.includes("flaticon")) {
-        const currentFolder = targetWindow.getAttribute("data-current-folder");
-        if (currentFolder === "pubg") useIcon = "pubg_icon.png";
-        else if (currentFolder === "lol") useIcon = "lol_icon.png";
-        else if (currentFolder === "sudden") useIcon = "sa_icon.png";
-        else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+    // 폴더 창(folderWindow)은 독바 왼쪽에 고정 아이콘이 이미 있으므로 우측에 새로 슬롯을 만들지 않고 숨기기만 처리!
+    if (windowId === 'folderWindow') {
+        targetWindow.style.display = "none";
+        return;
     }
+
+    // 개별 게임 앱 창들만 독바 우측 최소화 목록에 추가함
+    const actualTitle = targetWindow.querySelector('.window-title').innerText;
+    let useIcon = targetWindow.getAttribute("data-icon") || "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
 
     targetWindow.style.display = "none";
     if (minimizedWindows[windowId]) return;
@@ -206,7 +205,6 @@ function removeFromDock(windowId) {
 function closeFolder() {
     document.getElementById("folderWindow").style.display = "none";
     document.getElementById("folderWindow").classList.remove("maximized");
-    removeFromDock("folderWindow");
     lastClosedApp = null;
     updateForwardButtonState();
 }
@@ -215,7 +213,6 @@ function openApp(windowId) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById(windowId);
     
-    // 이전에 세팅한 크기 상태(최소화 축소 상태 등)가 없다면 기본적으로 처음 켤 땐 최대화 실행
     if (!windowPopup.classList.contains("maximized") && windowPopup.style.display !== "none" && !minimizedWindows[windowId]) {
         windowPopup.classList.add("maximized");
     }
@@ -228,7 +225,6 @@ function closeApp(windowId) {
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
     
-    // 닫았을 때 iframe을 리프레시하여 완전 종료 처리
     const iframe = windowPopup.querySelector("iframe");
     if (iframe) {
         const currentSrc = iframe.src;
@@ -243,7 +239,6 @@ function closeApp(windowId) {
 function backToFolder(windowId) {
     const windowPopup = document.getElementById(windowId);
     if (windowPopup.style.display !== "none") {
-        const iframe = windowPopup.querySelector("iframe");
         lastClosedApp = { 
             targetId: windowId
         };
