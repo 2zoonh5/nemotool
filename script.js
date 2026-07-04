@@ -7,6 +7,9 @@ const folderData = {
 let minimizedWindows = {};
 let lastClosedApp = null; 
 
+// 각 앱별 iframe 내부의 데이터나 입력값을 저장해 둘 가상 메모리 공간
+let appSessions = {};
+
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
 
@@ -22,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
+    // 바탕화면 클릭 시 창을 끄지 않고 '최소화'
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         const folderWindow = document.getElementById("folderWindow");
@@ -156,11 +160,36 @@ function openFolder(type) {
     updateForwardButtonState();
 }
 
+function saveCurrentAppSession() {
+    const currentName = document.getElementById("windowTitle").innerText;
+    const iframe = document.getElementById("appFrame");
+    
+    // 현재 열려있는 앱이 있고, iframe에 주소가 할당되어 있을 때 데이터 세이브
+    if (currentName && iframe && iframe.src) {
+        let textValues = [];
+        try {
+            // iframe 내부의 모든 input과 textarea 입력값을 추출해서 저장
+            const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
+            inputs.forEach((input, index) => {
+                textValues.push({ index: index, value: input.value });
+            });
+        } catch (e) {
+            // 크로스 도메인 이슈 등이 발생할 경우 대비 안전장치
+        }
+
+        appSessions[currentName] = {
+            url: iframe.src,
+            isMaximized: document.getElementById("appWindow").classList.contains("maximized"),
+            icon: document.getElementById("appWindow").getAttribute("data-icon"),
+            inputs: textValues
+        };
+    }
+}
+
 function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     
-    // 앱 고유 식별을 위한 키
     const uniqueKey = windowId === 'appWindow' ? `${windowId}-${actualTitle}` : windowId;
 
     let useIcon = targetWindow.getAttribute("data-icon");
@@ -168,8 +197,13 @@ function minimizeWindow(windowId) {
         const currentFolder = targetWindow.getAttribute("data-current-folder");
         if (currentFolder === "pubg") useIcon = "pubg_icon.png";
         else if (currentFolder === "lol") useIcon = "lol_icon.png";
-        else if (currentFolder === "sudden") useIcon = "sa-icon.png";
+        else if (currentFolder === "sudden") useIcon = "sa_icon.png";
         else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
+    }
+
+    // 최소화하기 직전의 세션 데이터를 메모리에 완벽하게 세이브!
+    if (windowId === 'appWindow') {
+        saveCurrentAppSession();
     }
 
     targetWindow.style.display = "none";
@@ -184,15 +218,38 @@ function minimizeWindow(windowId) {
     
     dockItem.addEventListener("click", (e) => { 
         e.stopPropagation(); 
-        restoreWindow(windowId, uniqueKey); 
+        restoreWindow(windowId, uniqueKey, actualTitle); 
     });
     minimizedList.appendChild(dockItem);
 }
 
-function restoreWindow(windowId, uniqueKey) {
+function restoreWindow(windowId, uniqueKey, appName) {
     const targetWindow = document.getElementById(windowId);
     if (targetWindow) {
-        // 기존에 세팅된 iframe과 창 크기 상태(maximized 유무)를 전혀 건드리지 않고 화면에 표시만 함
+        if (windowId === 'appWindow' && appSessions[appName]) {
+            // 현재 활성화된 앱 세션을 먼저 백업해두고
+            saveCurrentAppSession();
+            
+            // 독바에서 누른 그 앱의 데이터와 URL, 화면 상태를 정밀 복원
+            const session = appSessions[appName];
+            document.getElementById("appFrame").src = session.url;
+            document.getElementById("windowTitle").innerText = appName;
+            targetWindow.setAttribute("data-icon", session.icon);
+            
+            if (session.isMaximized) targetWindow.classList.add("maximized");
+            else targetWindow.classList.remove("maximized");
+
+            // iframe 로드가 완전히 끝난 직후 텍스트 복원
+            const iframe = document.getElementById("appFrame");
+            iframe.onload = () => {
+                try {
+                    const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
+                    session.inputs.forEach(item => {
+                        if (inputs[item.index]) inputs[item.index].value = item.value;
+                    });
+                } catch(e){}
+            };
+        }
         targetWindow.style.display = "flex";
     }
     removeFromDock(uniqueKey);
@@ -214,15 +271,32 @@ function closeFolder() {
 }
 
 function openApp(url, name, icon) {
+    // 새 앱을 열기 전에 기존 열려있던 앱 세션을 최종 백업
+    saveCurrentAppSession();
+
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
     
-    // 만약 완전히 다른 신규 앱을 여는 경우에만 iframe 주소를 새로고침함
-    // 독바에서 복원할 때는 이 함수를 안 타므로 내용이 유지됨
-    if (document.getElementById("appFrame").src !== window.location.origin + "/" + url && 
-        !document.getElementById("appFrame").src.endsWith(url)) {
+    // 이전에 켰던 세션이 메모리에 이미 존재한다면 그 상태 그대로 로드
+    if (appSessions[name]) {
+        const session = appSessions[name];
+        document.getElementById("appFrame").src = session.url;
+        if (session.isMaximized) windowPopup.classList.add("maximized");
+        else windowPopup.classList.remove("maximized");
+
+        const iframe = document.getElementById("appFrame");
+        iframe.onload = () => {
+            try {
+                const inputs = iframe.contentWindow.document.querySelectorAll("input, textarea");
+                session.inputs.forEach(item => {
+                    if (inputs[item.index]) inputs[item.index].value = item.value;
+                });
+            } catch(e){}
+        };
+    } else {
+        // 아예 처음 여는 생짜 새 앱이라면 초기화 로드
         document.getElementById("appFrame").src = url;
-        windowPopup.classList.add("maximized"); // 새 창으로 열 때는 기본 최대화로 시작
+        windowPopup.classList.add("maximized"); 
     }
     
     windowPopup.setAttribute("data-icon", icon);
@@ -238,6 +312,9 @@ function closeApp() {
     
     document.getElementById("appFrame").src = "";
     
+    // 앱을 완전히 종료(X)할 때는 메모리 세션도 함께 깔끔히 증발시킴
+    delete appSessions[actualTitle];
+    
     removeFromDock(`appWindow-${actualTitle}`);
     lastClosedApp = null;
     closeFolder(); 
@@ -246,6 +323,9 @@ function closeApp() {
 function backToFolder() {
     const windowPopup = document.getElementById("appWindow");
     const actualTitle = document.getElementById("windowTitle").innerText;
+    
+    saveCurrentAppSession();
+    
     if (windowPopup.style.display !== "none") {
         lastClosedApp = { url: document.getElementById("appFrame").src, name: actualTitle, icon: windowPopup.getAttribute("data-icon") };
         windowPopup.style.display = "none";
