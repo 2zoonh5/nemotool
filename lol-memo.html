@@ -41,7 +41,7 @@
             display: grid; grid-template-columns: minmax(360px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
         }
 
-        /* 🛠️ 3번 반영: 설정 보드의 배경 불투명도를 높여 시각적 위계 확립 */
+        /* 좌측 구성 제어 셋 보드 */
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -49,7 +49,6 @@
             min-height: 520px; height: 520px;
         }
         
-        /* 🛠️ 1번 반영: 게임 모드(좌) / 경기 형식(우) 정렬 구조 전격 교체 및 정렬 */
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
         }
@@ -107,7 +106,6 @@
         .btn-reset:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
         .btn-reset:active { transform: translateY(0px) scale(0.98); }
 
-        /* 🛠️ 3번 반영: 팀 배정 버튼에 고급스러운 프리미엄 블루 네온 글로우 추가 */
         .btn-assign {
             flex: 1.3; height: 50px;
             background: rgba(0, 122, 255, 0.08); color: #007aff; 
@@ -122,21 +120,26 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🛠️ 2, 3번 반영: 결과창의 배경 투명도를 낮추고 짤림 현상을 영구 차단하는 가로 인라인 마스킹 */
+        /* 우측 결과 보드 외부 컨테이너 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
             min-height: 520px; height: 520px; 
-            overflow-x: hidden; /* 필수 수정 3 반영: 돌출 방지 마스킹 고정 */
+            overflow-x: hidden; 
             position: relative;
         }
         
-        /* 🛠️ 필수 수정 1 반영: 플렉스 무력화 현상 완치 및 스크롤 코어 안정화 */
+        /* 🛠️ [image_af7bff.png 치우침 해결]: 기본 정렬을 center로 세팅해 Bo1, Bo3 균형 유지 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
-            align-items: flex-start; justify-content: flex-start;
+            align-items: center; justify-content: center;
+        }
+
+        /* 창이 극단적으로 작아질 때 정렬 보정 대응 */
+        @media (max-width: 1150px) {
+            .result-scroll-core { justify-content: flex-start !important; }
         }
 
         /* 스크롤바 모서리 파괴 방지 및 인라인 슬림 디자인 */
@@ -149,7 +152,7 @@
         .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
-        /* 🛠️ 필수 수정 2 반영: 가로 220px 완전 고정 격리 및 압착 방지 처리 */
+        /* 결과 시트 테이블 규격 고정 */
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
             border-radius: 12px; overflow: hidden; 
@@ -167,7 +170,7 @@
             font-size: 11px; font-weight: 700; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase;
         }
         
-        /* 🛠️ 4번 반영: 닉네임 정석 3단계 셀 밀림 파괴 패치 (eSports 고가독성 스타일 컴팩트 보정) */
+        /* 닉네임 정석 3단계 셀 밀림 파괴 패치 */
         .set-table td {
             padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
@@ -179,7 +182,7 @@
             background: rgba(255, 255, 255, 0.005); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #8e8e93 !important; border-right: 1px solid rgba(255,255,255,0.015); letter-spacing: 0;
         }
 
-        /* 블루 레드 진영 헤더 동기화 */
+        /* 블루 레드 진영 헤더 */
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
         
@@ -226,7 +229,6 @@
     <div class="app-content">
         <!-- 좌측 보드 -->
         <div class="setup-box">
-            <!-- 🛠️ 1번 해결: 게임 모드(좌) / 경기 형식(우) 정렬 구조 전격 교체 마크업 배치 -->
             <div class="mode-panel-row">
                 <div class="form-row">
                     <span class="form-label">게임 모드</span>
@@ -278,7 +280,7 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 (필수 수정 1, 2, 3이 완벽 탑재된 크래시 제로 컨테이너) -->
+        <!-- 우측 결과 보드 -->
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="no-result" id="noResultGrid">
@@ -332,6 +334,7 @@
             document.getElementById(`p2_${i}`).value = "";
         }
         const scrollCore = document.getElementById("resultScrollCore");
+        scrollCore.style.justifyContent = "center"; // 원점 원복
         scrollCore.innerHTML = `
             <div class="no-result" id="noResultGrid">
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
@@ -346,7 +349,6 @@
     }
 
     function runRollmojangAssignment() {
-        // 🛠️ 4번 반영: 닉네임 파싱 단에서 4글자 초과 시 자동 클립 슬라이스 자름 제어 장치 탑재
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
             let p2Val = document.getElementById(`p2_${i}`).value.trim();
@@ -412,6 +414,13 @@
 
         const scrollCore = document.getElementById("resultScrollCore");
         scrollCore.innerHTML = ""; 
+        
+        // 🛠️ [Bo5 정렬 우회 패치]: 4개 이상의 세트(즉, Bo5)인 경우에만 강제로 왼쪽 정렬로 밀어 스크롤 트리거 활성화
+        if (totalSets >= 4) {
+            scrollCore.style.justifyContent = "flex-start";
+        } else {
+            scrollCore.style.justifyContent = "center";
+        }
 
         for (let set = 0; set < totalSets; set++) {
             let blueResult = Array(5).fill(null);
