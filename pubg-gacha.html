@@ -40,9 +40,9 @@
       border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
       display: flex; flex-direction: column; gap: 24px; backdrop-filter: blur(30px); box-sizing: border-box;
     }
-    .sheet-top-row { display: flex; gap: 16px; align-items: center; width: 100%; }
+    .sheet-top-row { display: flex; gap: 14px; align-items: center; width: 100%; }
     
-    /* 🖥️ Mac OS 스타일 스테퍼 박스 */
+    /* 🖥️ Mac OS 스타일 스텝퍼 */
     .mac-stepper-box {
       background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); 
       border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; gap: 12px; height: 52px; box-sizing: border-box;
@@ -517,6 +517,7 @@
       });
     }
 
+    // 결과 아카이브 삭제
     function askTrashHistoryClear() {
       openMacAlert("결과 기록 삭제", "저장된 가챠 결과 기록을 모두 삭제하시겠습니까?", "confirm", () => {
         db.update({
@@ -570,19 +571,63 @@
       var modeSequence = [];
       var spinCount = 24;
 
-      activeParticipants.forEach(p => {
+      // 🛠️ [정밀 필터 인프라]: 중복 연달아 인접 차단용 안전 난수 생성 헬퍼 함수
+      function getFilteredRandomNum(max, lastNum, forbiddenList) {
+        let val;
+        let attempts = 0;
+        do {
+          let tmp = Math.floor(Math.random() * (max + 1));
+          val = (tmp === 0 ? 0 : -tmp);
+          attempts++;
+        } while (
+          (val === lastNum || (forbiddenList && forbiddenList.includes(val))) && attempts < 50
+        );
+        return val;
+      }
+
+      // 이전 참가자들이 획득한 기확정 스코어들을 담아둘 리스트
+      var accumulatedScores = [];
+
+      activeParticipants.forEach((p, pIdx) => {
         p.score = colorScoreMap[p.color];
-        for(var k=0; k < spinCount - 1; k++) {
-          var tmp = Math.floor(Math.random() * (maxVal + 1));
-          fullReelSequence.push(tmp === 0 ? 0 : -tmp);
+        
+        // 🛠️ 1번 문제 보완: 타겟 값 바로 직전(위)과 직후(아래) 칸 스포일러 방지 필터 셋
+        // 타겟의 위아래에는 현재 내 결과(p.score)와 이전 사람들의 누적 결과(accumulatedScores) 진입 금지
+        let spoilerForbidden = [p.score, ...accumulatedScores];
+
+        let lastNum = fullReelSequence[fullReelSequence.length - 1];
+
+        // 1. 타겟 앞단까지의 일반 회전 난수 채우기
+        for(var k=0; k < spinCount - 2; k++) {
+          let num = getFilteredRandomNum(maxVal, lastNum);
+          fullReelSequence.push(num);
+          lastNum = num;
         }
-        fullReelSequence.push(p.score); 
+
+        // 2. 타겟 직전(바로 위 칸) 숫자 생성 (스포일러 금지 필터 작동)
+        let immediateBeforeNum = getFilteredRandomNum(maxVal, lastNum, spoilerForbidden);
+        fullReelSequence.push(immediateBeforeNum);
+
+        // 3. 타겟 결과 숫자 안착
+        fullReelSequence.push(p.score);
+
+        // 4. 타겟 직후(바로 아래 칸) 숫자 생성 (스포일러 금지 필터 작동)
+        let immediateAfterNum = getFilteredRandomNum(maxVal, p.score, spoilerForbidden);
+        fullReelSequence.push(immediateAfterNum);
+        lastNum = immediateAfterNum;
+        
         var rand = Math.random();
         modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C')); 
-        for(var k=0; k < 3; k++) {
-          var tmp = Math.floor(Math.random() * (maxVal + 1));
-          fullReelSequence.push(tmp === 0 ? 0 : -tmp);
+        
+        // 5. 오버슛 연출용 완충 지대 버퍼 난수 생성
+        for(var k=0; k < 1; k++) {
+          let num = getFilteredRandomNum(maxVal, lastNum);
+          fullReelSequence.push(num);
+          lastNum = num;
         }
+
+        // 현재 판이 끝나면 내 스코어도 금지 리스트에 누적 축적
+        accumulatedScores.push(p.score);
       });
 
       db.update({
@@ -718,11 +763,8 @@
       animate();
     }
 
-    // 🌐 1번 문제 해결: 트랜잭션 레이스 컨디션 및 중복 세이브 방어 로직 패치
     function triggerFirebaseSave() {
-      // 1단계: 클릭되자마자 로컬 단에서 버튼을 즉시 소멸시켜 연속 클릭 차단
       saveBtn.style.display = "none";
-
       var currentGachaData = [];
       for (let i = 0; i < 6; i++) {
         var name = document.getElementById(`name-${i}`).value;
@@ -738,19 +780,13 @@
         }
       }
 
-      // 2단계: 최신 스냅샷을 1회 읽어와 트랜잭션 유효성 검증
       db.once("value", (snapshot) => {
         var serverData = snapshot.val();
-        
-        // 중요: 이미 다른 사람이 저장을 완료해서 파이어베이스 상태가 SAVED라면 중복 처리 스킵
-        if (serverData && serverData.state === STATE.SAVED) {
-          return; 
-        }
+        if (serverData && serverData.state === STATE.SAVED) return; 
 
         var oldHistory = serverData?.history || [];
         var mergedHistory = [...oldHistory, ...currentGachaData];
         
-        // 최종적으로 파이어베이스 데이터베이스 병합 업데이트 단행
         db.update({
           state: STATE.SAVED,
           history: mergedHistory
