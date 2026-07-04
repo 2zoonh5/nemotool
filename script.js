@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
-    // 바탕화면 클릭 시 창을 끄지 않고 '최소화' 하도록 변경
+    // 바탕화면 클릭 시 창을 끄지 않고 '최소화'
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         const folderWindow = document.getElementById("folderWindow");
@@ -161,38 +161,65 @@ function minimizeWindow(windowId) {
     const targetWindow = document.getElementById(windowId);
     const actualTitle = targetWindow.querySelector('.window-title').innerText;
     
-    // 앱 아이콘 혹은 기본 폴더 아이콘 가져오기
+    // 앱 고유 식별을 위해 창 ID 뒤에 현재 타이틀(이름)을 조합한 고유 키 생성
+    // (이걸 안 해주면 롤모장과 가챠머신이 같은 'appWindow'라 중복 처리됨)
+    const uniqueKey = windowId === 'appWindow' ? `${windowId}-${actualTitle}` : windowId;
+
     let useIcon = targetWindow.getAttribute("data-icon");
     if (!useIcon || useIcon.includes("flaticon")) {
-        // 폴더 윈도우인 경우 현재 열린 게임에 맞는 바탕화면 아이콘을 매핑
         const currentFolder = targetWindow.getAttribute("data-current-folder");
         if (currentFolder === "pubg") useIcon = "pubg_icon.png";
         else if (currentFolder === "lol") useIcon = "lol_icon.png";
-        else if (currentFolder === "sudden") useIcon = "sa-icon.png";
+        else if (currentFolder === "sudden") useIcon = "sa_icon.png";
         else useIcon = "https://cdn-icons-png.flaticon.com/512/3767/3767084.png";
     }
 
+    // 최소화할 때 현재 창의 데이터를 백업 (나중에 복원할 때 필요)
+    let appData = null;
+    if (windowId === 'appWindow') {
+        appData = {
+            url: document.getElementById("appFrame").src,
+            name: actualTitle,
+            icon: useIcon
+        };
+    }
+
     targetWindow.style.display = "none";
-    if (minimizedWindows[windowId]) return;
-    minimizedWindows[windowId] = true;
+    if (minimizedWindows[uniqueKey]) return;
+    
+    minimizedWindows[uniqueKey] = true;
     const minimizedList = document.getElementById("minimizedList");
     const dockItem = document.createElement("div");
     dockItem.className = "dock-item";
-    dockItem.id = `dock-slot-${windowId}`;
+    dockItem.id = `dock-slot-${uniqueKey.replace(/[^a-zA-Z0-9-]/g, '')}`; // 특수문자 제거 안전한 ID 생성
     dockItem.innerHTML = `<img src="${useIcon}"><span class="dock-tooltip">${actualTitle}</span>`;
-    dockItem.addEventListener("click", (e) => { e.stopPropagation(); restoreWindow(windowId); });
+    
+    dockItem.addEventListener("click", (e) => { 
+        e.stopPropagation(); 
+        restoreWindow(windowId, uniqueKey, appData); 
+    });
     minimizedList.appendChild(dockItem);
 }
 
-function restoreWindow(windowId) {
+function restoreWindow(windowId, uniqueKey, appData) {
     const targetWindow = document.getElementById(windowId);
-    if (targetWindow) targetWindow.style.display = "flex";
-    removeFromDock(windowId);
+    if (targetWindow) {
+        // 앱 창을 복원할 때는 백업해둔 해당 앱의 URL과 이름, 아이콘을 다시 로드
+        if (windowId === 'appWindow' && appData) {
+            document.getElementById("appFrame").src = appData.url;
+            document.getElementById("windowTitle").innerText = appData.name;
+            targetWindow.setAttribute("data-icon", appData.icon);
+            targetWindow.classList.add("maximized");
+        }
+        targetWindow.style.display = "flex";
+    }
+    removeFromDock(uniqueKey);
 }
 
-function removeFromDock(windowId) {
-    delete minimizedWindows[windowId];
-    const slot = document.getElementById(`dock-slot-${windowId}`);
+function removeFromDock(uniqueKey) {
+    delete minimizedWindows[uniqueKey];
+    const safeId = uniqueKey.replace(/[^a-zA-Z0-9-]/g, '');
+    const slot = document.getElementById(`dock-slot-${safeId}`);
     if (slot) slot.remove();
 }
 
@@ -205,7 +232,6 @@ function closeFolder() {
 }
 
 function openApp(url, name, icon) {
-    // 앱을 열 때 폴더를 완전히 끄는 대신 display만 숨겨서 기존 최소화된 독바 상태들을 보호
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById("appWindow");
     windowPopup.setAttribute("data-icon", icon);
@@ -218,20 +244,24 @@ function openApp(url, name, icon) {
 
 function closeApp() {
     const windowPopup = document.getElementById("appWindow");
+    const actualTitle = document.getElementById("windowTitle").innerText;
     windowPopup.style.display = "none";
     windowPopup.classList.remove("maximized");
-    removeFromDock("appWindow");
+    
+    // 닫을 때 해당 앱 이름으로 등록된 독바 슬롯을 제거
+    removeFromDock(`appWindow-${actualTitle}`);
     lastClosedApp = null;
     closeFolder(); 
 }
 
 function backToFolder() {
     const windowPopup = document.getElementById("appWindow");
+    const actualTitle = document.getElementById("windowTitle").innerText;
     if (windowPopup.style.display !== "none") {
-        lastClosedApp = { url: document.getElementById("appFrame").src, name: document.getElementById("windowTitle").innerText, icon: windowPopup.getAttribute("data-icon") };
+        lastClosedApp = { url: document.getElementById("appFrame").src, name: actualTitle, icon: windowPopup.getAttribute("data-icon") };
         windowPopup.style.display = "none";
     }
-    removeFromDock("appWindow");
+    removeFromDock(`appWindow-${actualTitle}`);
     document.getElementById("folderWindow").style.display = "flex";
     updateForwardButtonState();
 }
