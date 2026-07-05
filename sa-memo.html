@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서모장</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Space+Mono:wght@700&display=swap');
+        
+        :root {
+            --bg-main: #0b0c10;
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --sa-orange: #ff9f0a;
+            --sa-blue: #0a84ff;
+            --sa-red: #ff453a;
+        }
+        
+        body {
+            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
+            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
+            min-height: 100vh; user-select: none; position: relative;
+        }
+
+        .network-badge { 
+            position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
+            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
+            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
+        }
+        .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
+
+        .container {
+            max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px;
+        }
+
+        .mac-app-header h1 {
+            font-size: 36px; font-weight: 700; text-align: center; margin: 0 0 5px 0; letter-spacing: 4px; 
+            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .app-content {
+            display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: stretch; width: 100%;
+        }
+
+        .setup-box {
+            background: var(--bg-glass); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
+        }
+        
+        .mode-panel-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+        .form-row { 
+            display: flex; flex-direction: column; gap: 6px;
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
+            border: 1px solid var(--border-glass); box-sizing: border-box; 
+        }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; }
+        
+        .mac-select {
+            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
+            cursor: pointer; width: 100%; box-sizing: border-box; appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
+        }
+        .mac-select option { background: #1c1c1e; color: #fff; }
+
+        /* 티어별 명단 레이아웃 */
+        .tier-sheets-scroll {
+            display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 4px;
+        }
+        .tier-sheets-scroll::-webkit-scrollbar { width: 4px; }
+        .tier-sheets-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .tier-container {
+            border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px 14px;
+            background: rgba(255,255,255,0.005);
+        }
+        .tier-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .tier-inputs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px; }
+        .tier-inputs-grid:last-child { margin-bottom: 0; }
+        
+        .tier-inputs-grid input[type="text"] {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px;
+            color: #fff; font-size: 12px; padding: 6px; outline: none; text-align: center; width: 100%; box-sizing: border-box;
+        }
+        .tier-inputs-grid input[type="text"]:focus { border-color: var(--sa-orange); }
+
+        /* 커스텀 맵 선택 바 */
+        .custom-map-selector-box {
+            display: none; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.01); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .custom-map-title { font-size: 11px; font-weight: 700; color: #8e8e93; }
+        .custom-map-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 90px; overflow-y: auto; }
+        .map-chip {
+            font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+        }
+        .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
+
+        .btn-container { display: flex; gap: 12px; margin-top: auto; }
+        .btn-reset { flex: 0.7; height: 44px; background: rgba(255,255,255,0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 22px; font-weight: 500; cursor: pointer; }
+        .btn-assign { flex: 1.3; height: 44px; background: rgba(255,159,10,0.1); color: var(--sa-orange); border: 1px solid rgba(255,159,10,0.4); border-radius: 22px; font-weight: 700; cursor: pointer; box-shadow: 0 0 15px rgba(255,159,10,0.1); }
+        .btn-assign:hover { background: var(--sa-orange); color: #000; }
+
+        /* 우측 결과 대시보드 */
+        .result-container {
+            background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass);
+            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
+            padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px;
+        }
+        
+        .team-board-zone {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none;
+        }
+        .team-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; }
+        .team-card.blue-team { border-top: 4px solid var(--sa-blue); }
+        .team-card.red-team { border-top: 4px solid var(--sa-red); }
+        .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: center; }
+        .blue-team .team-header-title { color: var(--sa-blue); }
+        .red-team .team-header-title { color: var(--sa-red); }
+        .team-members-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; }
+        .member-badge { background: rgba(255,255,255,0.03); padding: 6px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.02); }
+
+        /* 🎰 서든어택 토너먼트 감성 7판 4선승제 맵 리스트 슬롯 연출 */
+        .map-slots-board {
+            display: none; flex-direction: column; gap: 12px; margin-top: auto;
+        }
+        .slots-title { font-size: 14px; font-weight: 700; color: #8e8e93; letter-spacing: 0.5px; }
+        .slots-row-binder {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%;
+        }
+        
+        .map-slot-window {
+            background: #141416; border: 1px solid #2c2c2e; border-radius: 8px; overflow: hidden;
+            height: 110px; display: flex; flex-direction: column; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .map-slot-window.confirmed { border-color: var(--sa-orange); box-shadow: 0 0 15px rgba(255,159,10,0.2); }
+        
+        .reel-viewport { flex: 1; overflow: hidden; position: relative; width: 100%; background: #000; }
+        .reel-container { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; }
+        .reel-container.spinning { transition: transform 3s cubic-bezier(0.15, 0.85, 0.15, 1); }
+        
+        .reel-item {
+            height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; position: relative;
+        }
+        .reel-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+        .map-slot-window.confirmed .reel-item img { opacity: 0.9; }
+        
+        .slot-map-name-plate {
+            height: 26px; background: #1c1c1e; color: #aeaeb2; font-size: 11px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; border-top: 1px solid #2c2c2e; text-align: center; z-index: 10;
+        }
+        .map-slot-window.confirmed .slot-map-name-plate { background: var(--sa-orange); color: #000; font-weight: 700; }
+        
+        .confirm-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 84px;
+            background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center;
+            z-index: 5; color: var(--sa-orange); font-size: 12px; font-weight: 700; border-bottom: 1px solid rgba(255,159,10,0.3);
+            letter-spacing: 1px; text-shadow: 0 0 6px #000;
+        }
+        .map-slot-window.confirmed .confirm-overlay { display: flex; }
+
+        .no-result-placeholder {
+            text-align: center; padding: 80px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto;
+        }
+
+        /* Mac OS 알림창 모달 명세 */
+        .mac-alert-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+        }
+        .mac-alert-modal {
+            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
+            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; white-space: pre-line; }
+        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
+        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+<div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
+
+<div class="container">
+    <div class="mac-app-header">
+        <h1>서모장</h1>
+    </div>
+
+    <div class="mac-alert-overlay" id="macAlertOverlay">
+        <div class="mac-alert-modal">
+            <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
+            <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
+            <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
+        </div>
+    </div>
+
+    <div class="app-content">
+        <!-- ⚙️ 좌측 환경 설정 보드 -->
+        <div class="setup-box">
+            <div class="mode-panel-row">
+                <div class="form-row">
+                    <span class="form-label">팀 배정 방식</span>
+                    <select id="teamAssignMode" class="mac-select" onchange="pushInputsToFirebase()">
+                        <option value="balance" selected>밸런스</option>
+                        <option value="allRandom">올랜덤</option>
+                        <option value="leaderPick">팀뽑기</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">맵 배정 방식</span>
+                    <select id="mapAssignMode" class="mac-select" onchange="toggleCustomMapBox(); pushInputsToFirebase();">
+                        <option value="allRandom">올랜덤</option>
+                        <option value="original" selected>오리지널</option>
+                        <option value="custom">커스텀</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 커스텀 맵 선택 트레이 -->
+            <div class="custom-map-selector-box" id="customMapBox">
+                <span class="custom-map-title">고정할 맵 선택 (남은 슬롯은 랜덤 배정)</span>
+                <div class="custom-map-chips" id="customMapChipsContainer"></div>
+            </div>
+
+            <!-- 1~5티어별 7칸 입력 컴포넌트 스크롤트랙 -->
+            <div class="tier-sheets-scroll" id="tierInputsWrapper"></div>
+
+            <div class="btn-container">
+                <button class="btn-reset" onclick="askSaMemoReset()">초기화</button>
+                <button class="btn-assign" id="assignBtn" onclick="runSaAssignment()">팀 배정</button>
+            </div>
+        </div>
+
+        <!-- 📊 우측 경기 매칭 결과 보드 -->
+        <div class="result-container" id="resultContainer">
+            <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
+            
+            <!-- 팀 라인업 보드 -->
+            <div class="team-board-zone" id="teamBoardZone">
+                <div class="team-card blue-team">
+                    <div class="team-header-title" id="blueTeamHeader">A 팀</div>
+                    <div class="team-members-list" id="blueTeamList"></div>
+                </div>
+                <div class="team-card red-team">
+                    <div class="team-header-title" id="redTeamHeader">B 팀</div>
+                    <div class="team-members-list" id="redTeamList"></div>
+                </div>
+            </div>
+
+            <!-- 🎰 7판 4선승제 서든어택 토너먼트 스타일 슬롯머신 맵 보드 -->
+            <div class="map-slots-board" id="mapSlotsBoard">
+                <div class="slots-title">MATCH MAP LINEUP (7판 4선승제)</div>
+                <div class="slots-row-binder" id="slotsRowBinder"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // F12 및 우클릭 완전 차단
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+        authDomain: "nemotool.firebaseapp.com",
+        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+        projectId: "nemotool",
+        storageBucket: "nemotool.firebasestorage.app",
+        messagingSenderId: "1003940918420",
+        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("nemo_sa_memo_session");
+
+    const mapPool = [
+        "드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고",
+        "듀오릭","팰리스","백어스","산악기지","마린베이스","이탈리아","아울렛",
+        "B2연구소","지하철","제5보급창고","화이트스콜","해양중계소","프로즌시티","골든아이","클럽나이트"
+    ];
+    const originalMaps = ["드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고"];
+
+    var isOperating = false;
+    var isAnimationRunning = false;
+    var selectedCustomMaps = [];
+
+    // 구조 빌드: 1~5티어별 7칸 생성
+    const tierWrapper = document.getElementById("tierInputsWrapper");
+    for (let t = 1; t <= 5; t++) {
+        let tierBox = document.createElement("div");
+        tierBox.className = "tier-container";
+        tierBox.innerHTML = `<div class="tier-title"><span>${t} Tier</span></div>`;
+        
+        let grid1 = document.createElement("div");
+        grid1.className = "tier-inputs-grid";
+        for(let i=0; i<4; i++) grid1.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="-" autocomplete="off" oninput="pushInputsToFirebase()">`;
+        
+        let grid2 = document.createElement("div");
+        grid2.className = "tier-inputs-grid";
+        for(let i=4; i<7; i++) grid2.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="-" autocomplete="off" oninput="pushInputsToFirebase()">`;
+        grid2.innerHTML += `<span style="opacity:0"></span>`; // 그리드 공백 채움
+        
+        tierBox.appendChild(grid1);
+        tierBox.appendChild(grid2);
+        tierWrapper.appendChild(tierBox);
+    }
+
+    // 커스텀 맵 칩 버튼 생성
+    const chipsContainer = document.getElementById("customMapChipsContainer");
+    mapPool.forEach(map => {
+        let chip = document.createElement("div");
+        chip.className = "map-chip";
+        chip.id = `chip-${map}`;
+        chip.innerText = map;
+        chip.onclick = () => toggleMapChip(map);
+        chipsContainer.appendChild(chip);
+    });
+
+    function toggleCustomMapBox() {
+        const mode = document.getElementById("mapAssignMode").value;
+        document.getElementById("customMapBox").style.display = (mode === 'custom') ? "flex" : "none";
+    }
+
+    function toggleMapChip(map) {
+        if (isAnimationRunning) return;
+        let idx = selectedCustomMaps.indexOf(map);
+        if (idx > -1) {
+            selectedCustomMaps.splice(idx, 1);
+        } else {
+            if (selectedCustomMaps.length >= 7) {
+                openMacAlert("선택 초과", "고정 맵은 최대 7개까지만 선택할 수 있습니다.", "alert");
+                return;
+            }
+            selectedCustomMaps.push(map);
+        }
+        pushInputsToFirebase();
+    }
+
+    function syncCustomMapChipsUI() {
+        document.querySelectorAll(".map-chip").forEach(chip => {
+            let mapName = chip.innerText;
+            chip.classList.toggle("selected", selectedCustomMaps.includes(mapName));
+        });
+    }
+
+    function openMacAlert(title, subText, type, onConfirm) {
+        const overlay = document.getElementById("macAlertOverlay");
+        document.getElementById("macAlertTitle").innerText = title;
+        document.getElementById("macAlertSub").innerText = subText;
+        const btnBox = document.getElementById("macAlertBtnBox");
+        btnBox.innerHTML = "";
+
+        if (type === "confirm") {
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "mac-alert-btn cancel"; cancelBtn.innerText = "취소";
+            cancelBtn.onclick = () => { overlay.style.display = "none"; };
+            const confirmBtn = document.createElement("button");
+            confirmBtn.className = "mac-alert-btn confirm"; confirmBtn.innerText = "확인";
+            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
+            btnBox.appendChild(cancelBtn); btnBox.appendChild(confirmBtn);
+        } else {
+            const alertBtn = document.createElement("button");
+            alertBtn.className = "mac-alert-btn confirm"; alertBtn.innerText = "확인";
+            alertBtn.onclick = () => { overlay.style.display = "none"; };
+            btnBox.appendChild(alertBtn);
+        }
+        overlay.style.display = "flex";
+    }
+
+    function pushInputsToFirebase() {
+        if (isOperating || isAnimationRunning) return;
+        let inputs = {};
+        for (let t = 1; t <= 5; t++) {
+            inputs[t] = [];
+            for (let i = 0; i < 7; i++) {
+                inputs[t].push(document.getElementById(`t_${t}_${i}`).value.trim());
+            }
+        }
+        db.update({
+            inputs: inputs,
+            teamAssignMode: document.getElementById("teamAssignMode").value,
+            mapAssignMode: document.getElementById("mapAssignMode").value,
+            selectedCustomMaps: selectedCustomMaps
+        });
+    }
+
+    db.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        isOperating = true;
+        if (data.inputs) {
+            for (let t = 1; t <= 5; t++) {
+                if (data.inputs[t]) {
+                    data.inputs[t].forEach((val, i) => {
+                        let el = document.getElementById(`t_${t}_${i}`);
+                        if (el.value !== val) el.value = val;
+                    });
+                }
+            }
+        }
+        if (data.teamAssignMode) document.getElementById("teamAssignMode").value = data.teamAssignMode;
+        if (data.mapAssignMode) {
+            document.getElementById("mapAssignMode").value = data.mapAssignMode;
+            toggleCustomMapBox();
+        }
+        if (data.selectedCustomMaps) {
+            selectedCustomMaps = data.selectedCustomMaps;
+            syncCustomMapChipsUI();
+        } else {
+            selectedCustomMaps = [];
+            syncCustomMapChipsUI();
+        }
+
+        if (data.results && !isAnimationRunning) {
+            renderResults(data.results);
+        } else if (!data.results && !isAnimationRunning) {
+            clearResultsUI();
+        }
+        isOperating = false;
+    });
+
+    function askSaMemoReset() {
+        openMacAlert("명단 초기화", "작성된 티어별 명단과 배정 결과를 전부 삭제하시겠습니까?", "confirm", () => {
+            let emptyInputs = {};
+            for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
+            db.set({
+                inputs: emptyInputs,
+                teamAssignMode: "balance",
+                mapAssignMode: "original",
+                selectedCustomMaps: null,
+                results: null
+            });
+        });
+    }
+
+    function clearResultsUI() {
+        document.getElementById("placeholderText").style.display = "block";
+        document.getElementById("teamBoardZone").style.display = "none";
+        document.getElementById("mapSlotsBoard").style.display = "none";
+    }
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function runSaAssignment() {
+        if (isAnimationRunning) return;
+        
+        // 데이터 수집
+        let allParticipantsByTier = {};
+        let totalCount = 0;
+        for (let t = 1; t <= 5; t++) {
+            allParticipantsByTier[t] = [];
+            for (let i = 0; i < 7; i++) {
+                let val = document.getElementById(`t_${t}_${i}`).value.trim();
+                if (val) {
+                    allParticipantsByTier[t].push(val);
+                    totalCount++;
+                }
+            }
+        }
+
+        if (totalCount === 0 || totalCount % 2 !== 0) {
+            openMacAlert("배정 불가", "참가자 인원이 비어있거나 짝수(5:5, 6:6 등)가 아닙니다.\n현재 총원: " + totalCount + "명", "alert");
+            return;
+        }
+
+        let teamMode = document.getElementById("teamAssignMode").value;
+        let mapMode = document.getElementById("mapAssignMode").value;
+
+        let teamA = [];
+        let teamB = [];
+
+        // 1. 팀 배정 분기 알고리즘
+        if (teamMode === "allRandom") {
+            let flatList = [];
+            for (let t in allParticipantsByTier) flatList = flatList.concat(allParticipantsByTier[t]);
+            shuffle(flatList);
+            teamA = flatList.slice(0, flatList.length / 2);
+            teamB = flatList.slice(flatList.length / 2);
+        } 
+        else if (teamMode === "balance") {
+            for (let t = 1; t <= 5; t++) {
+                let tierList = shuffle([...allParticipantsByTier[t]]);
+                tierList.forEach((player, idx) => {
+                    if (idx % 2 === 0) {
+                        if (teamA.length <= teamB.length) teamA.push(player); else teamB.push(player);
+                    } else {
+                        if (teamB.length <= teamA.length) teamB.push(player); else teamA.push(player);
+                    }
+                });
+            }
+        } 
+        else if (teamMode === "leaderPick") {
+            let validTiersForLeaders = [];
+            for (let t = 1; t <= 5; t++) {
+                if (allParticipantsByTier[t].length >= 2) validTiersForLeaders.push(t);
+            }
+            if (validTiersForLeaders.length === 0) {
+                openMacAlert("팀뽑기 실패", "2명 이상 등록된 티어가 없어 팀장을 선출할 수 없습니다.", "alert");
+                return;
+            }
+            let chosenTier = validTiersForLeaders[Math.floor(Math.random() * validTiersForLeaders.length)];
+            let tierPool = shuffle([...allParticipantsByTier[chosenTier]]);
+            
+            let leaderA = tierPool[0] + " (👑)";
+            let leaderB = tierPool[1] + " (👑)";
+            teamA.push(leaderA);
+            teamB.push(leaderB);
+
+            let remainPool = [];
+            for (let t = 1; t <= 5; t++) {
+                allParticipantsByTier[t].forEach(p => {
+                    if (p !== tierPool[0] && p !== tierPool[1]) remainPool.push(p);
+                });
+            }
+            shuffle(remainPool);
+            remainPool.forEach((p, idx) => {
+                if (idx % 2 === 0) teamA.push(p); else teamB.push(p);
+            });
+        }
+
+        // 2. 7개 매치 맵 배정 알고리즘
+        let chosenMaps = [];
+        if (mapMode === "original") {
+            chosenMaps = [...originalMaps];
+        } 
+        else if (mapMode === "allRandom") {
+            let pool = shuffle([...mapPool]);
+            chosenMaps = pool.slice(0, 7);
+        } 
+        else if (mapMode === "custom") {
+            let fixedPart = [...selectedCustomMaps];
+            let remainPool = mapPool.filter(m => !fixedPart.includes(m));
+            shuffle(remainPool);
+            let needed = 7 - fixedPart.length;
+            let randomPart = remainPool.slice(0, needed);
+            chosenMaps = shuffle(fixedPart.concat(randomPart));
+        }
+
+        // 결과 패키징 및 파이어베이스 발송
+        let finalResults = {
+            teamA: teamA,
+            teamB: teamB,
+            maps: chosenMaps,
+            seed: Math.random() // 애니메이션 리트리거용 랜덤시드
+        };
+
+        db.update({ results: finalResults });
+    }
+
+    // 🎰 토너먼트 가챠 연출용 비동기 스택 제어문
+    async function renderResults(results) {
+        isAnimationRunning = true;
+        document.getElementById("placeholderText").style.display = "none";
+        
+        // 팀 레이아웃 동기화
+        const blueList = document.getElementById("blueTeamList");
+        const redList = document.getElementById("redTeamList");
+        blueList.innerHTML = ""; redList.innerHTML = "";
+        
+        results.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}</div>`);
+        results.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}</div>`);
+        
+        if (results.teamA[0] && results.teamA[0].includes("👑")) {
+            document.getElementById("blueTeamHeader").innerText = results.teamA[0].replace(" (👑)", "") + "팀";
+            document.getElementById("redTeamHeader").innerText = results.teamB[0].replace(" (👑)", "") + "팀";
+        } else {
+            document.getElementById("blueTeamHeader").innerText = "A 팀 (" + results.teamA.length + "명)";
+            document.getElementById("redTeamHeader").innerText = "B 팀 (" + results.redTeamHeader = "B 팀 (" + results.teamB.length + "명)";
+        }
+        document.getElementById("teamBoardZone").style.display = "grid";
+
+        // 롤러 슬롯 프레임 빌드
+        const binder = document.getElementById("slotsRowBinder");
+        binder.innerHTML = "";
+        document.getElementById("mapSlotsBoard").style.display = "flex";
+
+        let slotPromises = [];
+
+        results.maps.forEach((finalMap, sIdx) => {
+            let slotWin = document.createElement("div");
+            slotWin.className = "map-slot-window";
+            slotWin.id = `slot-win-${sIdx}`;
+
+            // 가상 롤러 시퀀스 조립
+            let dummyReel = [];
+            let forbidden = [finalMap];
+            for(let i=0; i<15; i++) {
+                let randMap = mapPool[Math.floor(Math.random() * mapPool.length)];
+                if(!forbidden.includes(randMap)) dummyReel.push(randMap);
+            }
+            dummyReel.push(finalMap); // 16번째 마지막 칸에 정답 배치
+
+            let reelHtml = dummyReel.map(m => `
+                <div class="reel-item">
+                    <img src="map_sample.png" alt="${m}">
+                </div>
+            `).join('');
+
+            slotWin.innerHTML = `
+                <div class="reel-viewport">
+                    <div class="confirm-overlay">확정</div>
+                    <div class="reel-container" id="reel-core-${sIdx}">${reelHtml}</div>
+                </div>
+                <div class="slot-map-name-plate" id="plate-name-${sIdx}">-</div>
+            `;
+            binder.appendChild(slotWin);
+
+            // 개별 슬롯 순차 정지 딜레이 트리거 프로미스 푸시
+            slotPromises.push(new Promise(resolve => {
+                setTimeout(() => {
+                    let container = document.getElementById(`reel-core-${sIdx}`);
+                    container.className = "reel-container spinning";
+                    // 16번째 타겟 좌표 이동 (아이템 높이 84px)
+                    let targetY = 15 * 84; 
+                    container.style.transform = `translateY(-${targetY}px)`;
+                    
+                    setTimeout(() => {
+                        document.getElementById(`slot-win-${sIdx}`).classList.add("confirmed");
+                        document.getElementById(`plate-name-${sIdx}`).innerText = finalMap;
+                        resolve();
+                    }, 3000); // 3초 스핀
+                }, sIdx * 350); // 0.35초 간격 순차 연출
+            }));
+        });
+
+        await Promise.all(slotPromises);
+        isAnimationRunning = false;
+    }
+</script>
+</body>
+</html>
