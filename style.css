@@ -17,6 +17,16 @@ body {
 body.bg-sunset { background: linear-gradient(135deg, #4b1248 0%, #f0c27b 100%) !important; animation: none; }
 body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important; animation: none; }
 
+/* 감성 그라데이션 배경화면 추가 라인업 */
+body.bg-mojave { background: linear-gradient(135deg, #e65c00 0%, #F9D423 100%) !important; animation: none; }
+body.bg-aqua { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%) !important; animation: none; }
+body.bg-sakura { background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%) !important; animation: none; }
+body.bg-nebula { 
+    background: linear-gradient(135deg, #61410b 0%, #2b1055 40%, #7597de 100%) !important; 
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+}
+
 /* 상단바 */
 .mac-menu-bar {
     position: fixed; top: 0; left: 0; width: 100%; height: 25px;
@@ -110,12 +120,16 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
     display: none; position: fixed; top: 15vh; left: 20vw; width: 60vw; height: 55vh;
     background: #ffffff; border-radius: 14px; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
     flex-direction: column; overflow: hidden; border: 1px solid rgba(0,0,0,0.18); z-index: 10;
-    transition: width 0.22s ease, height 0.22s ease, top 0.22s ease, left 0.22s ease, border-radius 0.22s ease;
+    transition: width 0.22s cubic-bezier(0.25, 1, 0.5, 1), height 0.22s cubic-bezier(0.25, 1, 0.5, 1), border-radius 0.22s ease;
 }
 .window-popup.maximized { top: 24px !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 24px) !important; border-radius: 0px !important; }
 
-.window-header { background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box; }
-.window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); }
+.window-header { 
+    background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; 
+    align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box;
+    cursor: move; /* 드래그 아이콘 유도 */
+}
+.window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
 
 .nav-buttons { display: flex; align-items: center; gap: 14px; z-index: 12; }
 .nav-btn { background: none; border: none; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; border-radius: 6px; transition: background 0.15s; }
@@ -127,7 +141,6 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .mac-buttons { display: flex; align-items: center; gap: 9px; z-index: 12; }
 .window-btn { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: none; transition: background 0.15s; color: transparent; line-height: 1; padding: 0; position: relative; }
 
-/* 신호등 버튼 내부 기호(- + x) 호버 효과 완전 제거 */
 .minimize-btn { background: #ffbd2e; border: 1px solid #de9e1e; }
 .minimize-btn:hover { background: #ffb115; }
 .minimize-btn:hover::before { content: none; }
@@ -211,3 +224,22 @@ body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c
 .dock-item:hover .dock-tooltip { display: block; }
 
 .dock-divider { width: 1px; height: 38px; background: rgba(255, 255, 255, 0.28); }
+
+/* macOS 알림창 스타일 명세 */
+.mac-alert-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+}
+.mac-alert-modal {
+    background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; white-space: pre-line; }
+.mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; white-space: pre-line; }
+.mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
+.mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+.mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
+.mac-alert-btn.confirm:hover { background: #148cff; }
