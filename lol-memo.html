@@ -50,12 +50,11 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 🛠️ 3번 해결: 좌측과 우측의 수평 정렬을 완벽하게 맞추기 위해 stretch 바인딩 정렬 적용 */
+        /* 🛠️ 3번 해결: 좌우 컴포넌트 하단 수평 일치를 위한 기본 stretch 레이아웃 가동 */
         .app-content {
             display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
 
-        /* 🛠️ 3번 해결: 기존 auto 높이에서 팽창하도록 변경하여 양측 하단 라인 수평 일치화 완료 */
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -85,14 +84,14 @@
         .mac-select option { background: #1c1c1e; color: #fff; }
         .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
+        /* 🛠️ 2번 해결: 입력단 리스트들 간격을 균일화하여 통일미 극대화 */
+        .input-table-sheet { display: flex; flex-direction: column; width: 100%; gap: 10px; }
         
         .table-row {
             display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
             background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255,255,255,0.03);
-            padding: 8px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
+            padding: 10px 14px; border-radius: 12px; box-sizing: border-box;
         }
-        .table-row:last-child { margin-bottom: 0; }
         .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
 
         .table-row input[type="text"] {
@@ -101,7 +100,6 @@
             font-family: inherit;
         }
         
-        /* 🛠️ 1번 해결: 닉네임 입력 전 플레이스홀더 문구 콤팩트 크기 정밀 축소 */
         .table-row input[type="text"]::placeholder { 
             color: #48484a; 
             font-weight: 400; 
@@ -134,34 +132,36 @@
         }
         .btn-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); transform: translateY(-1px); }
 
-        /* 🛠️ 3번 해결: 좌측 셋 박스와 일직선으로 결합하여 팽창하는 100% 매칭 높이 적용 */
+        /* 🛠️ 3번 해결: 최소화 시 짤림을 완벽 방지하기 위해 유동적 반응형 최소 너비 시스템으로 재개편 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            height: 100%; min-height: 520px; overflow: hidden; position: relative;
+            height: 100%; min-height: 0; overflow: hidden; position: relative;
+            display: flex; flex-direction: column;
         }
         
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: auto;
             align-items: center; justify-content: center;
         }
 
-        @media (max-width: 1000px) {
-            .result-scroll-core { justify-content: flex-start; }
+        /* 부모 컨테이너 크기가 줄어들면 즉각 강제 스크롤 인프라로 전환하여 1세트 짤림 차단 */
+        @media (max-width: 1024px), (max-height: 640px) {
+            .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
         }
 
         .table-wrapper-binder {
-            display: flex; gap: 20px; margin: 0 auto; align-items: center;
+            display: flex; gap: 20px; align-items: flex-start; justify-content: center; min-height: 100%;
         }
 
-        .result-scroll-core::-webkit-scrollbar { height: 6px; }
+        .result-scroll-core::-webkit-scrollbar { height: 6px; width: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
-        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
-        .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
+        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18) !important; }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         .set-table {
@@ -198,19 +198,21 @@
 
         /* 🛠️ 2번 해결: 결과판 참가자 이름 글자 크기 가독성 확보용 소폭 확대 */
         .set-table td {
-            padding: 10px 4px; text-align: center; font-size: 16px; height: 38px; 
+            padding: 10px 4px; text-align: center; font-size: 16px; height: 42px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
             width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
+            vertical-align: middle;
         }
         .set-table tr:last-child td { border-bottom: none; }
         
+        /* 🛠️ 1번 해결: 플렉스 강제 중앙 정렬을 수직 센터링 테이블 속성으로 바꾸어 완벽한 높이 균일 통일화 완수 */
         .set-table td.lane-cell {
             background: rgba(255, 255, 255, 0.005); width: 44px; max-width: 44px; border-right: 1px solid rgba(255,255,255,0.015);
-            display: flex; align-items: center; justify-content: center; height: 38px; padding: 0; box-sizing: border-box;
+            height: 42px; padding: 0; box-sizing: border-box; vertical-align: middle; text-align: center;
         }
         .lane-icon {
-            width: 22px; height: 22px; object-fit: contain; display: block; opacity: 0.85;
+            width: 22px; height: 22px; object-fit: contain; display: inline-block; vertical-align: middle; opacity: 0.85;
         }
 
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
@@ -656,12 +658,28 @@
         });
         
         const scrollCore = document.getElementById("resultScrollCore");
-        if (results.length >= 4) {
+        if (results.length >= 4 || window.innerWidth < 1024 || window.innerHeight < 640) {
             scrollCore.style.justifyContent = "flex-start";
+            scrollCore.style.alignItems = "flex-start";
         } else {
             scrollCore.style.justifyContent = "center";
+            scrollCore.style.alignItems = "center";
         }
     }
+
+    // 창 크기 변경 시 실시간 정렬 보완 핸들러 추가
+    window.addEventListener("resize", () => {
+        if (globalResultData) {
+            const scrollCore = document.getElementById("resultScrollCore");
+            if (globalResultData.length >= 4 || window.innerWidth < 1024 || window.innerHeight < 640) {
+                scrollCore.style.justifyContent = "flex-start";
+                scrollCore.style.alignItems = "flex-start";
+            } else {
+                scrollCore.style.justifyContent = "center";
+                scrollCore.style.alignItems = "center";
+            }
+        }
+    });
 
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
         if (globalResultData && globalResultData[setIdx]) {
