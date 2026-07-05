@@ -58,23 +58,26 @@ function preventInspection() {
     });
 }
 
-// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태 우회)
+// 1. 드래그 이동 핸들러 자바스크립트 구현 (버그 및 렉 완벽 해결 버전)
 function makeWindowsDraggable() {
     let activeWindow = null;
     let offsetX = 0;
     let offsetY = 0;
     let isDragging = false;
+    let ticking = false; // requestAnimationFrame 최적화용 플래그
 
     document.querySelectorAll(".window-popup").forEach(win => {
         const header = win.querySelector(".window-header");
         if (!header) return;
 
         header.addEventListener("mousedown", (e) => {
+            // 버튼 클릭 시 드래그 방지
             if (
                 e.target.closest(".mac-buttons") ||
                 e.target.closest(".nav-buttons")
             ) return;
 
+            // 최대화 상태일 때는 드래그 금지
             if (win.classList.contains("maximized")) return;
 
             isDragging = true;
@@ -83,39 +86,57 @@ function makeWindowsDraggable() {
             offsetX = e.clientX - win.offsetLeft;
             offsetY = e.clientY - win.offsetTop;
 
+            // 제트인덱스(z-index) 최상위로 올리기
             document.querySelectorAll(".window-popup").forEach(w => {
                 w.style.zIndex = "10";
             });
             win.style.zIndex = "100";
 
+            // 드래그 중 iframe 간섭 차단 및 텍스트 선택 방지
             document.body.style.userSelect = "none";
+            document.querySelectorAll("iframe").forEach(ifrm => {
+                ifrm.style.pointerEvents = "none";
+            });
         });
     });
-
-    let animationFrame = null;
 
     document.addEventListener("mousemove", (e) => {
         if (!isDragging || !activeWindow) return;
 
-        if (animationFrame) return;
+        // 브라우저가 화면을 갱신할 수 있을 때만 위치 계산 (렉 줄이기 및 부드러운 이동)
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                if (!isDragging || !activeWindow) {
+                    ticking = false;
+                    return;
+                }
 
-        animationFrame = requestAnimationFrame(() => {
-            let x = e.clientX - offsetX;
-            let y = e.clientY - offsetY;
+                let x = e.clientX - offsetX;
+                let y = e.clientY - offsetY;
 
-            if (y < 25) y = 25;
+                // 상단 메뉴바(25px) 밑으로 내려가지 않도록 가이드 제한
+                if (y < 25) y = 25;
 
-            activeWindow.style.left = x + "px";
-            activeWindow.style.top = y + "px";
+                activeWindow.style.left = x + "px";
+                activeWindow.style.top = y + "px";
 
-            animationFrame = null;
-        });
+                ticking = false; // 드래그 계산 완료 후 플래그 해제
+            });
+            ticking = true; // 프레임이 실행되는 동안 추가 이벤트 무시
+        }
     });
 
     document.addEventListener("mouseup", () => {
+        if (!isDragging) return;
+        
         isDragging = false;
         activeWindow = null;
+        
+        // 드래그 종료 후 원상복구
         document.body.style.userSelect = "";
+        document.querySelectorAll("iframe").forEach(ifrm => {
+            ifrm.style.pointerEvents = "auto";
+        });
     });
 }
 
