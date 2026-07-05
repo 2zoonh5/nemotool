@@ -5,19 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>롤모장</title>
     
+    <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
+        /* 🎨 프리미엄 서체 바인딩 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         
         :root {
-            --bg-main: #0f0f12;
+            --bg-main: #0c0c0e;
             --bg-glass-active: rgba(255, 255, 255, 0.04);
-            --bg-glass-passive: rgba(255, 255, 255, 0.015);
+            --bg-glass-passive: rgba(255, 255, 255, 0.02);
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
             --mac-red: #ff453a;
+            --text-gray: #8e8e93;
+            --text-dim: #aeaeb2;
         }
         
         body {
@@ -34,40 +38,39 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1250px; margin: 0 auto; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 20px; z-index: 10;
+            max-width: 1400px; margin: 0 auto; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 20px; z-index: 10;
         }
 
         .mac-app-header {
             display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-shrink: 0;
         }
         .mac-app-header h1 {
-            font-size: 34px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
+            font-size: 32px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
             background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
         .app-content {
-            display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%; flex: 1; min-height: 0;
+            display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: stretch; width: 100%; flex: 1; min-height: 0;
         }
 
-        /* 🛠️ 1번 해결: 불필요한 강제 내부 연장을 배제하고 정갈하게 컴팩트 핏 레이아웃으로 변경 */
+        /* 🛠️ 1번 해결: 좌측 입력창 내부 밀도 리디자인 (불필요 여백 전면 숙청) */
         .setup-box {
-            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; backdrop-filter: blur(30px); box-sizing: border-box;
+            background: rgba(22, 22, 26, 0.7); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; backdrop-filter: blur(40px); box-sizing: border-box;
             height: 100%; min-height: 0;
         }
         
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box; flex-shrink: 0;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         .form-row { 
             display: flex; flex-direction: column; gap: 6px;
             background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
             border: 1px solid var(--border-glass); box-sizing: border-box; 
         }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
+        .form-label { font-size: 11px; font-weight: 700; color: var(--text-gray); letter-spacing: -0.1px; }
         
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
@@ -77,150 +80,137 @@
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
-        .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
-        .mac-select option { background: #1c1c1e; color: #fff; }
-        .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        /* 🛠️ 1번 해결: 공백 대란의 원인이던 내부 오토 익스팬션을 막고 하단 버튼 유도를 위한 마진 배치 */
         .input-table-sheet { 
             display: flex; flex-direction: column; width: 100%; overflow-y: auto; padding-right: 4px;
-            margin-bottom: 24px;
+            margin-bottom: 20px; gap: 8px;
         }
         
         .table-row {
-            display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
-            background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255,255,255,0.03);
-            padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
-            flex-shrink: 0;
+            display: grid; grid-template-columns: 1fr 66px 1fr; gap: 12px; align-items: center;
+            background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255,255,255,0.03);
+            padding: 8px 14px; border-radius: 12px; box-sizing: border-box; flex-shrink: 0;
         }
-        .table-row:last-child { margin-bottom: 0; }
-        .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
+        .table-row.fixed-row { background: rgba(255, 214, 10, 0.015); border-color: rgba(255, 214, 10, 0.08); }
 
         .table-row input[type="text"] {
             background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06);
             color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500; text-align: center;
-            font-family: inherit;
         }
-        .table-row input[type="text"]::placeholder { color: #48484a; font-weight: 400; }
         .table-row input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
         
         .vs-divider {
-            text-align: center; font-size: 11px; font-weight: 700; color: #636366; background: rgba(255,255,255,0.03); padding: 3px 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.01); letter-spacing: 0.5px;
+            text-align: center; font-size: 11px; font-weight: 700; color: #636366; background: rgba(255,255,255,0.03); padding: 4px 0; border-radius: 6px; border: 1px solid rgba(255,255,255,0.01);
         }
-        .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
+        .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.8); background: rgba(255, 214, 10, 0.06); }
 
-        .btn-container { display: flex; gap: 14px; width: 100%; flex-shrink: 0; } 
+        .btn-container { display: flex; gap: 12px; width: 100%; flex-shrink: 0; } 
         
         .btn-reset {
-            flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
-            border: 1px solid var(--border-glass); border-radius: 25px; font-weight: 500; font-size: 14px;
-            cursor: pointer; transition: all 0.2s; white-space: nowrap; box-sizing: border-box;
+            flex: 0.7; height: 46px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
+            border: 1px solid var(--border-glass); border-radius: 23px; font-weight: 500; font-size: 13.5px;
+            cursor: pointer; transition: all 0.2s; box-sizing: border-box;
         }
-        .btn-reset:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
-        .btn-reset:active { transform: translateY(0px) scale(0.98); }
+        .btn-reset:hover { background: rgba(255, 255, 255, 0.08); }
 
         .btn-assign {
-            flex: 1.3; height: 50px;
-            background: rgba(0, 122, 255, 0.08); color: #007aff; 
-            border: 1px solid rgba(0, 122, 255, 0.35); 
-            border-radius: 25px; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 0.2px;
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
+            flex: 1.3; height: 46px; background: rgba(0, 122, 255, 0.1); color: #2ea6ff; 
+            border: 1px solid rgba(0, 122, 255, 0.4); border-radius: 23px; font-weight: 700; font-size: 14.5px; cursor: pointer;
+            transition: all 0.2s; box-sizing: border-box;
         }
-        .btn-assign:hover { 
-            background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); 
-            transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35); 
-        }
-        .btn-assign:active { transform: translateY(0px) scale(0.97); }
+        .btn-assign:hover { background: var(--mac-blue); color: #ffffff; }
 
+        /* 🛠️ 1번 해결: 결과 화면의 공백 대란을 지우기 위해 flex 레이아웃 스케일링 전면 개편 */
         .result-container {
-            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
-            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
-            backdrop-filter: blur(30px); box-sizing: border-box;
-            height: 100%; min-height: 0;
-            display: flex; flex-direction: column; overflow: hidden;
+            background: rgba(20, 20, 24, 0.4); border: 1px solid var(--border-glass);
+            border-radius: 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); 
+            backdrop-filter: blur(40px); box-sizing: border-box;
+            height: 100%; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
         }
         
         .result-scroll-core {
-            width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
-            display: flex; gap: 24px; overflow-x: auto; overflow-y: auto;
+            width: 100%; height: 100%; padding: 32px; box-sizing: border-box;
+            display: flex; gap: 32px; overflow-x: auto; overflow-y: auto;
             align-items: center; justify-content: center;
         }
 
-        @media (max-width: 1000px), (max-height: 620px) {
+        @media (max-width: 1200px), (max-height: 650px) {
             .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
         }
 
         .table-wrapper-binder {
-            display: flex; gap: 24px; align-items: flex-start; justify-content: center;
+            display: flex; gap: 32px; align-items: flex-start; justify-content: center; min-height: 100%;
         }
 
-        .result-scroll-core::-webkit-scrollbar { height: 6px; width: 6px; }
-        .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
-        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
-        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2) !important; }
-
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
-        .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
-
+        /* 🛠️ 2번 해결: 투박한 라인 격자선을 모두 지우고 완벽한 Mac OS 시각적 대비 컴포넌트로 전면 교체 */
         .set-table {
-            border-collapse: collapse; background: #131316; border: 1px solid rgba(255,255,255,0.06); 
-            border-radius: 14px; overflow: hidden; 
-            width: 234px; min-width: 234px; flex: 0 0 auto; 
-            box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+            border-collapse: separate; border-spacing: 0; background: rgba(30, 30, 35, 0.4); 
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; 
+            width: 260px; min-width: 260px; flex: 0 0 auto; 
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5); backdrop-filter: blur(20px);
         }
         
         .set-table th.set-title {
-            background-color: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255,255,255,0.08); 
+            background-color: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255,255,255,0.06); 
             padding: 14px 10px; font-size: 15px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
 
         .set-table th.sub-hdr {
-            font-size: 12px; font-weight: 700; padding: 0 4px; height: 36px;
-            border-bottom: 1px solid rgba(255,255,255,0.08); color: #ffffff !important; 
-            text-transform: uppercase; vertical-align: middle; line-height: 36px; box-sizing: border-box;
+            font-size: 11.5px; font-weight: 700; padding: 0 8px; height: 38px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-dim) !important;
+            text-transform: uppercase; vertical-align: middle; line-height: 38px; box-sizing: border-box;
         }
         
+        /* 🛠️ 3번 해결: 스왑/클릭 모션 통합 - Mac OS 리스트 바 형태의 프리미엄 하이라이터 장착 */
         .clickable-swap-row {
             cursor: pointer;
-            transition: background 0.15s ease;
+            position: relative;
         }
-        .clickable-swap-row:hover {
-            background: rgba(255, 255, 255, 0.04) !important;
+        .clickable-swap-row td {
+            position: relative; z-index: 2;
         }
-        .clickable-swap-row.selected-token {
-            background: rgba(0, 122, 255, 0.15) !important;
-            box-shadow: inset 0 0 0 1.5px var(--mac-blue) !important;
+        /* 인셋 선택 배경 레이어 구현 (테두리 짤림 완전 원천 차단) */
+        .clickable-swap-row::after {
+            content: ''; position: absolute; top: 3px; left: 4px; right: 4px; bottom: 3px;
+            background: transparent; border-radius: 8px; z-index: 1;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+            pointer-events: none;
+        }
+        .clickable-swap-row:hover::after {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .clickable-swap-row.selected-token::after {
+            background: rgba(0, 122, 255, 0.14);
+            box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.4) inset;
         }
 
-        .disabled-fixed-row {
-            background: transparent;
-        }
-        body.swap-mode-active .disabled-fixed-row {
-            cursor: not-allowed !important;
-        }
+        .disabled-fixed-row { background: transparent; }
+        body.swap-mode-active .disabled-fixed-row { cursor: not-allowed !important; }
 
+        /* 🛠️ 2번&3번 해결: 유저 이름 색상을 화이트로 '무조건 통일'하고, 스왑 시 탄력적인 햅틱 스케일+블러 모션 적용 */
         .set-table td {
-            padding: 10px 6px; text-align: center; font-size: 15px; height: 42px; 
-            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 700;
-            width: 95px; max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            padding: 10px 8px; text-align: center; font-size: 15px; height: 44px; 
+            font-weight: 600; color: #ffffff !important; /* 명단 화이트 무조건 통일 */
+            width: 108px; max-width: 108px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
-            transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), filter 0.22s cubic-bezier(0.25, 1, 0.5, 1), color 0.15s ease;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s ease, filter 0.22s ease;
         }
-        .set-table tr:last-child td { border-bottom: none; }
+        
+        /* 라인 표시부 컬러 분리 대비 */
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.01); font-size: 12px; font-weight: 700; width: 44px; max-width: 44px; color: #9a9a9e !important; border-right: 1px solid rgba(255,255,255,0.03); letter-spacing: 0;
+            font-size: 12px; font-weight: 700; width: 44px; max-width: 44px; 
+            color: var(--text-gray) !important; /* 대비를 위해 라인은 그레이 고정 */
+            background: transparent; letter-spacing: 0; border: none;
         }
 
-        .hdr-blue { background: #007aff !important; color: #ffffff !important; font-weight: 700; }
-        .hdr-red { background: #ff453a !important; color: #ffffff !important; font-weight: 700; }
+        /* 헤더만 진영 정체성 명시 */
+        .hdr-blue { background: rgba(0, 122, 255, 0.2) !important; color: #59a9ff !important; box-shadow: inset 0 -2px 0 #007aff; }
+        .hdr-red { background: rgba(255, 69, 58, 0.2) !important; color: #ff7875 !important; box-shadow: inset 0 -2px 0 #ff453a; }
         
-        .color-mac-blue-player { color: #59a9ff !important; }
-        .color-mac-red-player { color: #ff7875 !important; }
-        
-        .text-mac-blur-hide {
+        /* 🛠️ 3번 해결: 스왑 트리거 시 매끄럽게 축소 팝 다운되며 사라지는 햅틱 상태 클래스 */
+        .text-mac-haptic-hide {
             opacity: 0 !important;
-            filter: blur(4px) !important;
+            filter: blur(5px) scale(0.9) !important;
         }
 
         .mac-alert-overlay {
@@ -230,18 +220,8 @@
         .mac-alert-modal {
             background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
         }
-        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
-        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
-        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
-        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .mac-alert-btn.cancel:hover { background: rgba(255, 255, 255, 0.15); }
-        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
-        .mac-alert-btn.confirm:hover { background: #148cff; }
     </style>
 </head>
 <body class="swap-mode-inactive">
@@ -426,7 +406,7 @@
     });
 
     function askRollmojangReset() {
-        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트별 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
             db.update({
                 gameMode: "Bo3",
                 inputs: [ {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""} ],
@@ -602,28 +582,25 @@
             const table = document.createElement("table");
             table.className = "set-table";
 
-            // 고정 팀장명 가져오기 (1세트 서폿 기준 고정)
             let fixedBlueLeader = results[0].lines[4] ? results[0].lines[4].blue : "블루";
             let fixedRedLeader = results[0].lines[4] ? results[0].lines[4].red : "레드";
 
             let teamAName = `${fixedBlueLeader}팀`;
             let teamBName = `${fixedRedLeader}팀`;
 
+            // 진영 색상 헤더 지그재그 크로스 매핑 복원
             let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
             
-            let leftPlayerColorClass = (setObj.setIndex % 2 === 0) ? "color-mac-blue-player" : "color-mac-red-player";
-            let rightPlayerColorClass = (setObj.setIndex % 2 === 0) ? "color-mac-red-player" : "color-mac-blue-player";
-
             let htmlPayload = `
                 <thead>
                     <tr>
                         <th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th>
                     </tr>
                     <tr>
-                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px;">라인</th>
-                        <th class="sub-hdr ${teamAHdrClass}">${teamAName}</th>
-                        <th class="sub-hdr ${teamBHdrClass}">${teamBName}</th>
+                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px; text-align:center;">라인</th>
+                        <th class="sub-hdr ${teamAHdrClass}" style="text-align:center;">${teamAName}</th>
+                        <th class="sub-hdr ${teamBHdrClass}" style="text-align:center;">${teamBName}</th>
                     </tr>
                 </thead>
                 <tbody data-set="${sIdx}">
@@ -641,8 +618,8 @@
                 htmlPayload += `
                     <tr ${rowClass} id="cell-row-${sIdx}-${lIdx}">
                         <td class="lane-cell">${lineObj.lane}</td>
-                        <td class="${leftPlayerColorClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
-                        <td class="${rightPlayerColorClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
+                        <td id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
+                        <td id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
                     </tr>
                 `;
             });
@@ -652,11 +629,21 @@
             binder.appendChild(table);
         });
         
+        // 🛠️ 1번 해결: 뷰포트 상태에 따른 유동적 배치 마감 엔진 가동
         const scrollCore = document.getElementById("resultScrollCore");
-        if (results.length >= 4) {
+        if (results.length >= 4 || window.innerWidth < 1200 || window.innerHeight < 650) {
             scrollCore.style.justifyContent = "flex-start";
+            scrollCore.style.alignItems = "flex-start";
         } else {
-            if (window.innerWidth < 1000 || window.innerHeight < 620) {
+            scrollCore.style.justifyContent = "center";
+            scrollCore.style.alignItems = "center";
+        }
+    }
+
+    window.addEventListener("resize", () => {
+        if (globalResultData) {
+            const scrollCore = document.getElementById("resultScrollCore");
+            if (globalResultData.length >= 4 || window.innerWidth < 1200 || window.innerHeight < 650) {
                 scrollCore.style.justifyContent = "flex-start";
                 scrollCore.style.alignItems = "flex-start";
             } else {
@@ -664,23 +651,9 @@
                 scrollCore.style.alignItems = "center";
             }
         }
-    }
-
-    window.addEventListener("resize", () => {
-        if (globalResultData) {
-            const scrollCore = document.getElementById("resultScrollCore");
-            if (window.innerWidth < 1000 || window.innerHeight < 620) {
-                scrollCore.style.justifyContent = "flex-start";
-                scrollCore.style.alignItems = "flex-start";
-            } else {
-                if (globalResultData.length < 4) {
-                    scrollCore.style.justifyContent = "center";
-                    scrollCore.style.alignItems = "center";
-                }
-            }
-        }
     });
 
+    // 🛠️ 3번 해결: 클릭/스왑 모션을 탄력적인 Mac OS 햅틱 팝 다운 스케일 모션으로 통일 바인딩
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
@@ -719,17 +692,12 @@
                     return;
                 }
 
-                let bText1 = document.getElementById(`text-blue-${setIdx}-${firstLineIdx}`);
-                let rText1 = document.getElementById(`text-red-${setIdx}-${firstLineIdx}`);
-                let bText2 = document.getElementById(`text-blue-${setIdx}-${secondLineIdx}`);
-                let rText2 = document.getElementById(`text-red-${setIdx}-${secondLineIdx}`);
+                // 고급 햅틱 스케일 아웃 모션 타겟팅
+                let cells1 = selectedRowElement.querySelectorAll("td:not(.lane-cell)");
+                let cells2 = element.querySelectorAll("td:not(.lane-cell)");
 
-                if(bText1 && rText1 && bText2 && rText2) {
-                    bText1.classList.add("text-mac-blur-hide");
-                    rText1.classList.add("text-mac-blur-hide");
-                    bText2.classList.add("text-mac-blur-hide");
-                    rText2.classList.add("text-mac-blur-hide");
-                }
+                cells1.forEach(td => td.classList.add("text-mac-haptic-hide"));
+                cells2.forEach(td => td.classList.add("text-mac-haptic-hide"));
 
                 setTimeout(() => {
                     let holdBlue = linesArray[firstLineIdx].blue;
