@@ -274,6 +274,18 @@
   </div>
 
   <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (
+            e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || 
+            (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
     const firebaseConfig = {
       apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
       authDomain: "nemotool.firebaseapp.com",
