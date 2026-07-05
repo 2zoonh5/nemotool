@@ -48,20 +48,21 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 🛠️ 1번 해결: 창 최소화 시 짤림을 막기 위해 상위 레이아웃을 flex 100% 채움 구조로 전개 */
         .app-content {
             display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%; flex: 1; min-height: 0;
         }
 
+        /* 🛠️ 1번 해결: 불필요한 강제 내부 연장을 배제하고 정갈하게 컴팩트 핏 레이아웃으로 변경 */
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
+            display: flex; flex-direction: column; backdrop-filter: blur(30px); box-sizing: border-box;
             height: 100%; min-height: 0;
         }
         
         .mode-panel-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box; flex-shrink: 0;
+            margin-bottom: 16px;
         }
         .form-row { 
             display: flex; flex-direction: column; gap: 6px;
@@ -82,12 +83,17 @@
         .mac-select option { background: #1c1c1e; color: #fff; }
         .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        .input-table-sheet { display: flex; flex-direction: column; width: 100%; flex: 1; overflow-y: auto; padding-right: 4px; }
+        /* 🛠️ 1번 해결: 공백 대란의 원인이던 내부 오토 익스팬션을 막고 하단 버튼 유도를 위한 마진 배치 */
+        .input-table-sheet { 
+            display: flex; flex-direction: column; width: 100%; overflow-y: auto; padding-right: 4px;
+            margin-bottom: 24px;
+        }
         
         .table-row {
             display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
             background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255,255,255,0.03);
             padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; box-sizing: border-box;
+            flex-shrink: 0;
         }
         .table-row:last-child { margin-bottom: 0; }
         .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
@@ -105,7 +111,7 @@
         }
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; flex-shrink: 0; } 
+        .btn-container { display: flex; gap: 14px; width: 100%; flex-shrink: 0; } 
         
         .btn-reset {
             flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
@@ -129,7 +135,6 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
-        /* 🛠️ 1번 해결: 결과 보드가 고정 높이 520px에 묶이지 않고 부모 너비를 유연하게 채우도록 수정 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
@@ -138,14 +143,12 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
         
-        /* 🛠️ 1번 해결: 스크롤 영역을 절대 정렬 방식에서 유연한 상하 스크롤 보정 모델로 전격 전환 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 24px; overflow-x: auto; overflow-y: auto;
             align-items: center; justify-content: center;
         }
 
-        /* 창 크기가 결과 테이블 크기보다 심하게 작아질 경우 강제 스크롤 지원 */
         @media (max-width: 1000px), (max-height: 620px) {
             .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
         }
@@ -159,7 +162,7 @@
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
         .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2) !important; }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         .set-table {
@@ -180,7 +183,6 @@
             text-transform: uppercase; vertical-align: middle; line-height: 36px; box-sizing: border-box;
         }
         
-        /* 🛠️ 4번 해결: Mac OS 스타일의 세련된 인셋 발광 컴포넌트 이펙트로 교체 */
         .clickable-swap-row {
             cursor: pointer;
             transition: background 0.15s ease;
@@ -200,14 +202,12 @@
             cursor: not-allowed !important;
         }
 
-        /* 🛠️ 3번&4번 해결: 이름을 화이트로 완벽 통일하고 스왑 시 고안해 낸 Mac OS 블러 페이드 아웃 연출 */
         .set-table td {
             padding: 10px 6px; text-align: center; font-size: 15px; height: 42px; 
-            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 600;
-            color: #ffffff !important; /* 3번 과제: 블루레드 진영 구분 없이 명단 색상 깔끔하게 폰트 통일 마감 */
+            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 700;
             width: 95px; max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
-            transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), filter 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), filter 0.22s cubic-bezier(0.25, 1, 0.5, 1), color 0.15s ease;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
@@ -217,7 +217,10 @@
         .hdr-blue { background: #007aff !important; color: #ffffff !important; font-weight: 700; }
         .hdr-red { background: #ff453a !important; color: #ffffff !important; font-weight: 700; }
         
-        /* 🛠️ 4번 해결: 스왑 연산 가동 시 나타날 세련된 Mac OS 전용 블러 상태 정의 */
+        /* 🛠️ 2번 해결: 흰 눈 아픔 방지! 진영 교차 동기화와 완벽히 맞아떨어지는 Mac OS 고시인성 네온 컬러 배정 */
+        .color-mac-blue-player { color: #59a9ff !important; }
+        .color-mac-red-player { color: #ff7875 !important; }
+        
         .text-mac-blur-hide {
             opacity: 0 !important;
             filter: blur(4px) !important;
@@ -455,7 +458,7 @@
         }
     }
 
-    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 철저히 보존 유지
+    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 보존 유지
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
@@ -594,7 +597,6 @@
         db.update({ results: serializedResults });
     }
 
-    // 🛠️ 2번 해결: 팀 데이터 위치는 정렬 고정하되, 진영(블루/레드) 헤더 색상은 지그재그로 교차(크로스) 매핑 완수
     function renderResultTables(results) {
         const binder = document.getElementById("tableWrapperBinder");
         binder.innerHTML = ""; 
@@ -610,10 +612,14 @@
             let teamAName = `${fixedBlueLeader}팀`;
             let teamBName = `${fixedRedLeader}팀`;
 
-            // 2번 과제: 진영 색상 헤더를 지그재그 교차하여 배치 복원
+            // 진영 색상 헤더 지그재그 교차 배치
             let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
             
+            // 🛠️ 2번 해결: 상단 헤더 진영 색상(블루/레드)에 따라 유저 글씨 색상도 선명하게 하이라이트 되도록 동적 클래스 분기 설계
+            let leftPlayerColorClass = (setObj.setIndex % 2 === 0) ? "color-mac-blue-player" : "color-mac-red-player";
+            let rightPlayerColorClass = (setObj.setIndex % 2 === 0) ? "color-mac-red-player" : "color-mac-blue-player";
+
             let htmlPayload = `
                 <thead>
                     <tr>
@@ -637,12 +643,11 @@
                     rowClass = `class="clickable-swap-row ${isSelected ? 'selected-token' : ''}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"`;
                 }
 
-                // 왼쪽 열과 오른쪽 열은 무조건 고정된 유저 쌍 데이터 보장
                 htmlPayload += `
                     <tr ${rowClass} id="cell-row-${sIdx}-${lIdx}">
                         <td class="lane-cell">${lineObj.lane}</td>
-                        <td id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
-                        <td id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
+                        <td class="${leftPlayerColorClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
+                        <td class="${rightPlayerColorClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
                     </tr>
                 `;
             });
@@ -652,12 +657,10 @@
             binder.appendChild(table);
         });
         
-        // 🛠️ 1번 해결: 창 크기가 작을 때 스크롤이 끊기거나 한쪽으로 쏠리지 않도록 뷰포트 반응형 분기
         const scrollCore = document.getElementById("resultScrollCore");
         if (results.length >= 4) {
             scrollCore.style.justifyContent = "flex-start";
         } else {
-            // 창의 세로/가로 길이가 좁아지면 강제로 좌측 상단 정렬로 바꿔 스크롤 확보 보장 (짤림 완전 차단)
             if (window.innerWidth < 1000 || window.innerHeight < 620) {
                 scrollCore.style.justifyContent = "flex-start";
                 scrollCore.style.alignItems = "flex-start";
@@ -668,7 +671,6 @@
         }
     }
 
-    // 윈도우 크기 변경 시 실시간 정렬 보정 (짤림 방지 후속 조치)
     window.addEventListener("resize", () => {
         if (globalResultData) {
             const scrollCore = document.getElementById("resultScrollCore");
@@ -684,7 +686,6 @@
         }
     });
 
-    // 🛠️ 4번 해결: Mac OS 전용 스무스 블러 스왑 인터랙션 오케스트레이션
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
@@ -723,7 +724,6 @@
                     return;
                 }
 
-                // 🛠️ 4번 해결: 스왑될 4개 텍스트 노드를 부드럽게 흐리며 블러 트랜지션 처리
                 let bText1 = document.getElementById(`text-blue-${setIdx}-${firstLineIdx}`);
                 let rText1 = document.getElementById(`text-red-${setIdx}-${firstLineIdx}`);
                 let bText2 = document.getElementById(`text-blue-${setIdx}-${secondLineIdx}`);
@@ -752,7 +752,7 @@
                     document.body.className = "swap-mode-inactive";
 
                     db.update({ results: globalResultData });
-                }, 220); // 블러 아웃이 완료되는 타이밍에 갱신 파이어
+                }, 220);
             }
         }
     }
