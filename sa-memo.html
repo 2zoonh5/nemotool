@@ -13,158 +13,158 @@
         
         :root {
             --bg-main: #0c0c0e;
-            --bg-panel: #16161a;
-            --bg-card: #1f1f24;
-            --bg-input: #111113;
-            --border-system: rgba(255, 255, 255, 0.08);
-            --border-input: rgba(255, 255, 255, 0.04);
+            --bg-glass-active: rgba(255, 255, 255, 0.04);
+            --bg-glass-passive: rgba(255, 255, 255, 0.015);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --mac-blue: #007aff;
+            --mac-blue-hover: #148cff;
             --sa-orange: #ff9f0a;
             --sa-blue: #0a84ff;
             --sa-red: #ff453a;
-            --text-main: #f5f5f7;
-            --text-dim: #8e8e93;
+            --text-dim: #aeaeb2;
+            --text-gray: #8e8e93;
         }
         
         body {
-            background: var(--bg-main); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Noto Sans KR", sans-serif;
-            margin: 0; padding: 20px 24px; overflow-y: auto; box-sizing: border-box;
+            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
+            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
 
         .network-badge { 
             position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
-            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.4); 
+            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
             padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
         }
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 14px;
+            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px;
         }
 
         .mac-app-header h1 {
-            font-size: 26px; font-weight: 700; text-align: center; margin: 0 0 5px 0; letter-spacing: 4px; 
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1a3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 36px; font-weight: 700; text-align: center; margin: 0 0 5px 0; letter-spacing: 4px; 
+            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 💻 [황금 공간 분할 아키텍처]: 수평과 대칭 라인을 완벽 동기화 */
+        /* 💻 [구조 대수선]: 롤모장 디자인 정체성을 기반으로 배치한 황금 수평 분할 구조 */
         .app-content {
-            display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: stretch; width: 100%;
+            display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
 
-        /* ✨ [Mac OS 프리미엄 스튜디오 패널] */
-        .studio-panel {
-            background: var(--bg-panel); 
-            border: 1px solid var(--border-system);
-            border-radius: 6px; padding: 22px; 
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            display: flex; flex-direction: column; gap: 16px; 
-            box-sizing: border-box; min-height: 575px;
+        /* ✨ [롤모장 스타일 부모 컨테이너 핏] */
+        .setup-box {
+            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            box-sizing: border-box; min-height: 580px;
         }
         
-        /* 상단 환경 설정 구역 수평 정렬화 */
-        .control-system-row { display: flex; gap: 10px; width: 100%; align-items: flex-end; }
+        /* 상단 드롭다운 및 초기화 캡슐 라인 수평 맞춤 */
+        .control-system-row { display: flex; gap: 12px; width: 100%; align-items: flex-end; }
         
         .form-row { 
-            flex: 1; display: flex; flex-direction: column; gap: 5px;
-            background: var(--bg-card); border-radius: 6px; padding: 6px 12px; border: 1px solid var(--border-system); 
-            box-sizing: border-box; height: 52px; /* 초기화 버튼과 칼매칭 */
+            flex: 1; display: flex; flex-direction: column; gap: 6px;
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border-glass); 
+            box-sizing: border-box; height: 56px;
         }
-        .form-label { font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
         
         .mac-select {
-            background: rgba(0, 0, 0, 0.3); color: #ffffff; border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 4px; padding: 5px 20px 5px 8px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; width: 100%; appearance: none;
+            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
 
-        /* 📸 [티어 테이블 그리드 인프라]: 가로 간격 최적화 */
+        /* 📸 [롤모장 스타일 가로 5열 명단 컴포넌트] */
         .tier-table-wrapper {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%;
         }
         .tier-column {
-            border: 1px solid var(--border-system); border-radius: 6px; overflow: hidden; background: rgba(0, 0, 0, 0.25);
-            display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .tier-column-header {
-            padding: 9px 2px; font-size: 12px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
-        }
-        /* 🎨 오리지널 매트 다크 테마 시스템 컬러 코딩 */
-        .tier-column:nth-child(1) .tier-column-header { background: #321919; border-bottom: 2px solid var(--sa-red); }
-        .tier-column:nth-child(2) .tier-column-header { background: #13233c; border-bottom: 2px solid var(--sa-blue); }
-        .tier-column:nth-child(3) .tier-column-header { background: #162a1c; border-bottom: 2px solid #30d158; }
-        .tier-column:nth-child(4) .tier-column-header { background: #322b11; border-bottom: 2px solid #ffd60a; }
-        .tier-column:nth-child(5) .tier-column-header { background: #281735; border-bottom: 2px solid #bf5af2; }
-
-        .tier-inputs-vertical-list {
-            padding: 8px 6px; display: flex; flex-direction: column; gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.008);
+            display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        /* 🔗 [디자인 통일]: 명단 인풋 텍스트 상자 */
+        /* 🎨 원색/파스텔톤 전면 폐기: 정갈하고 차분한 롤모장 스타일 다크 라벨링 */
+        .tier-column-header {
+            padding: 10px 2px; font-size: 11.5px; font-weight: 700; text-align: center; color: #ffffff;
+            background: rgba(255, 255, 255, 0.03); border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .tier-inputs-vertical-list {
+            padding: 10px 6px; display: flex; flex-direction: column; gap: 8px;
+        }
+        
+        /* 🔗 명단 유저 인풋 크기를 롤모장과 완벽하게 매칭 */
         .tier-inputs-vertical-list input[type="text"] {
-            background: var(--bg-input); border: 1px solid var(--border-input); border-radius: 4px;
-            color: #ffffff; font-size: 13px; height: 32px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center; font-weight: 500;
+            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: #ffffff; font-size: 14px; height: 38px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center; font-weight: 500;
             transition: all 0.15s ease;
         }
-        .tier-inputs-vertical-list input[type="text"]:focus { 
-            border-color: var(--sa-orange); 
-            background: rgba(255, 159, 10, 0.02);
-            box-shadow: 0 0 8px rgba(255, 159, 10, 0.2);
-        }
+        .tier-inputs-vertical-list input[type="text"]::placeholder { color: #48484a; font-weight: 400; font-size: 11.5px; }
+        .tier-inputs-vertical-list input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
 
         .custom-map-selector-box { display: none; flex-direction: column; gap: 4px; background: rgba(255,255,255,0.01); border-radius: 4px; padding: 8px; border: 1px solid rgba(255,255,255,0.04); }
         .custom-map-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 70px; overflow-y: auto; }
         .map-chip { font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.04); border-radius: 3px; cursor: pointer; }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        /* 🛠️ 하단 2분할 스케일업 대형 액션 컨트롤러 디자인 */
-        .control-action-row { display: flex; gap: 10px; width: 100%; margin-top: auto; }
-        .btn-action-base { border-radius: 6px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; transition: all 0.2s ease; }
+        /* 🛠️ 하단 2분할 롤모장 디자인 캡슐 버튼 구역 */
+        .control-action-row { display: flex; gap: 14px; width: 100%; margin-top: auto; }
+        .btn-action-base { border-radius: 23px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); }
         
-        /* 상단 드롭다운 라인 높이와 1px 보더 매칭 처리 완료 */
-        .btn-reset { width: 90px; height: 52px; background: #24242b; color: #e5e5ea; border-color: var(--border-system); font-size: 13px; }
-        .btn-reset:hover { background: rgba(255, 69, 58, 0.15); color: var(--sa-red); border-color: rgba(255, 69, 58, 0.3); }
+        /* 드롭다운 옆 라인에 알맞은 라운드 캡슐 매핑 */
+        .btn-reset { width: 90px; height: 56px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 28px; font-size: 14px; font-weight: 500; }
+        .btn-reset:hover { background: rgba(255, 255, 255, 0.1); }
         
-        /* 가로폭 확장된 메인 와이드 버튼트랙 */
-        .btn-team-assign { flex: 1; height: 42px; background: rgba(0, 122, 255, 0.08); color: var(--sa-blue); border-color: rgba(0, 122, 255, 0.3); font-size: 13.5px; }
-        .btn-team-assign:hover { background: var(--sa-blue); color: #ffffff; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25); }
+        /* 롤모장 고유 광택 테두리 및 볼륨감이 반영된 메인 와이드 배정 버튼 트랙 */
+        .btn-team-assign { flex: 1; height: 46px; background: rgba(0, 122, 255, 0.08); color: #007aff; border: 1px solid rgba(0, 122, 255, 0.35); font-size: 14.5px; box-shadow: 0 0 20px rgba(0, 122, 255, 0.15); }
+        .btn-team-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); }
         
-        .btn-map-assign { flex: 1; height: 42px; background: rgba(255, 159, 10, 0.08); color: var(--sa-orange); border-color: rgba(255, 159, 10, 0.3); font-size: 13.5px; }
-        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; box-shadow: 0 4px 14px rgba(255, 159, 10, 0.25); }
+        .btn-map-assign { flex: 1; height: 46px; background: rgba(255, 159, 10, 0.08); color: var(--sa-orange); border: 1px solid rgba(255, 159, 10, 0.35); font-size: 14.5px; box-shadow: 0 0 20px rgba(255, 159, 10, 0.15); }
+        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; border-color: var(--sa-orange); }
 
-        /* 📊 우측 매칭 스페이스 결과 보드 */
+        /* 📊 우측 결과 보드 트랙 (롤모장 수평 핏 싱크) */
+        .right-column-area {
+            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; gap: 14px; min-height: 580px; box-sizing: border-box;
+        }
+
         .team-board-zone {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; display: none; width: 100%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none; width: 100%;
         }
         .team-card { 
-            background: rgba(0,0,0,0.25); border: 1px solid var(--border-system); border-radius: 6px; padding: 14px; 
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 14px; 
             box-sizing: border-box;
         }
-        .team-card.drag-over { background: rgba(0, 122, 255, 0.02); border-color: var(--sa-blue); }
+        .team-card.drag-over { background: rgba(0, 122, 255, 0.04); border-color: var(--mac-blue); }
         .team-card.blue-team { border-top: 3px solid var(--sa-blue); }
         .team-card.red-team { border-top: 3px solid var(--sa-red); }
         
-        .team-header-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; text-align: center; letter-spacing: 0.5px; }
+        .team-header-title { font-size: 14.5px; font-weight: 700; margin-bottom: 12px; text-align: center; letter-spacing: 0.5px; }
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
         
-        /* 🔗 결과창 명단 사각형 규격 32px 완전 동기화 */
-        .team-members-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        /* 🔗 결과창 명단 포인트를 좌측 인풋 38px 세로 크기와 밀리미터 단위 완전 조화 */
+        .team-members-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .member-badge { 
-            background: var(--bg-input); border: 1px solid var(--border-input); height: 32px; padding: 0; border-radius: 4px; 
-            font-size: 13px; font-weight: 500; color: #ffffff; text-align: center; display: flex; align-items: center; justify-content: center;
-            box-sizing: border-box; 
+            background: rgba(255,255,255,0.008); height: 38px; padding: 0; border-radius: 6px; 
+            font-size: 14px; font-weight: 500; color: #ffffff; text-align: center; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.02); box-sizing: border-box; 
         }
 
         /* 미배정 드래그 대기 풀 */
         .leader-pick-pool-zone {
-            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 4px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
+            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
         }
         .pool-zone-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); }
         .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
         .pool-player-chip { 
-            background: #141416; border: 1px solid rgba(255,255,255,0.06); padding: 5px 12px; border-radius: 4px; 
+            background: #141416; border: 1px solid rgba(255,255,255,0.06); padding: 5px 12px; border-radius: 6px; 
             font-size: 12.5px; font-weight: 600; color: #fff; cursor: grab;
         }
 
@@ -175,12 +175,12 @@
         .static-title { font-size: 11.5px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
         .static-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; }
         .static-map-card {
-            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-system); border-radius: 6px; height: 52px;
+            background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; height: 52px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; color: #ffffff;
         }
         .static-map-card .card-num { font-size: 9px; color: var(--sa-orange); margin-bottom: 2px; font-weight: 700; }
 
-        .no-result-placeholder { text-align: center; padding: 160px 0; color: #3a3a3c; font-size: 13px; font-weight: 500; margin: auto; }
+        .no-result-placeholder { text-align: center; padding: 160px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto; }
 
         /* 🎰 블루 서치 라이트 시네마틱 오버레이 */
         .gacha-cinema-overlay {
@@ -200,7 +200,7 @@
             transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
         }
         
-        .cinema-slot-box.flash-highlight { border-color: var(--sa-blue) !important; box-shadow: 0 0 16px rgba(10, 132, 255, 0.6) !important; }
+        .cinema-slot-box.flash-highlight { border-color: var(--mac-blue) !important; box-shadow: 0 0 16px rgba(0, 122, 255, 0.6) !important; }
         .cinema-slot-box.confirmed-jackpot { border-color: var(--sa-orange) !important; box-shadow: 0 0 30px rgba(255,159,10,0.5) !important; transform: scale(1.03); }
         .cinema-slot-box.dimmed { opacity: 0.12; filter: grayscale(100%); }
 
@@ -241,12 +241,12 @@
         <h1>서모장</h1>
     </div>
 
-    <!-- 💻 수평 밸런스가 조율된 대칭형 2열 패널 스페이스 -->
+    <!-- 💻 롤모장 핏을 기반으로 완전 대칭 정렬된 2열 패널 스페이스 -->
     <div class="app-content">
         
-        <!-- [좌측 컨트롤 스튜디오 패널] -->
+        <!-- [좌측 컨트롤 패널 구역] -->
         <div class="left-column-area">
-            <div class="studio-panel">
+            <div class="setup-box">
                 <div class="control-system-row">
                     <div class="form-row">
                         <span class="form-label">팀 배정 방식</span>
@@ -264,7 +264,7 @@
                             <option value="custom">커스텀</option>
                         </select>
                     </div>
-                    <!-- 🛠️ 정밀 수평 매칭이 성립된 초기화 버튼 -->
+                    <!-- 🛠️ 롤모장 캡슐 형태로 수평 정렬을 정교하게 맞춘 초기화 버튼 -->
                     <button class="btn-action-base btn-reset" onclick="askSaMemoReset()">초기화</button>
                 </div>
 
@@ -273,10 +273,10 @@
                     <div class="custom-map-chips" id="customMapChipsContainer"></div>
                 </div>
 
-                <!-- 가로 5열 인풋 32px 사각 매칭 테이블 -->
+                <!-- 가로 5열 38px 롤모장 크기 매칭 인풋 테이블 -->
                 <div class="tier-table-wrapper" id="tierTableWrapper"></div>
 
-                <!-- 🛠️ 와이드 사이즈업 하단 팀배정 / 맵배정 2열 트랙 -->
+                <!-- 🛠️ 하단 팀배정 / 맵배정 와이드 캡슐 액션 트랙 -->
                 <div class="control-action-row">
                     <button class="btn-action-base btn-team-assign" onclick="runSaTeamAssignment()">팀 배정</button>
                     <button class="btn-action-base btn-map-assign" onclick="runSaMapAssignment()">맵 배정</button>
@@ -284,8 +284,8 @@
             </div>
         </div>
 
-        <!-- [우측 결과 스튜디오 패널] -->
-        <div class="right-column-area studio-panel" id="resultContainer">
+        <!-- [우측 결과 패널 구역] -->
+        <div class="right-column-area right-column-area studio-panel" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
             <div class="team-board-zone" id="teamBoardZone">
@@ -334,6 +334,7 @@
         }
     }
 
+    // 📸 가로 5열 38px 롤모장 인풋 규격 동적 주입
     const tableWrapper = document.getElementById("tierTableWrapper");
     for (let t = 1; t <= 5; t++) {
         let col = document.createElement("div");
@@ -622,7 +623,6 @@
         });
     }
 
-    // 🎰 [블루 점멸 서치 추첨 가챠 시퀀스]
     async function triggerBorderFlashGacha(combinedData) {
         const overlay = document.getElementById("gachaCinemaOverlay");
         const container = document.getElementById("cinemaSlotsContainer");
@@ -635,7 +635,6 @@
             container.innerHTML = "";
 
             let finalSelectedMap = combinedData.maps[matchIdx];
-
             let currentCandidates = [finalSelectedMap];
             let filterPool = mapPool.filter(m => m !== finalSelectedMap);
             shuffle(filterPool);
@@ -693,7 +692,6 @@
         renderStaticResultBoard(combinedData);
     }
 
-    // 결과 렌더링 함수
     function renderStaticResultBoard(combinedData) {
         if ((combinedData.teamA && combinedData.teamA.length > 0) || (combinedData.maps && combinedData.maps.length > 0)) {
             document.getElementById("placeholderText").style.display = "none";
