@@ -50,16 +50,17 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
+        /* 🛠️ 3번 해결: 좌측과 우측의 수평 정렬을 완벽하게 맞추기 위해 stretch 바인딩 정렬 적용 */
         .app-content {
-            display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
 
-        /* 🛠️ 여백 개선: 불필요하게 찢어지던 height 제거, 밀도 높은 오토 컴팩트 핏 전환 */
+        /* 🛠️ 3번 해결: 기존 auto 높이에서 팽창하도록 변경하여 양측 하단 라인 수평 일치화 완료 */
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
-            height: auto;
+            height: 100%;
         }
         
         .mode-panel-row {
@@ -72,7 +73,6 @@
         }
         .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
         
-        /* 🛠️ 맥북 스타일 드롭박스 화살표 복구 */
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
             border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
@@ -100,7 +100,14 @@
             color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500; text-align: center;
             font-family: inherit;
         }
-        .table-row input[type="text"]::placeholder { color: #48484a; font-weight: 400; }
+        
+        /* 🛠️ 1번 해결: 닉네임 입력 전 플레이스홀더 문구 콤팩트 크기 정밀 축소 */
+        .table-row input[type="text"]::placeholder { 
+            color: #48484a; 
+            font-weight: 400; 
+            font-size: 11.5px;
+            letter-spacing: -0.3px;
+        }
         .table-row input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
         
         .vs-divider {
@@ -108,7 +115,7 @@
         }
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: 4px; } 
+        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } 
         
         .btn-reset {
             flex: 0.7; height: 46px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
@@ -127,16 +134,16 @@
         }
         .btn-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); transform: translateY(-1px); }
 
-        /* 🛠️ 여백 개선: 결과 보드 역시 과도하게 벌어지던 height를 압축 제거 */
+        /* 🛠️ 3번 해결: 좌측 셋 박스와 일직선으로 결합하여 팽창하는 100% 매칭 높이 적용 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            height: auto; min-height: 520px; overflow: hidden; position: relative;
+            height: 100%; min-height: 520px; overflow: hidden; position: relative;
         }
         
         .result-scroll-core {
-            width: 100%; min-height: 520px; padding: 24px; box-sizing: border-box;
+            width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
             align-items: center; justify-content: center;
         }
@@ -175,7 +182,6 @@
             text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
         }
         
-        /* 🛠️ 드래그 표시 효과 복구 */
         .clickable-swap-row {
             cursor: pointer;
             transition: all 0.15s ease;
@@ -183,25 +189,26 @@
         .clickable-swap-row:hover {
             background: rgba(255, 255, 255, 0.03);
         }
+        
+        /* 🛠️ 4번 해결: 우측 라인이 씹히던 단방향 아웃라인을 제거하고, 완벽한 사방 발광 인셋 레이어로 정밀 복구 */
         .clickable-swap-row.selected-token {
             background: rgba(0, 122, 255, 0.15) !important;
-            outline: 1px solid var(--mac-blue);
+            box-shadow: inset 0 0 0 1.5px var(--mac-blue) !important;
         }
 
+        /* 🛠️ 2번 해결: 결과판 참가자 이름 글자 크기 가독성 확보용 소폭 확대 */
         .set-table td {
-            padding: 10px 4px; text-align: center; font-size: 15px; height: 38px; 
+            padding: 10px 4px; text-align: center; font-size: 16px; height: 38px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
             width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
         }
         .set-table tr:last-child td { border-bottom: none; }
         
-        /* 🛠️ 라인 표시 셀 정밀 레이아웃 패딩 조절 */
         .set-table td.lane-cell {
             background: rgba(255, 255, 255, 0.005); width: 44px; max-width: 44px; border-right: 1px solid rgba(255,255,255,0.015);
             display: flex; align-items: center; justify-content: center; height: 38px; padding: 0; box-sizing: border-box;
         }
-        /* 라인 이미지 최적화 스타일 */
         .lane-icon {
             width: 22px; height: 22px; object-fit: contain; display: block; opacity: 0.85;
         }
@@ -212,7 +219,6 @@
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
         .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
 
-        /* 🛠️ Mac OS 스타일 알림창 모달 복구 완료 */
         .mac-alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
@@ -339,7 +345,6 @@
     var selectedSetIndex = null;
     var selectedLineIndex = null;
 
-    // 🛠️ 라인별 매핑 이미지 딕셔너리 구축 완료
     var laneIconMap = {
         "탑": "top.png",
         "정글": "jg.png",
@@ -453,7 +458,6 @@
         }
     }
 
-    // ⭐ 기존 팀 배정 로직 100% 원본 그대로 유지 보존
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
@@ -634,7 +638,6 @@
                     rowClass = `class="clickable-swap-row ${isSelected ? 'selected-token' : ''}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"`;
                 }
 
-                // 🛠️ 글자 제거 후 PNG 이미지 태그 동적 변환 이식 완료
                 let imgFile = laneIconMap[lineObj.lane] || "top.png";
                 let laneContent = `<img src="${imgFile}" class="lane-icon" alt="${lineObj.lane}">`;
 
