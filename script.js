@@ -58,12 +58,23 @@ function syncDesktopToDock() {
     });
 }
 
+// 🛠️ 1번 해결: 폴더 이름뿐만 아니라 내부 앱들의 이름까지 통합 매칭 검색 가능하도록 개수선
 function searchDesktop(query) {
     const icons = document.querySelectorAll(".desktop .icon");
     const cleanQuery = query.toLowerCase().trim();
+    
     icons.forEach(icon => {
-        const iconName = icon.querySelector(".icon-name").innerText.toLowerCase();
-        if (iconName.includes(cleanQuery)) {
+        const folderType = icon.getAttribute("data-folder");
+        const folderName = icon.querySelector(".icon-name").innerText.toLowerCase();
+        
+        // 해당 폴더 내부에 속해 있는 앱 이름 추출
+        let internalAppNames = "";
+        if (folderData[folderType]) {
+            internalAppNames = folderData[folderType].apps.map(app => app.name.toLowerCase()).join(" ");
+        }
+
+        // 폴더명이나 내부 앱 이름 중 하나라도 쿼리를 포함하면 매칭 통과
+        if (folderName.includes(cleanQuery) || internalAppNames.includes(cleanQuery)) {
             icon.style.display = "flex";
             icon.style.opacity = "1";
             icon.style.transform = "scale(1)";
@@ -211,7 +222,6 @@ function openApp(windowId) {
     document.getElementById("folderWindow").style.display = "none"; 
     const windowPopup = document.getElementById(windowId);
     
-    // 🛠️ 최대화 버그 완전 해결: 앱을 켤 때 강제 조건문 검증 없이 무조건 클래스 주입 보장하도록 고정
     windowPopup.classList.add("maximized");
     windowPopup.style.display = "flex";
 }
