@@ -17,8 +17,8 @@
             --bg-glass-passive: rgba(255, 255, 255, 0.015);
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
-            --mac-blue-hover: #148cff;
             --sa-orange: #ff9f0a;
+            --sa-orange-hover: #ffb340;
             --sa-blue: #0a84ff;
             --sa-red: #ff453a;
             --text-dim: #aeaeb2;
@@ -26,7 +26,7 @@
         }
         
         body {
-            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-main); color: #d1d1d6; font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Noto Sans KR", sans-serif;
             margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
@@ -48,10 +48,12 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
+        /* 💻 [구조 대수선]: 좌측과 우측의 수평 라인을 완벽하게 맞춘 2열 밸런스 */
         .app-content {
             display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
 
+        /* ✨ [롤모장 스타일 컨테이너 베이스 유지] */
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -59,23 +61,27 @@
             box-sizing: border-box; min-height: 580px;
         }
         
+        /* 1번 수정: 드롭다운 높이 규격 복구 및 짤림 현상 완벽 해결 */
         .control-system-row { display: flex; gap: 12px; width: 100%; align-items: flex-end; }
         
         .form-row { 
-            flex: 1; display: flex; flex-direction: column; gap: 6px;
+            flex: 1; display: flex; flex-direction: column; gap: 4px;
             background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border-glass); 
-            box-sizing: border-box; height: 56px;
+            box-sizing: border-box; height: 62px; justify-content: center;
         }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; margin-bottom: 2px; }
         
+        /* Mac OS 오리지널 셀렉트 박스 텍스트 센터링 및 간격 확보 */
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; appearance: none;
+            border-radius: 6px; padding: 4px 24px 4px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
+            height: 28px; line-height: 20px; box-sizing: border-box;
         }
+        .mac-select option { background: #1c1c1e; color: #fff; }
 
-        /* 📸 [롤모장 스타일 가로 5열 명단 컴포넌트] */
+        /* 📸 [티어 테이블 매핑] */
         .tier-table-wrapper {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%;
         }
@@ -84,61 +90,71 @@
             display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        /* 🎨 원색/파스텔톤 전면 폐기: 정갈하고 차분한 롤모장 스타일 다크 라벨링 */
+        /* 3번 수정: Mac OS 전용 은은하고 고급스럽게 톤다운된 미세 컬러 티어 라벨 바 세팅 */
         .tier-column-header {
             padding: 10px 2px; font-size: 11.5px; font-weight: 700; text-align: center; color: #ffffff;
-            background: rgba(255, 255, 255, 0.03); border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-            letter-spacing: 0.5px; text-transform: uppercase;
+            letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 2px solid transparent;
         }
+        .tier-column:nth-child(1) .tier-column-header { background: rgba(255, 69, 58, 0.08); border-bottom-color: rgba(255, 69, 58, 0.4); color: #ff453a; }
+        .tier-column:nth-child(2) .tier-column-header { background: rgba(10, 132, 255, 0.08); border-bottom-color: rgba(10, 132, 255, 0.4); color: #0a84ff; }
+        .tier-column:nth-child(3) .tier-column-header { background: rgba(48, 209, 88, 0.08); border-bottom-color: rgba(48, 209, 88, 0.4); color: #30d158; }
+        .tier-column:nth-child(4) .tier-column-header { background: rgba(255, 214, 10, 0.08); border-bottom-color: rgba(255, 214, 10, 0.4); color: #ffd60a; }
+        .tier-column:nth-child(5) .tier-column-header { background: rgba(191, 90, 242, 0.08); border-bottom-color: rgba(191, 90, 242, 0.4); color: #bf5af2; }
 
         .tier-inputs-vertical-list {
             padding: 10px 6px; display: flex; flex-direction: column; gap: 8px;
         }
         
-        /* 🔗 명단 유저 인풋 크기를 롤모장과 완벽하게 매칭 */
+        /* 2번 수정: 입력란 선택 및 포커스 시 서모장 고유의 글로우 오렌지 하이라이트 컬러 복원 */
         .tier-inputs-vertical-list input[type="text"] {
             background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06);
             color: #ffffff; font-size: 14px; height: 38px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center; font-weight: 500;
             transition: all 0.15s ease;
         }
         .tier-inputs-vertical-list input[type="text"]::placeholder { color: #48484a; font-weight: 400; font-size: 11.5px; }
-        .tier-inputs-vertical-list input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
+        .tier-inputs-vertical-list input[type="text"]:focus { 
+            border-bottom-color: var(--sa-orange); 
+            text-shadow: 0 0 4px rgba(255,159,10,0.3);
+        }
 
         .custom-map-selector-box { display: none; flex-direction: column; gap: 4px; background: rgba(255,255,255,0.01); border-radius: 4px; padding: 8px; border: 1px solid rgba(255,255,255,0.04); }
         .custom-map-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 70px; overflow-y: auto; }
         .map-chip { font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.04); border-radius: 3px; cursor: pointer; }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        /* 🛠️ 하단 2분할 롤모장 디자인 캡슐 버튼 구역 */
+        /* 🛠️ 하단 와이드 버튼 트랙 */
         .control-action-row { display: flex; gap: 14px; width: 100%; margin-top: auto; }
-        .btn-action-base { border-radius: 23px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); }
+        .btn-action-base { border-radius: 28px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); }
         
-        /* 드롭다운 옆 라인에 알맞은 라운드 캡슐 매핑 */
-        .btn-reset { width: 90px; height: 56px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 28px; font-size: 14px; font-weight: 500; }
+        /* 상단 컨트롤러 우측 끝 라인과 맞물리는 캡슐 초기화 버튼 */
+        .btn-reset { width: 90px; height: 62px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 31px; font-size: 14px; font-weight: 500; }
         .btn-reset:hover { background: rgba(255, 255, 255, 0.1); }
         
-        /* 롤모장 고유 광택 테두리 및 볼륨감이 반영된 메인 와이드 배정 버튼 트랙 */
+        /* 2번 수정: 메인 배정 실행기들을 깊고 풍부한 서모장 전용 오렌지 및 블루 투톤 캡슐 글로우 효과로 교정 */
         .btn-team-assign { flex: 1; height: 46px; background: rgba(0, 122, 255, 0.08); color: #007aff; border: 1px solid rgba(0, 122, 255, 0.35); font-size: 14.5px; box-shadow: 0 0 20px rgba(0, 122, 255, 0.15); }
-        .btn-team-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); }
+        .btn-team-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
         
         .btn-map-assign { flex: 1; height: 46px; background: rgba(255, 159, 10, 0.08); color: var(--sa-orange); border: 1px solid rgba(255, 159, 10, 0.35); font-size: 14.5px; box-shadow: 0 0 20px rgba(255, 159, 10, 0.15); }
-        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; border-color: var(--sa-orange); }
+        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; border-color: var(--sa-orange); box-shadow: 0 4px 15px rgba(255, 159, 10, 0.3); }
 
-        /* 📊 우측 결과 보드 트랙 (롤모장 수평 핏 싱크) */
+        /* 📊 우측 매칭 결과 스페이스 보드 */
         .right-column-area {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             display: flex; flex-direction: column; gap: 14px; min-height: 580px; box-sizing: border-box;
         }
 
+        /* 4번 수정: 팀 배정 결과 보드를 좌측 규격과 오차 없이 일치하도록 전면 수정 */
         .team-board-zone {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none; width: 100%;
         }
+        
+        /* 4번 수정: 둥글둥글했던 팀 카드를 좌측 카드 라인 디자인에 맞춰 깔끔하게 재정립 */
         .team-card { 
-            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 14px; 
-            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.008); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 14px; 
+            box-sizing: border-box; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .team-card.drag-over { background: rgba(0, 122, 255, 0.04); border-color: var(--mac-blue); }
+        .team-card.drag-over { background: rgba(255, 159, 10, 0.04); border-color: var(--sa-orange); }
         .team-card.blue-team { border-top: 3px solid var(--sa-blue); }
         .team-card.red-team { border-top: 3px solid var(--sa-red); }
         
@@ -146,12 +162,13 @@
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
         
-        /* 🔗 결과창 명단 포인트를 좌측 인풋 38px 세로 크기와 밀리미터 단위 완전 조화 */
+        /* 4번 수정: 명단 칸 크기(`height: 38px`), 패딩, 폰트 및 구조를 좌측 인풋 필드양식과 완벽 통일 */
         .team-members-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .member-badge { 
-            background: rgba(255,255,255,0.008); height: 38px; padding: 0; border-radius: 6px; 
+            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06); 
+            height: 38px; padding: 4px;
             font-size: 14px; font-weight: 500; color: #ffffff; text-align: center; display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.02); box-sizing: border-box; 
+            box-sizing: border-box; 
         }
 
         /* 미배정 드래그 대기 풀 */
@@ -238,10 +255,10 @@
         <h1>서모장</h1>
     </div>
 
-    <!-- 💻 롤모장 핏을 기반으로 완전 대칭 정렬된 2열 패널 스페이스 -->
+    <!-- 💻 좌우 균형 및 격차가 오차 없이 조율된 2열 패널 구조 트랙 -->
     <div class="app-content">
         
-        <!-- [좌측 컨트롤 패널 구역] -->
+        <!-- [좌측 컨트롤 영역] -->
         <div class="left-column-area">
             <div class="setup-box">
                 <div class="control-system-row">
@@ -261,7 +278,6 @@
                             <option value="custom">커스텀</option>
                         </select>
                     </div>
-                    <!-- 🛠️ 롤모장 캡슐 형태로 수평 정렬을 정교하게 맞춘 초기화 버튼 -->
                     <button class="btn-action-base btn-reset" onclick="askSaMemoReset()">초기화</button>
                 </div>
 
@@ -270,10 +286,9 @@
                     <div class="custom-map-chips" id="customMapChipsContainer"></div>
                 </div>
 
-                <!-- 가로 5열 38px 롤모장 크기 매칭 인풋 테이블 -->
+                <!-- 🔗 가로형 5열 입력단 (인풋 높이 38px 싱크형 명단 구조) -->
                 <div class="tier-table-wrapper" id="tierTableWrapper"></div>
 
-                <!-- 🛠️ 하단 팀배정 / 맵배정 와이드 캡슐 액션 트랙 -->
                 <div class="control-action-row">
                     <button class="btn-action-base btn-team-assign" onclick="runSaTeamAssignment()">팀 배정</button>
                     <button class="btn-action-base btn-map-assign" onclick="runSaMapAssignment()">맵 배정</button>
@@ -281,7 +296,7 @@
             </div>
         </div>
 
-        <!-- [우측 결과 패널 구역] -->
+        <!-- [우측 결과 표기 영역]: 좌측과 높이 및 수평 완전 수치 일치화 완료 -->
         <div class="right-column-area right-column-area studio-panel" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
@@ -331,7 +346,7 @@
         }
     }
 
-    // 📸 가로 5열 38px 롤모장 인풋 규격 동적 주입
+    // 가로 5열 인풋 38px 슬림 라인업 세팅
     const tableWrapper = document.getElementById("tierTableWrapper");
     for (let t = 1; t <= 5; t++) {
         let col = document.createElement("div");
