@@ -42,19 +42,21 @@
             background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* 💻 [구조 대수선]: 우측을 슬림하게 줄이고, 왼쪽 명단 입력 패널을 균형있게 확보 (1.15fr : 1fr 황금비 분할) */
+        /* 💻 [구조 대수선]: 좌측과 우측의 가로 밸런스 조정 및 상단 수평 맞춤 */
         .app-content {
-            display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: stretch; width: 100%;
         }
 
-        /* ⚙️ 왼쪽 컴포넌트 공간 */
+        /* ⚙️ 왼쪽 영역 (명단 및 환경 설정) */
         .setup-box {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 6px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex; flex-direction: column; gap: 14px; backdrop-filter: blur(30px); box-sizing: border-box;
+            min-height: 560px; /* 🔗 우측 패널과 길이 수평 동기화 */
         }
         
-        .mode-panel-row { display: flex; gap: 10px; width: 100%; }
+        /* 🛠️ 드롭다운 라인 우측 끝에 초기화 버튼 정렬 */
+        .mode-panel-row { display: flex; gap: 10px; width: 100%; align-items: flex-end; }
         .form-row { 
             flex: 1; display: flex; flex-direction: column; gap: 4px;
             background: rgba(255,255,255,0.01); border-radius: 4px; padding: 6px 10px; border: 1px solid var(--border-glass); 
@@ -67,7 +69,7 @@
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
 
-        /* 여유로워진 5열 테이블 아키텍처 */
+        /* 📸 가로 테이블 명단 그리드 */
         .tier-table-wrapper {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%;
         }
@@ -85,11 +87,13 @@
         .tier-column:nth-child(5) .tier-column-header { background: rgba(191, 90, 242, 0.2); border-bottom: 2px solid rgba(191, 90, 242, 0.4); }
 
         .tier-inputs-vertical-list {
-            padding: 8px 6px; display: flex; flex-direction: column; gap: 5px;
+            padding: 8px 6px; display: flex; flex-direction: column; gap: 6px;
         }
+        
+        /* 🔗 크기 통일: 입력창 명단 크기 정교화 */
         .tier-inputs-vertical-list input[type="text"] {
             background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 2px;
-            color: #fff; font-size: 12.5px; padding: 6px 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center;
+            color: #fff; font-size: 13px; height: 32px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center; font-weight: 500;
         }
         .tier-inputs-vertical-list input[type="text"]:focus { border-color: var(--sa-orange); background: rgba(255,159,10,0.01); }
 
@@ -98,20 +102,20 @@
         .map-chip { font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.04); border-radius: 3px; cursor: pointer; }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        /* 하단 액션 트레이 설계 개편 (초기화, 팀배정, 맵배정 3분할 독립) */
-        .control-action-row { display: flex; justify-content: flex-end; gap: 8px; }
-        .btn-action-base { height: 34px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 12px; border: 1px solid transparent; box-sizing: border-box; }
-        .btn-reset { width: 85px; background: rgba(255,255,255,0.03); color: #aeaeb2; border-color: var(--border-glass); font-weight: 500; }
-        .btn-team-assign { width: 125px; background: rgba(10, 132, 255, 0.08); color: var(--sa-blue); border-color: rgba(10, 132, 255, 0.3); }
+        /* 🛠️ 하단 액션 버튼 좌우 2분할 배치 정렬 */
+        .control-action-row { display: flex; gap: 10px; width: 100%; margin-top: auto; }
+        .btn-action-base { height: 38px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 13px; border: 1px solid transparent; box-sizing: border-box; }
+        .btn-reset { width: 85px; height: 34px; background: rgba(255,255,255,0.03); color: #aeaeb2; border-color: var(--border-glass); font-weight: 500; margin-bottom: 2px; } /* 상단 매칭 라인 밸런스 */
+        .btn-team-assign { flex: 1; background: rgba(10, 132, 255, 0.08); color: var(--sa-blue); border-color: rgba(10, 132, 255, 0.3); }
         .btn-team-assign:hover { background: var(--sa-blue); color: #fff; }
-        .btn-map-assign { width: 125px; background: rgba(255,159,10,0.08); color: var(--sa-orange); border-color: rgba(255,159,10,0.3); }
+        .btn-map-assign { flex: 1; background: rgba(255,159,10,0.08); color: var(--sa-orange); border-color: rgba(255,159,10,0.3); }
         .btn-map-assign:hover { background: var(--sa-orange); color: #000; }
 
-        /* 📊 오른쪽 매칭 결과 대시보드 (슬림하고 간결하게 핏 조정) */
+        /* 📊 오른쪽 영역 (매칭 결과 대시보드) */
         .right-column-area {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 6px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(30px);
-            display: flex; flex-direction: column; gap: 14px; min-height: 520px; box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 14px; min-height: 560px; box-sizing: border-box; /* 🔗 좌측 패널과 수평 매칭 */
         }
 
         .team-board-zone {
@@ -119,7 +123,7 @@
         }
         .team-card { 
             background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.04); border-radius: 4px; padding: 14px; 
-            min-height: 120px; box-sizing: border-box;
+            box-sizing: border-box;
         }
         .team-card.drag-over { background: rgba(255, 159, 10, 0.03); border-color: var(--sa-orange); }
         .team-card.blue-team { border-top: 3px solid var(--sa-blue); }
@@ -127,8 +131,14 @@
         .team-header-title { font-size: 14.5px; font-weight: 700; margin-bottom: 12px; text-align: center; }
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
-        .team-members-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-        .member-badge { background: rgba(255,255,255,0.02); padding: 6px; border-radius: 2px; font-size: 12.5px; font-weight: 600; color: #fff; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
+        
+        /* 🔗 크기 통일: 결과창 명단 폰트 및 높이를 좌측 입력창 파일과 완벽 정사각 매칭 */
+        .team-members-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .member-badge { 
+            background: rgba(255,255,255,0.02); height: 32px; padding: 0; border-radius: 2px; 
+            font-size: 13px; font-weight: 500; color: #fff; text-align: center; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.02); box-sizing: border-box; 
+        }
 
         /* 미배정 드래그 대기 풀 */
         .leader-pick-pool-zone {
@@ -141,7 +151,7 @@
             font-size: 12.5px; font-weight: 600; color: #fff; cursor: grab;
         }
 
-        /* 확정 매치 보드 */
+        /* 상시 결과 노출용 하단 매치 맵 카드 고정 레이아웃 */
         .map-static-result-board {
             display: none; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.04); margin-top: auto;
         }
@@ -153,9 +163,9 @@
         }
         .static-map-card .card-num { font-size: 9.5px; color: var(--sa-orange); margin-bottom: 2px; text-transform: uppercase; }
 
-        .no-result-placeholder { text-align: center; padding: 140px 0; color: #3a3a3c; font-size: 13.5px; font-weight: 500; margin: auto; }
+        .no-result-placeholder { text-align: center; padding: 160px 0; color: #3a3a3c; font-size: 13.5px; font-weight: 500; margin: auto; }
 
-        /* 🎰 [가챠 대개조]: 푸른빛 서치 추첨 연출 전용 시네마틱 오버레이 */
+        /* 🎰 [가챠]: 푸른 테두리 묵직한 동시 발광 추첨 시네마틱 오버레이 */
         .gacha-cinema-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 6, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -173,10 +183,9 @@
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         
-        /* ⚡ 수정 반영: 푸른색 테두리로 정갈하게 점멸 연출 및 속도 텀 제어 */
+        /* ⚡ 푸른색 테두리 탐색 및 스왑 간격 제어 */
         .cinema-slot-box.flash-highlight { border-color: var(--sa-blue) !important; box-shadow: 0 0 14px rgba(10, 132, 255, 0.6) !important; }
         
-        /* 최종 당첨 "확정 딱!" */
         .cinema-slot-box.confirmed-jackpot { border-color: var(--sa-orange) !important; box-shadow: 0 0 25px rgba(255,159,10,0.5) !important; transform: scale(1.02); }
         .cinema-slot-box.dimmed { opacity: 0.2; filter: grayscale(100%); }
 
@@ -184,8 +193,6 @@
             flex: 1; display: flex; align-items: center; justify-content: center; background: #000;
             font-size: 15px; font-weight: 700; color: #d1d1d6; text-align: center; position: relative;
         }
-        
-        /* 🖼️ 추후 사진 업로드 시 바인딩될 가상 공간 구조 정의 */
         .cinema-view-frame .map-mock-img {
             position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; opacity: 0.35; pointer-events: none;
         }
@@ -209,7 +216,7 @@
 
 <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
 
-<!-- 🎰 푸른 테두리 순차 추첨 가챠 시네마틱 오버레이 -->
+<!-- 🎰 가챠 시네마틱 레이아웃 오버레이 -->
 <div class="gacha-cinema-overlay" id="gachaCinemaOverlay">
     <div class="cinema-title" id="cinemaTitleTrack">SUDDENATTACK MATCH MAP LINEUP</div>
     <div class="cinema-slots-container" id="cinemaSlotsContainer"></div>
@@ -222,7 +229,7 @@
 
     <div class="app-content">
         
-        <!-- [좌측 영역]: 대칭 확장된 티어 리스트 공간 -->
+        <!-- [좌측 영역]: 가로 테이블 명단 셋업 공간 -->
         <div class="left-column-area">
             <div class="setup-box">
                 <div class="mode-panel-row">
@@ -242,6 +249,8 @@
                             <option value="custom">커스텀</option>
                         </select>
                     </div>
+                    <!-- 🛠️ 상단 드롭다운 우측 자리에 배치된 초기화 버튼 -->
+                    <button class="btn-action-base btn-reset" onclick="askSaMemoReset()">초기화</button>
                 </div>
 
                 <div class="custom-map-selector-box" id="customMapBox">
@@ -249,18 +258,18 @@
                     <div class="custom-map-chips" id="customMapChipsContainer"></div>
                 </div>
 
-                <!-- 황금 비율 시각화 가로 그리드 명단 리스트 -->
+                <!-- 🔗 가로형 5열 테이블 명단 (인풋 높이 32px 정밀 싱크) -->
                 <div class="tier-table-wrapper" id="tierTableWrapper"></div>
 
+                <!-- 🛠️ 하단 팀배정 / 맵배정 좌우 정렬 트레이 -->
                 <div class="control-action-row">
-                    <button class="btn-action-base btn-reset" onclick="askSaMemoReset()">초기화</button>
                     <button class="btn-action-base btn-team-assign" onclick="runSaTeamAssignment()">팀 배정</button>
                     <button class="btn-action-base btn-map-assign" onclick="runSaMapAssignment()">맵 배정</button>
                 </div>
             </div>
         </div>
 
-        <!-- [우측 영역]: 정밀하게 슬림해진 매칭 결과 대시보드란 -->
+        <!-- [우측 영역]: 좌측과 완벽한 수평(560px)을 유지하는 결과 스페이스 -->
         <div class="right-column-area" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
@@ -275,13 +284,13 @@
                 </div>
             </div>
 
-            <!-- 팀뽑기 드래그 대기소 -->
+            <!-- 팀뽑기 드래그 대기 풀 -->
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
                 <div class="pool-zone-title">미배정 대기 명단 (호명 후 상단 팀 칸으로 드래그앤드롭하세요)</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
-            <!-- 상시 결과 노출용 컴팩트 카드 -->
+            <!-- 상시 결과 노출용 하단 매치 맵 카드 보드 -->
             <div class="map-static-result-board" id="mapStaticResultBoard">
                 <div class="static-title">MATCH MAP LINEUP (7판 4선승제)</div>
                 <div class="static-row-binder" id="staticRowBinder"></div>
@@ -427,7 +436,6 @@
                 maps: data.mapResults?.maps || []
             };
 
-            // 맵 가챠 시드 변경 감지 및 연출 흐름 바인딩
             if (data.mapResults && currentMapSeed !== data.mapResults.mapSeed) {
                 currentMapSeed = data.mapResults.mapSeed;
                 if (data.mapAssignMode !== 'original') {
@@ -475,7 +483,6 @@
         return array;
     }
 
-    // 🛠️ [기능 분리]: 독립형 팀 배정 함수
     function runSaTeamAssignment() {
         let allParticipantsByTier = {};
         let totalCount = 0;
@@ -549,7 +556,6 @@
         });
     }
 
-    // 🛠️ [기능 분리]: 독립형 맵 배정 함수
     function runSaMapAssignment() {
         let mapMode = document.getElementById("mapAssignMode").value;
         let chosenMaps = [];
@@ -576,7 +582,6 @@
         });
     }
 
-    function dragStart(e, playerName) { e.dataTransfer.setData("text/plain", playerName); }
     function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
     function dragLeave(e) { e.currentTarget.classList.remove("drag-over"); }
 
@@ -604,7 +609,8 @@
         });
     }
 
-    // 🎰 [대대적 이펙트 교정]: 푸른 테두리 동시 점멸 및 텀(속도) 제어형 가챠 시스템
+    async function triggerCinemaGachaSequence(results) { /* 기존 연출 보존용 구역 */ }
+
     async function triggerBorderFlashGacha(combinedData) {
         const overlay = document.getElementById("gachaCinemaOverlay");
         const container = document.getElementById("cinemaSlotsContainer");
@@ -618,7 +624,6 @@
 
             let finalSelectedMap = combinedData.maps[matchIdx];
 
-            // 후보군 4개 트랙 구축 (가운데 가상 이미지 목업 구역 제공)
             let currentCandidates = [finalSelectedMap];
             let filterPool = mapPool.filter(m => m !== finalSelectedMap);
             shuffle(filterPool);
@@ -642,9 +647,7 @@
                 container.appendChild(card);
             });
 
-            // ⚡ 수정 반영: 푸른 불빛 점멸 텀을 0.22초로 늘려 부드럽고 묵직한 탐색 연출
             let flashState = false;
-            let loopCount = 0;
             let flashInterval = setInterval(() => {
                 for(let idx=0; idx<4; idx++) {
                     let box = document.getElementById(`c-slot-${idx}`);
@@ -654,14 +657,11 @@
                     }
                 }
                 flashState = !flashState;
-                loopCount++;
-            }, 220); // 텀 여유증가 (0.22초)
+            }, 220); 
 
-            // 약 1.8초간 정갈하게 추첨 연출 대기
             await new Promise(r => setTimeout(r, 1800));
             clearInterval(flashInterval);
 
-            // ⚡ "확정 딱!" 단 하나만 노란 테두리 고정, 나머지는 디밍 오프
             for(let idx=0; idx<4; idx++) {
                 let box = document.getElementById(`c-slot-${idx}`);
                 if(box) {
@@ -675,7 +675,6 @@
                 }
             }
 
-            // 라운드별 각인 딜레이 브레이크
             await new Promise(r => setTimeout(r, 1000));
         }
 
@@ -684,7 +683,6 @@
     }
 
     function renderStaticResultBoard(combinedData) {
-        // 명단 데이터 혹은 맵 데이터가 하나라도 있으면 플레이스홀더를 숨김
         if ((combinedData.teamA && combinedData.teamA.length > 0) || (combinedData.maps && combinedData.maps.length > 0)) {
             document.getElementById("placeholderText").style.display = "none";
         } else {
