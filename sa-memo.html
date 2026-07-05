@@ -22,7 +22,7 @@
         
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
+            margin: 0; padding: 25px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
 
@@ -34,149 +34,164 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px;
+            max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
         }
 
         .mac-app-header h1 {
-            font-size: 36px; font-weight: 700; text-align: center; margin: 0 0 5px 0; letter-spacing: 4px; 
+            font-size: 32px; font-weight: 700; text-align: center; margin: 0 0 10px 0; letter-spacing: 4px; 
             background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
+        /* 💻 핵심 세로 종렬 분할 그리드 */
         .app-content {
-            display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: stretch; width: 100%;
+            display: grid; grid-template-columns: 440px 1fr; gap: 20px; align-items: start; width: 100%;
         }
 
         .setup-box {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
+            border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; gap: 14px; backdrop-filter: blur(30px); box-sizing: border-box;
         }
         
         .mode-panel-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
         }
         .form-row { 
-            display: flex; flex-direction: column; gap: 6px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
+            display: flex; flex-direction: column; gap: 4px;
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 8px 12px; 
             border: 1px solid var(--border-glass); box-sizing: border-box; 
         }
         .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; }
         
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
+            border-radius: 6px; padding: 6px 20px 6px 10px; font-size: 12px; font-weight: 700; outline: none; 
             cursor: pointer; width: 100%; box-sizing: border-box; appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
-        .mac-select option { background: #1c1c1e; color: #fff; }
 
-        /* 티어별 명단 레이아웃 */
+        /* 1번 수정: 1~5티어 명단 세로 정렬 리스트 */
         .tier-sheets-scroll {
-            display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 4px;
+            display: flex; flex-direction: column; gap: 10px;
         }
-        .tier-sheets-scroll::-webkit-scrollbar { width: 4px; }
-        .tier-sheets-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
         .tier-container {
-            border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px 14px;
-            background: rgba(255,255,255,0.005);
+            border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 10px;
+            background: rgba(0,0,0,0.15);
         }
-        .tier-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .tier-inputs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px; }
-        .tier-inputs-grid:last-child { margin-bottom: 0; }
+        .tier-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); margin-bottom: 8px; }
         
-        .tier-inputs-grid input[type="text"] {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px;
-            color: #fff; font-size: 12px; padding: 6px; outline: none; text-align: center; width: 100%; box-sizing: border-box;
+        /* 세로로 정렬된 명단 7칸 */
+        .tier-inputs-list { display: flex; flex-direction: column; gap: 5px; }
+        .tier-inputs-list input[type="text"] {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;
+            color: #fff; font-size: 13px; padding: 6px 12px; outline: none; width: 100%; box-sizing: border-box;
         }
-        .tier-inputs-grid input[type="text"]:focus { border-color: var(--sa-orange); }
+        .tier-inputs-list input[type="text"]:focus { border-color: var(--sa-orange); background: rgba(255,159,10,0.02); }
 
-        /* 커스텀 맵 선택 바 */
         .custom-map-selector-box {
             display: none; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.01); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.04);
         }
-        .custom-map-title { font-size: 11px; font-weight: 700; color: #8e8e93; }
         .custom-map-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 90px; overflow-y: auto; }
         .map-chip {
-            font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+            font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; border: 1px solid transparent;
         }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        .btn-container { display: flex; gap: 12px; margin-top: auto; }
-        .btn-reset { flex: 0.7; height: 44px; background: rgba(255,255,255,0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 22px; font-weight: 500; cursor: pointer; }
-        .btn-assign { flex: 1.3; height: 44px; background: rgba(255,159,10,0.1); color: var(--sa-orange); border: 1px solid rgba(255,159,10,0.4); border-radius: 22px; font-weight: 700; cursor: pointer; box-shadow: 0 0 15px rgba(255,159,10,0.1); }
+        .btn-container { display: flex; gap: 10px; margin-top: 6px; }
+        .btn-reset { flex: 0.7; height: 40px; background: rgba(255,255,255,0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 20px; font-weight: 500; cursor: pointer; }
+        .btn-assign { flex: 1.3; height: 40px; background: rgba(255,159,10,0.1); color: var(--sa-orange); border: 1px solid rgba(255,159,10,0.4); border-radius: 20px; font-weight: 700; cursor: pointer; }
         .btn-assign:hover { background: var(--sa-orange); color: #000; }
 
-        /* 우측 결과 대시보드 */
+        /* 우측 결과 트랙 보드 */
         .result-container {
             background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass);
-            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
-            padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px;
+            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; gap: 20px; min-height: 600px;
         }
         
+        /* 1번 수정: 팀 배정 결과 세로 배치 전용 타겟 필드 (두 줄 명단화) */
         .team-board-zone {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none;
+            display: flex; flex-direction: column; gap: 16px; display: none;
         }
-        .team-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; min-height: 120px; }
-        .team-card.blue-team { border-top: 4px solid var(--sa-blue); }
-        .team-card.red-team { border-top: 4px solid var(--sa-red); }
-        .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: center; }
+        .team-card { 
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; 
+            min-height: 100px; transition: background 0.2s;
+        }
+        .team-card.drag-over { background: rgba(255, 159, 10, 0.05); border-color: var(--sa-orange); }
+        .team-card.blue-team { border-left: 5px solid var(--sa-blue); }
+        .team-card.red-team { border-left: 5px solid var(--sa-red); }
+        .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: left; padding-left: 4px; }
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
-        .team-members-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; }
-        .member-badge { background: rgba(255,255,255,0.03); padding: 6px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.02); }
+        
+        .team-members-list { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; min-height: 40px; }
+        .member-badge { background: rgba(255,255,255,0.05); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; border: 1px solid rgba(255,255,255,0.02); }
 
-        /* 👑 팀뽑기 전용 남은 유저 명단 드롭 현황판 */
+        /* 3번 수정: 드래그 전용 미배정 대기 현황 트레이 */
         .leader-pick-pool-zone {
-            display: none; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); border-radius: 14px; padding: 16px; border: 1px solid rgba(255,255,255,0.04);
+            display: none; flex-direction: column; gap: 10px; background: rgba(255,159,10,0.03); border-radius: 14px; padding: 16px; border: 1px solid rgba(255,159,10,0.15);
         }
-        .pool-zone-title { font-size: 13px; font-weight: 700; color: #ff9f0a; }
+        .pool-zone-title { font-size: 13px; font-weight: 700; color: var(--sa-orange); }
         .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-        .pool-player-chip { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #fff; }
+        
+        .pool-player-chip { 
+            background: #1c1c1e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 8px; 
+            font-size: 13px; font-weight: 600; color: #fff; cursor: grab; user-select: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.1s;
+        }
+        .pool-player-chip:active { cursor: grabbing; transform: scale(0.95); }
 
-        /* 🎰 7판 4선승제 맵 리스트 슬롯 연출 */
+        /* 🎰 7판 4선승제 슬롯 보드 */
         .map-slots-board {
-            display: none; flex-direction: column; gap: 12px; margin-top: auto;
+            display: none; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .slots-title { font-size: 14px; font-weight: 700; color: #8e8e93; letter-spacing: 0.5px; }
-        .slots-row-binder {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%;
-        }
+        .slots-title { font-size: 13px; font-weight: 700; color: #8e8e93; letter-spacing: 0.5px; }
+        .slots-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
         
         .map-slot-window {
             background: #141416; border: 1px solid #2c2c2e; border-radius: 8px; overflow: hidden;
-            height: 110px; display: flex; flex-direction: column; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            height: 100px; display: flex; flex-direction: column; position: relative;
         }
-        .map-slot-window.confirmed { border-color: var(--sa-orange); box-shadow: 0 0 15px rgba(255,159,10,0.2); }
-        
+        .map-slot-window.confirmed { border-color: var(--sa-orange); box-shadow: 0 0 12px rgba(255,159,10,0.2); }
         .reel-viewport { flex: 1; overflow: hidden; position: relative; width: 100%; background: #000; }
         .reel-container { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; }
-        .reel-container.spinning { transition: transform 3s cubic-bezier(0.15, 0.85, 0.15, 1); }
+        .reel-container.spinning { transition: transform 2.8s cubic-bezier(0.15, 0.85, 0.15, 1); }
         
-        .reel-item {
-            height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; position: relative;
-        }
-        .reel-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
-        .map-slot-window.confirmed .reel-item img { opacity: 0.9; }
+        .reel-item { height: 74px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .reel-item span { font-size: 11px; font-weight: 500; color: #636366; text-align: center; padding: 0 4px; word-break: break-all; }
+        .map-slot-window.confirmed .reel-item span { color: #fff; font-weight: 700; }
         
         .slot-map-name-plate {
-            height: 26px; background: #1c1c1e; color: #aeaeb2; font-size: 11px; font-weight: 600;
-            display: flex; align-items: center; justify-content: center; border-top: 1px solid #2c2c2e; text-align: center; z-index: 10;
+            height: 24px; background: #1c1c1e; color: #aeaeb2; font-size: 11px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; border-top: 1px solid #2c2c2e;
         }
         .map-slot-window.confirmed .slot-map-name-plate { background: var(--sa-orange); color: #000; font-weight: 700; }
         
         .confirm-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 84px;
-            background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center;
-            z-index: 5; color: var(--sa-orange); font-size: 12px; font-weight: 700; border-bottom: 1px solid rgba(255,159,10,0.3);
-            letter-spacing: 1px; text-shadow: 0 0 6px #000;
+            position: absolute; top: 0; left: 0; width: 100%; height: 74px;
+            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center;
+            z-index: 5; color: var(--sa-orange); font-size: 11px; font-weight: 700;
         }
         .map-slot-window.confirmed .confirm-overlay { display: flex; }
 
-        .no-result-placeholder {
-            text-align: center; padding: 80px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto;
+        .no-result-placeholder { text-align: center; padding: 100px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto; }
+        
+        .mac-alert-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
         }
+        .mac-alert-modal {
+            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
+            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
+        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
+        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -197,7 +212,7 @@
     </div>
 
     <div class="app-content">
-        <!-- ⚙️ 좌측 환경 설정 보드 -->
+        <!-- ⚙️ 좌측 종렬 레이아웃 -->
         <div class="setup-box">
             <div class="mode-panel-row">
                 <div class="form-row">
@@ -218,13 +233,13 @@
                 </div>
             </div>
 
-            <!-- 커스텀 맵 선택 트레이 -->
+            <!-- 커스텀 맵 선택 컨테이너 -->
             <div class="custom-map-selector-box" id="customMapBox">
-                <span class="custom-map-title">고정할 맵 선택 (남은 슬롯은 랜덤 배정)</span>
+                <span class="custom-map-title">고정할 맵 선택 (최대 7개)</span>
                 <div class="custom-map-chips" id="customMapChipsContainer"></div>
             </div>
 
-            <!-- 1~5티어별 7칸 입력 컴포넌트 명단 영역 -->
+            <!-- 1~5티어 종형 리스트 배치 -->
             <div class="tier-sheets-scroll" id="tierInputsWrapper"></div>
 
             <div class="btn-container">
@@ -233,25 +248,25 @@
             </div>
         </div>
 
-        <!-- 📊 우측 매칭 결과 및 가챠 보드 -->
+        <!-- 📊 우측 매칭 결과 대시보드 -->
         <div class="result-container" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
-            <!-- 팀 명단 대시보드 -->
+            <!-- 세로형 2줄 팀 카드 명단 배치 -->
             <div class="team-board-zone" id="teamBoardZone">
-                <div class="team-card blue-team">
+                <div class="team-card blue-team" id="drop-zone-teamA" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropPlayer(event, 'teamA')">
                     <div class="team-header-title" id="blueTeamHeader">A 팀</div>
                     <div class="team-members-list" id="blueTeamList"></div>
                 </div>
-                <div class="team-card red-team">
+                <div class="team-card red-team" id="drop-zone-teamB" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropPlayer(event, 'teamB')">
                     <div class="team-header-title" id="redTeamHeader">B 팀</div>
                     <div class="team-members-list" id="redTeamList"></div>
                 </div>
             </div>
 
-            <!-- 👑 팀뽑기 전용 남은 유저 리스트 현황판 -->
+            <!-- 3번 수정: 팀 드래그 연동 전용 미배정 풀 구역 -->
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
-                <div class="pool-zone-title">선택을 기다리는 대기 명단 (직접 호명하며 뽑아주세요)</div>
+                <div class="pool-zone-title">미배정 대기 명단 (마우스로 드래그해서 원하는 팀 칸에 떨어뜨리세요)</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
@@ -295,31 +310,25 @@
     const originalMaps = ["드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고"];
 
     var isOperating = false;
-    var isAnimationRunning = false;
+    var currentReelSeed = null; // 2번 수정: 불필요한 스핀 재생 방지용 고유 시드 비교 키
     var selectedCustomMaps = [];
 
-    // 1~5티어별 7칸 자동 생성 실행문
+    // 1~5티어별 7칸 세로형 자동 생성
     const tierWrapper = document.getElementById("tierInputsWrapper");
     for (let t = 1; t <= 5; t++) {
         let tierBox = document.createElement("div");
         tierBox.className = "tier-container";
-        tierBox.innerHTML = `<div class="tier-title"><span>${t} 티어 (Tier ${t})</span></div>`;
+        tierBox.innerHTML = `<div class="tier-title">${t}티어 (7칸)</div>`;
         
-        let grid1 = document.createElement("div");
-        grid1.className = "tier-inputs-grid";
-        for(let i=0; i<4; i++) grid1.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="-" autocomplete="off" oninput="pushInputsToFirebase()">`;
-        
-        let grid2 = document.createElement("div");
-        grid2.className = "tier-inputs-grid";
-        for(let i=4; i<7; i++) grid2.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="-" autocomplete="off" oninput="pushInputsToFirebase()">`;
-        grid2.innerHTML += `<span style="opacity:0"></span>`;
-        
-        tierBox.appendChild(grid1);
-        tierBox.appendChild(grid2);
+        let listContainer = document.createElement("div");
+        listContainer.className = "tier-inputs-list";
+        for(let i=0; i<7; i++) {
+            listContainer.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="${t}티어 유저 입력" autocomplete="off" oninput="pushInputsToFirebase()">`;
+        }
+        tierBox.appendChild(listContainer);
         tierWrapper.appendChild(tierBox);
     }
 
-    // 커스텀 맵 선택용 인게임 토큰 조립
     const chipsContainer = document.getElementById("customMapChipsContainer");
     mapPool.forEach(map => {
         let chip = document.createElement("div");
@@ -336,7 +345,6 @@
     }
 
     function toggleMapChip(map) {
-        if (isAnimationRunning) return;
         let idx = selectedCustomMaps.indexOf(map);
         if (idx > -1) {
             selectedCustomMaps.splice(idx, 1);
@@ -352,8 +360,7 @@
 
     function syncCustomMapChipsUI() {
         document.querySelectorAll(".map-chip").forEach(chip => {
-            let mapName = chip.innerText;
-            chip.classList.toggle("selected", selectedCustomMaps.includes(mapName));
+            chip.classList.toggle("selected", selectedCustomMaps.includes(chip.innerText));
         });
     }
 
@@ -382,7 +389,7 @@
     }
 
     function pushInputsToFirebase() {
-        if (isOperating || isAnimationRunning) return;
+        if (isOperating) return;
         let inputs = {};
         for (let t = 1; t <= 5; t++) {
             inputs[t] = [];
@@ -426,16 +433,23 @@
             syncCustomMapChipsUI();
         }
 
-        if (data.results && !isAnimationRunning) {
-            renderResults(data.results);
-        } else if (!data.results && !isAnimationRunning) {
+        if (data.results) {
+            // 2번 수정: 파이어베이스의 랜덤 시드가 변경되었을 때만 애니메이션과 함께 새로 렌더링
+            if (currentReelSeed !== data.results.seed) {
+                currentReelSeed = data.results.seed;
+                renderResults(data.results, true);
+            } else {
+                renderResults(data.results, false); // 드래그 드롭 등 데이터 구조 변경 시 스핀 없이 즉시반영
+            }
+        } else {
+            currentReelSeed = null;
             clearResultsUI();
         }
         isOperating = false;
     });
 
     function askSaMemoReset() {
-        openMacAlert("명단 초기화", "작성된 티어별 명단과 결과를 전부 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("명단 초기화", "작성된 명단과 매칭 결과를 전부 삭제하시겠습니까?", "confirm", () => {
             let emptyInputs = {};
             for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
             db.set({
@@ -464,8 +478,6 @@
     }
 
     function runSaAssignment() {
-        if (isAnimationRunning) return;
-        
         let allParticipantsByTier = {};
         let totalCount = 0;
         for (let t = 1; t <= 5; t++) {
@@ -489,9 +501,8 @@
 
         let teamA = [];
         let teamB = [];
-        let remainPool = []; // 팀뽑기용 대기자 명단 리스트
+        let remainPool = [];
 
-        // 1. 팀 배정 분기 알고리즘
         if (teamMode === "allRandom") {
             let flatList = [];
             for (let t in allParticipantsByTier) flatList = flatList.concat(allParticipantsByTier[t]);
@@ -523,20 +534,17 @@
             let chosenTier = validTiersForLeaders[Math.floor(Math.random() * validTiersForLeaders.length)];
             let tierPool = shuffle([...allParticipantsByTier[chosenTier]]);
             
-            // 두 팀의 팀장 선출 고정
             teamA.push(tierPool[0] + " (👑)");
             teamB.push(tierPool[1] + " (👑)");
 
-            // 팀장 둘을 제외한 모든 유저를 대기 풀(remainPool)로 이동
             for (let t = 1; t <= 5; t++) {
                 allParticipantsByTier[t].forEach(p => {
                     if (p !== tierPool[0] && p !== tierPool[1]) remainPool.push(p);
                 });
             }
-            shuffle(remainPool); // 대기열 무작위 정렬
+            shuffle(remainPool);
         }
 
-        // 2. 7개 매치 맵 배정 알고리즘
         let chosenMaps = [];
         if (mapMode === "original") {
             chosenMaps = [...originalMaps];
@@ -560,53 +568,114 @@
             remainPool: remainPool,
             maps: chosenMaps,
             isLeaderPick: (teamMode === "leaderPick"),
-            seed: Math.random()
+            seed: Math.random() // 정지 조건 컨트롤용 고유 식별값
         };
 
         db.update({ results: finalResults });
     }
 
-    // 🎰 룰렛 슬롯머신 맵 보드 인터페이스 동기화 함수
-    async function renderResults(results) {
-        isAnimationRunning = true;
+    // 3번 수정: 드래그 앤 드롭 이벤트를 위한 시스템 헨들러 선언문
+    function dragStart(e, playerName) {
+        e.dataTransfer.setData("text/plain", playerName);
+    }
+    function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
+    document.addEventListener("dragover", e => e.preventDefault());
+    function dragLeave(e) { e.currentTarget.classList.remove("drag-over"); }
+
+    function dropPlayer(e, targetTeam) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("drag-over");
+        let name = e.dataTransfer.getData("text/plain");
+        if (!name) return;
+
+        db.once("value", (snapshot) => {
+            let data = snapshot.val();
+            if (!data || !data.results) return;
+
+            let res = data.results;
+            // 대기 풀에서 삭제
+            if (res.remainPool) {
+                let idx = res.remainPool.indexOf(name);
+                if (idx > -1) res.remainPool.splice(idx, 1);
+            }
+            // 타겟 팀 리스트에 푸시
+            if (targetTeam === 'teamA') {
+                if(!res.teamA) res.teamA = [];
+                res.teamA.push(name);
+            } else {
+                if(!res.teamB) res.teamB = [];
+                res.teamB.push(name);
+            }
+            db.child("results").update(res);
+        });
+    }
+
+    // 메인 그래픽 렌더링 트랙
+    function renderResults(results, shouldAnimate) {
         document.getElementById("placeholderText").style.display = "none";
         
         const blueList = document.getElementById("blueTeamList");
         const redList = document.getElementById("redTeamList");
         blueList.innerHTML = ""; redList.innerHTML = "";
         
-        results.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}</div>`);
-        results.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}</div>`);
+        if(results.teamA) results.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}</div>`);
+        if(results.teamB) results.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}</div>`);
         
-        if (results.isLeaderPick && results.teamA[0] && results.teamB[0]) {
+        if (results.isLeaderPick && results.teamA && results.teamA[0] && results.teamB && results.teamB[0]) {
             document.getElementById("blueTeamHeader").innerText = results.teamA[0].replace(" (👑)", "") + "팀";
             document.getElementById("redTeamHeader").innerText = results.teamB[0].replace(" (👑)", "") + "팀";
         } else {
-            document.getElementById("blueTeamHeader").innerText = "A 팀 (" + results.teamA.length + "명)";
-            document.getElementById("redTeamHeader").innerText = "B 팀 (" + results.teamB.length + "명)";
+            document.getElementById("blueTeamHeader").innerText = "A 팀 (" + (results.teamA ? results.teamA.length : 0) + "명)";
+            document.getElementById("redTeamHeader").innerText = "B 팀 (" + (results.teamB ? results.teamB.length : 0) + "명)";
         }
-        document.getElementById("teamBoardZone").style.display = "grid";
+        document.getElementById("teamBoardZone").style.display = "flex";
 
-        // 팀뽑기 방식일 때 남은 대기열 명단 판넬 노출
+        // 드래그 풀 제어
         const poolZone = document.getElementById("leaderPickPoolZone");
         const poolChipsWrap = document.getElementById("poolChipsWrap");
         poolChipsWrap.innerHTML = "";
         
         if (results.isLeaderPick && results.remainPool && results.remainPool.length > 0) {
             results.remainPool.forEach(p => {
-                poolChipsWrap.innerHTML += `<div class="pool-player-chip">${p}</div>`;
+                let chip = document.createElement("div");
+                chip.className = "pool-player-chip";
+                chip.innerText = p;
+                chip.draggable = true;
+                chip.ondragstart = (e) => dragStart(e, p);
+                poolChipsWrap.appendChild(chip);
             });
             poolZone.style.display = "flex";
         } else {
             poolZone.style.display = "none";
         }
 
-        // 룰렛 트랙 초기 바인딩
+        // 🎰 맵 룰렛 그리기 트랙 시작
         const binder = document.getElementById("slotsRowBinder");
+        
+        // 2번 수정: 단순히 데이터 갱신(드래그 등)일 때는 스핀을 돌리지 않고 정지 레이아웃 유지
+        if (!shouldAnimate) {
+            binder.innerHTML = "";
+            document.getElementById("mapSlotsBoard").style.display = "flex";
+            results.maps.forEach((finalMap, sIdx) => {
+                let slotWin = document.createElement("div");
+                slotWin.className = "map-slot-window confirmed";
+                slotWin.innerHTML = `
+                    <div class="reel-viewport">
+                        <div class="confirm-overlay" style="display:flex;">확정</div>
+                        <div class="reel-container" style="transform:translateY(-74px);">
+                            <div class="reel-item"><span>${finalMap}</span></div>
+                        </div>
+                    </div>
+                    <div class="slot-map-name-plate">${finalMap}</div>
+                `;
+                binder.appendChild(slotWin);
+            });
+            return;
+        }
+
+        // 새 판이 짜여졌을 때의 스핀 연출 트랙 가동
         binder.innerHTML = "";
         document.getElementById("mapSlotsBoard").style.display = "flex";
-
-        let slotPromises = [];
 
         results.maps.forEach((finalMap, sIdx) => {
             let slotWin = document.createElement("div");
@@ -615,16 +684,14 @@
 
             let dummyReel = [];
             let forbidden = [finalMap];
-            for(let i=0; i<15; i++) {
+            for(let i=0; i<10; i++) {
                 let randMap = mapPool[Math.floor(Math.random() * mapPool.length)];
                 if(!forbidden.includes(randMap)) dummyReel.push(randMap);
             }
-            dummyReel.push(finalMap);
+            dummyReel.push(finalMap); // 11번째 정답 패킹
 
             let reelHtml = dummyReel.map(m => `
-                <div class="reel-item">
-                    <img src="map_sample.png" alt="${m}">
-                </div>
+                <div class="reel-item"><span>${m}</span></div>
             `).join('');
 
             slotWin.innerHTML = `
@@ -636,28 +703,22 @@
             `;
             binder.appendChild(slotWin);
 
-            slotPromises.push(new Promise(resolve => {
+            setTimeout(() => {
+                let container = document.getElementById(`reel-core-${sIdx}`);
+                if (container) {
+                    container.className = "reel-container spinning";
+                    let targetY = 10 * 74; // 높이 값 74px 매칭 계산식
+                    container.style.transform = `translateY(-${targetY}px)`;
+                }
+                
                 setTimeout(() => {
-                    let container = document.getElementById(`reel-core-${sIdx}`);
-                    if (container) {
-                        container.className = "reel-container spinning";
-                        let targetY = 15 * 84; 
-                        container.style.transform = `translateY(-${targetY}px)`;
-                    }
-                    
-                    setTimeout(() => {
-                        let winEl = document.getElementById(`slot-win-${sIdx}`);
-                        let plateEl = document.getElementById(`plate-name-${sIdx}`);
-                        if (winEl) winEl.classList.add("confirmed");
-                        if (plateEl) plateEl.innerText = finalMap;
-                        resolve();
-                    }, 3000);
-                }, sIdx * 350);
-            }));
+                    let winEl = document.getElementById(`slot-win-${sIdx}`);
+                    let plateEl = document.getElementById(`plate-name-${sIdx}`);
+                    if (winEl) winEl.classList.add("confirmed");
+                    if (plateEl) plateEl.innerText = finalMap;
+                }, 2800);
+            }, sIdx * 300);
         });
-
-        await Promise.all(slotPromises);
-        isAnimationRunning = false;
     }
 </script>
 </body>
