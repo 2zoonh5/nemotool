@@ -60,45 +60,62 @@ function preventInspection() {
 
 // 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태 우회)
 function makeWindowsDraggable() {
-    const windows = document.querySelectorAll('.window-popup');
-    
-    windows.forEach(win => {
-        const header = win.querySelector('.window-header');
+    let activeWindow = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+
+    document.querySelectorAll(".window-popup").forEach(win => {
+        const header = win.querySelector(".window-header");
         if (!header) return;
 
-        let isDragging = false;
-        let currentX, currentY, initialX, initialY;
+        header.addEventListener("mousedown", (e) => {
+            if (
+                e.target.closest(".mac-buttons") ||
+                e.target.closest(".nav-buttons")
+            ) return;
 
-        header.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.mac-buttons') || e.target.closest('.nav-buttons')) return;
-            if (win.classList.contains('maximized')) return;
+            if (win.classList.contains("maximized")) return;
 
             isDragging = true;
-            
-            const style = window.getComputedStyle(win);
-            initialX = e.clientX - parseInt(style.left || 0);
-            initialY = e.clientY - parseInt(style.top || 0);
-            
-            document.querySelectorAll('.window-popup').forEach(w => w.style.zIndex = "10");
+            activeWindow = win;
+
+            offsetX = e.clientX - win.offsetLeft;
+            offsetY = e.clientY - win.offsetTop;
+
+            document.querySelectorAll(".window-popup").forEach(w => {
+                w.style.zIndex = "10";
+            });
             win.style.zIndex = "100";
+
+            document.body.style.userSelect = "none";
         });
+    });
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
+    let animationFrame = null;
 
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging || !activeWindow) return;
 
-            if (currentY < 25) currentY = 25;
+        if (animationFrame) return;
 
-            win.style.left = `${currentX}px`;
-            win.style.top = `${currentY}px`;
+        animationFrame = requestAnimationFrame(() => {
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
+
+            if (y < 25) y = 25;
+
+            activeWindow.style.left = x + "px";
+            activeWindow.style.top = y + "px";
+
+            animationFrame = null;
         });
+    });
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+        activeWindow = null;
+        document.body.style.userSelect = "";
     });
 }
 
