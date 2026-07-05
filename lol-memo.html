@@ -67,6 +67,11 @@
             background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
             border: 1px solid var(--border-glass); box-sizing: border-box; 
         }
+        .form-row { 
+            display: flex; flex-direction: column; gap: 6px;
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
+            border: 1px solid var(--border-glass); box-sizing: border-box; 
+        }
         .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
         
         .mac-select {
@@ -137,15 +142,20 @@
             position: relative;
         }
         
-        /* 🛠️ 3번 해결: 최소화 시 짤림을 막고 이쁘게 정중앙 배치 정렬 상태 유지하도록 개량 */
+        /* 🛠️ 4번 해결: 상하 짤림 원천 차단. align-items를 flex-start로 고정하고 세로 방향 반응형 정렬 적용 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 24px; overflow-x: auto; overflow-y: auto;
-            align-items: center; justify-content: center;
+            align-items: flex-start; justify-content: center;
+        }
+
+        /* 창 너비가 세트 배열보다 작을 경우 왼쪽 치우침 방지 */
+        @media (max-width: 1000px) {
+            .result-scroll-core { justify-content: flex-start; }
         }
 
         .table-wrapper-binder {
-            display: flex; gap: 24px; align-items: center; justify-content: center; min-height: 100%;
+            display: flex; gap: 24px; align-items: flex-start; justify-content: center; min-height: 100%; padding-bottom: 10px; box-sizing: border-box;
         }
 
         .result-scroll-core::-webkit-scrollbar { height: 6px; width: 6px; }
@@ -154,14 +164,13 @@
         .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
         .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18) !important; }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
-        /* 🛠️ 1번 해결: 불필요하게 거슬리던 깜빡임 효과(@keyframes tableFadeIn) 삭제 */
         .set-table {
-            border-collapse: collapse; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); 
+            border-collapse: collapse; background: #131316; border: 1px solid rgba(255,255,255,0.06); 
             border-radius: 14px; overflow: hidden; 
-            width: 230px; min-width: 230px; flex: 0 0 auto; 
+            width: 234px; min-width: 234px; flex: 0 0 auto; 
             box-shadow: 0 16px 40px rgba(0,0,0,0.4);
         }
         
@@ -171,26 +180,24 @@
         }
 
         .set-table th.sub-hdr {
-            font-size: 11px; font-weight: 700; padding: 0 4px; height: 34px;
+            font-size: 12px; font-weight: 700; padding: 0 4px; height: 36px;
             border-bottom: 1px solid rgba(255,255,255,0.08); color: #a5a5a7; 
-            text-transform: uppercase; vertical-align: middle; line-height: 34px; box-sizing: border-box;
+            text-transform: uppercase; vertical-align: middle; line-height: 36px; box-sizing: border-box;
         }
         
+        /* 🛠️ 1번 해결: 우측 라인 짤림을 영구 차단하기 위해 outline 대신 안쪽 그림자(inset box-shadow)로 설계 변경 */
         .clickable-swap-row {
             cursor: pointer;
-            transition: background 0.15s ease, transform 0.1s ease;
+            transition: background 0.15s ease;
         }
         .clickable-swap-row:hover {
             background: rgba(255, 255, 255, 0.04) !important;
         }
         .clickable-swap-row.selected-token {
-            background: rgba(0, 122, 255, 0.25) !important;
-            box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.1) !important;
-            outline: 1.5px solid #3498ff;
-            outline-offset: -1.5px;
+            background: rgba(0, 122, 255, 0.18) !important;
+            box-shadow: inset 0 0 0 1.5px #3498ff !important;
         }
 
-        /* 🛠️ 2번 해결: 평소엔 잘 보이고 다른 행 선택(스왑 모드) 시에만 제한 커서 피드백 제공 */
         .disabled-fixed-row {
             background: transparent;
         }
@@ -198,24 +205,30 @@
             cursor: not-allowed !important;
         }
 
-        /* 🛠️ 4번 해결: 명단 글자색 시인성 대폭 업그레이드 및 하이엔드 폰트 마감 */
+        /* 🛠️ 1번&3번 해결: 부드러운 Mac OS 햅틱 텍스트 트랜지션 애니메이션 인프라 구축 및 가독성 완성 */
         .set-table td {
-            padding: 10px 6px; text-align: center; font-size: 14.5px; height: 40px; 
-            border-bottom: 1px solid rgba(255,255,255,0.02); color: #ffffff; font-weight: 600;
-            width: 93px; max-width: 93px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            letter-spacing: -0.3px; box-sizing: border-box;
+            padding: 10px 6px; text-align: center; font-size: 15px; height: 42px; 
+            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 700;
+            width: 95px; max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            letter-spacing: -0.2px; box-sizing: border-box;
+            transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s ease;
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
-            background: rgba(255, 255, 255, 0.01); font-size: 11.5px; font-weight: 700; width: 44px; max-width: 44px; color: #9a9a9e !important; border-right: 1px solid rgba(255,255,255,0.03); letter-spacing: 0;
+            background: rgba(255, 255, 255, 0.01); font-size: 12px; font-weight: 700; width: 44px; max-width: 44px; color: #9a9a9e !important; border-right: 1px solid rgba(255,255,255,0.03); letter-spacing: 0;
         }
 
-        /* 🛠️ 4번 해결: Mac OS 아이덴티티를 살린 블루/레드 테마 컬러 선명도 강화 */
-        .hdr-blue { background: rgba(0, 122, 255, 0.65) !important; color: #ffffff !important; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-        .hdr-red { background: rgba(255, 69, 58, 0.65) !important; color: #ffffff !important; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        /* 🛠️ 3번 해결: 가독성을 위해 Mac OS 테마 가이드라인의 고휘도 네온 컬러 서체 치환 */
+        .hdr-blue { background: #007aff !important; color: #ffffff !important; font-weight: 700; }
+        .hdr-red { background: #ff453a !important; color: #ffffff !important; font-weight: 700; }
         
-        .cell-blue { color: #8ec5ff !important; background: rgba(0, 122, 255, 0.02) !important; }
-        .cell-red { color: #ffb3b0 !important; background: rgba(255, 69, 58, 0.02) !important; }
+        .cell-blue { color: #40a9ff !important; background: rgba(0, 122, 255, 0.02) !important; }
+        .cell-red { color: #ff7875 !important; background: rgba(255, 69, 58, 0.02) !important; }
+
+        /* 비활성화 혹은 부드러운 스왑 도중 전개될 페이드 상태 */
+        .text-fade-out {
+            opacity: 0.1 !important;
+        }
 
         .mac-alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -343,36 +356,6 @@
     var selectedSetIndex = null;
     var selectedLineIndex = null;
 
-    function openMacAlert(title, subText, type, onConfirm) {
-        const overlay = document.getElementById("macAlertOverlay");
-        document.getElementById("macAlertTitle").innerText = title;
-        document.getElementById("macAlertSub").innerText = subText;
-        const btnBox = document.getElementById("macAlertBtnBox");
-        btnBox.innerHTML = "";
-
-        if (type === "confirm") {
-            const cancelBtn = document.createElement("button");
-            cancelBtn.className = "mac-alert-btn cancel";
-            cancelBtn.innerText = "취소";
-            cancelBtn.onclick = () => { overlay.style.display = "none"; };
-            
-            const confirmBtn = document.createElement("button");
-            confirmBtn.className = "mac-alert-btn confirm";
-            confirmBtn.innerText = "확인";
-            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
-            
-            btnBox.appendChild(cancelBtn);
-            btnBox.appendChild(confirmBtn);
-        } else {
-            const alertBtn = document.createElement("button");
-            alertBtn.className = "mac-alert-btn confirm";
-            alertBtn.innerText = "확인";
-            alertBtn.onclick = () => { overlay.style.display = "none"; };
-            btnBox.appendChild(alertBtn);
-        }
-        overlay.style.display = "flex";
-    }
-
     function pushInputsToFirebase() {
         if (isOperating) return;
         let inputs = [];
@@ -449,7 +432,7 @@
         }
     }
 
-    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 철저히 보존 유지
+    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 보존 유지
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
@@ -588,25 +571,27 @@
         db.update({ results: serializedResults });
     }
 
+    // 🛠️ 2번 해결: 왼쪽 열과 오른쪽 열의 팀장명을 완전 고정 추적하여 엇갈리는 버그 근절
     function renderResultTables(results) {
         const binder = document.getElementById("tableWrapperBinder");
         binder.innerHTML = ""; 
 
         results.forEach((setObj, sIdx) => {
-            let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
-            let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
-            let teamACellClass = (setObj.setIndex % 2 === 0) ? "cell-blue" : "cell-red";
-            let teamBCellClass = (setObj.setIndex % 2 === 0) ? "cell-red" : "cell-blue";
-
             const table = document.createElement("table");
             table.className = "set-table";
 
-            // 🛠️ 5번 해결: 서폿 라인(인덱스 4)에 배치된 유저 닉네임을 추출하여 동적 팀장명 타이틀 매핑 구현
-            let blueLeader = setObj.lines[4] ? setObj.lines[4].blue : "블루";
-            let redLeader = setObj.lines[4] ? setObj.lines[4].red : "레드";
+            // 고정 팀장명 가져오기 (1세트 서폿 기준 좌우 유저 고정)
+            let fixedBlueLeader = results[0].lines[4] ? results[0].lines[4].blue : "블루";
+            let fixedRedLeader = results[0].lines[4] ? results[0].lines[4].red : "레드";
 
-            let teamAName = (setObj.setIndex % 2 === 0) ? `${blueLeader}팀` : `${redLeader}팀`;
-            let teamBName = (setObj.setIndex % 2 === 0) ? `${redLeader}팀` : `${blueLeader}팀`;
+            // 세트 번호에 관계없이 왼쪽 열은 항상 fixedBlueLeader, 오른쪽 열은 fixedRedLeader 배정
+            let teamAName = `${fixedBlueLeader}팀`;
+            let teamBName = `${fixedRedLeader}팀`;
+
+            let teamAHdrClass = "hdr-blue";
+            let teamBHdrClass = "hdr-red";
+            let teamACellClass = "cell-blue";
+            let teamBCellClass = "cell-red";
             
             let htmlPayload = `
                 <thead>
@@ -627,16 +612,16 @@
                 if (lineObj.isFixed) {
                     rowClass = `class="disabled-fixed-row"`;
                 } else {
-                    // 🛠️ 1번 해결: 깜빡임 방지를 위해 토큰 활성화 시 엘리먼트 자체 클래스 제어 방식으로 연동
                     let isSelected = (selectedSetIndex === sIdx && selectedLineIndex === lIdx);
                     rowClass = `class="clickable-swap-row ${isSelected ? 'selected-token' : ''}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"`;
                 }
 
+                // 무조건 왼쪽은 최초 지정된 blue 데이터, 오른쪽은 red 데이터 바인딩
                 htmlPayload += `
-                    <tr ${rowClass}>
+                    <tr ${rowClass} id="cell-row-${sIdx}-${lIdx}">
                         <td class="lane-cell">${lineObj.lane}</td>
-                        <td class="${teamACellClass}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}">${lineObj.red}</td>
+                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
+                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
                     </tr>
                 `;
             });
@@ -646,7 +631,6 @@
             binder.appendChild(table);
         });
         
-        // 🛠️ 3번 해결: 보기에 가장 이쁘고 이상적인 배치 마감 유지 보정
         const scrollCore = document.getElementById("resultScrollCore");
         if (results.length >= 4) {
             scrollCore.style.justifyContent = "flex-start";
@@ -655,27 +639,25 @@
         }
     }
 
+    // 🛠️ 1번 해결: 텍스트 투명도를 제어하여 한 단계 스무스한 Mac OS 전용 연출 레이어 설계
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
-            if (linesArray[lineDocsIdx].isFixed) return; // 서폿 고정 라인 터치 절대 거부
+            if (linesArray[lineDocsIdx].isFixed) return;
         }
 
-        // 다른 세트를 누르면 선택 상태 전격 초기화
         if (selectedRowElement && selectedSetIndex !== setIdx) {
             selectedRowElement.classList.remove("selected-token");
             selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
         }
 
         if (!selectedRowElement) {
-            // 첫 번째 라인 토큰 선택
             selectedRowElement = element;
             selectedSetIndex = setIdx;
             selectedLineIndex = lineDocsIdx;
             element.classList.add("selected-token");
-            document.body.className = "swap-mode-active"; // 🛠️ 2번 해결: 스왑 모드 켜진 경우에만 서폿에 금지 피드백 활성화
+            document.body.className = "swap-mode-active";
         } else {
-            // 두 번째 라인 토큰 선택
             let firstLineIdx = selectedLineIndex;
             let secondLineIdx = lineDocsIdx;
 
@@ -696,22 +678,39 @@
                     return;
                 }
 
-                let holdBlue = linesArray[firstLineIdx].blue;
-                let holdRed = linesArray[firstLineIdx].red;
+                // 애니메이션 연출 타겟 DOM 캐싱
+                let bText1 = document.getElementById(`text-blue-${setIdx}-${firstLineIdx}`);
+                let rText1 = document.getElementById(`text-red-${setIdx}-${firstLineIdx}`);
+                let bText2 = document.getElementById(`text-blue-${setIdx}-${secondLineIdx}`);
+                let rText2 = document.getElementById(`text-red-${setIdx}-${secondLineIdx}`);
 
-                linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
-                linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
+                // 1단계: 순식간에 투명해지며 숨김 (Fade Out)
+                if(bText1 && rText1 && bText2 && rText2) {
+                    bText1.classList.add("text-fade-out");
+                    rText1.classList.add("text-fade-out");
+                    bText2.classList.add("text-fade-out");
+                    rText2.classList.add("text-fade-out");
+                }
 
-                linesArray[secondLineIdx].blue = holdBlue;
-                linesArray[secondLineIdx].red = holdRed;
+                setTimeout(() => {
+                    // 데이터 교환 단행
+                    let holdBlue = linesArray[firstLineIdx].blue;
+                    let holdRed = linesArray[firstLineIdx].red;
 
-                selectedRowElement.classList.remove("selected-token");
-                element.classList.remove("selected-token");
-                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
-                document.body.className = "swap-mode-inactive";
+                    linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
+                    linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
 
-                // 🛠️ 1번 해결: 깜빡임 차단을 위해 데이터만 고속 주입 후 실시간 업데이트 단행
-                db.update({ results: globalResultData });
+                    linesArray[secondLineIdx].blue = holdBlue;
+                    linesArray[secondLineIdx].red = holdRed;
+
+                    selectedRowElement.classList.remove("selected-token");
+                    element.classList.remove("selected-token");
+                    selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+                    document.body.className = "swap-mode-inactive";
+
+                    // 원격 노드 일괄 트리거 파이어 (전체 동기화)
+                    db.update({ results: globalResultData });
+                }, 200); // 0.2초 페이드 아웃 유지 시간 후 교체
             }
         }
     }
