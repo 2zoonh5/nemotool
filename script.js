@@ -10,7 +10,7 @@ let lastClosedApp = null;
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
     makeWindowsDraggable(); 
-    preventInspection(); // 2번 수정: 우클릭 및 개발자 도구 방지 스크립트 가동
+    preventInspection(); // 우클릭 및 개발자 도구 방지 스크립트 가동
 
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-// 2번 수정: 우클릭 메뉴 차단 및 F12 단축키 완벽 제한 스크립트
+// 우클릭 메뉴 차단 및 F12 단축키 완벽 제한 스크립트
 function preventInspection() {
     // 마우스 우클릭 금지
     document.addEventListener('contextmenu', event => event.preventDefault());
