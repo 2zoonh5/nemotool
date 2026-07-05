@@ -19,6 +19,7 @@
             --bg-glass-passive: rgba(255, 255, 255, 0.015);
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
+            --mac-blue-hover: #148cff;
             --mac-red: #ff453a;
             --text-gray: #8e8e93;
             --text-dim: #aeaeb2;
@@ -50,7 +51,6 @@
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
-        /* 🛠️ 3번 해결: 좌우 컴포넌트 하단 수평 일치를 위한 기본 stretch 레이아웃 가동 */
         .app-content {
             display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
@@ -84,7 +84,6 @@
         .mac-select option { background: #1c1c1e; color: #fff; }
         .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        /* 🛠️ 2번 해결: 입력단 리스트들 간격을 균일화하여 통일미 극대화 */
         .input-table-sheet { display: flex; flex-direction: column; width: 100%; gap: 10px; }
         
         .table-row {
@@ -130,24 +129,23 @@
             transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box;
             box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
         }
-        .btn-assign:hover { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); transform: translateY(-1px); }
+        .btn-assign:hover:not(:disabled) { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); transform: translateY(-1px); }
+        .btn-assign:disabled { background: rgba(255,255,255,0.02); color: #48484a; border-color: rgba(255,255,255,0.05); box-shadow: none; cursor: not-allowed; }
 
-        /* 🛠️ 3번 해결: 최소화 시 짤림을 완벽 방지하기 위해 유동적 반응형 최소 너비 시스템으로 재개편 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            height: 100%; min-height: 0; overflow: hidden; position: relative;
+            height: 100%; min-height: 520px; overflow: hidden; position: relative;
             display: flex; flex-direction: column;
         }
         
         .result-scroll-core {
-            width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
+            width: 100%; flex: 1; padding: 24px 24px 12px 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: auto;
             align-items: center; justify-content: center;
         }
 
-        /* 부모 컨테이너 크기가 줄어들면 즉각 강제 스크롤 인프라로 전환하여 1세트 짤림 차단 */
         @media (max-width: 1024px), (max-height: 640px) {
             .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
         }
@@ -169,8 +167,14 @@
             border-radius: 12px; overflow: hidden; 
             width: 220px; min-width: 220px; flex: 0 0 auto; 
             box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            transition: opacity 0.3s ease;
         }
         
+        /* 라인업 확정 시 결과 보드판 잠금 시각 효과 */
+        .result-container.confirmed-locked .set-table {
+            opacity: 0.65;
+        }
+
         .set-table th.set-title {
             background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
@@ -184,29 +188,42 @@
         
         .clickable-swap-row {
             cursor: pointer;
-            transition: all 0.15s ease;
         }
         .clickable-swap-row:hover {
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* 🛠️ 4번 해결: 우측 라인이 씹히던 단방향 아웃라인을 제거하고, 완벽한 사방 발광 인셋 레이어로 정밀 복구 */
-        .clickable-swap-row.selected-token {
-            background: rgba(0, 122, 255, 0.15) !important;
-            box-shadow: inset 0 0 0 1.5px var(--mac-blue) !important;
+        /* 🛠️ 1번 해결: tr outline 대신 각각의 td 보더 정밀 지정을 통해 우측 짤림 완전 제거 */
+        .clickable-swap-row.selected-token td {
+            border-top: 1.5px solid var(--mac-blue);
+            border-bottom: 1.5px solid var(--mac-blue);
+            background: rgba(0, 122, 255, 0.12) !important;
+        }
+        .clickable-swap-row.selected-token td:first-child {
+            border-left: 1.5px solid var(--mac-blue);
+        }
+        .clickable-swap-row.selected-token td:last-child {
+            border-right: 1.5px solid var(--mac-blue);
         }
 
-        /* 🛠️ 2번 해결: 결과판 참가자 이름 글자 크기 가독성 확보용 소폭 확대 */
+        /* 라인업 잠금 시 스왑 커서 제어 */
+        body.lock-system-active .clickable-swap-row {
+            cursor: default !important;
+        }
+        body.lock-system-active .clickable-swap-row:hover {
+            background: transparent !important;
+        }
+
         .set-table td {
             padding: 10px 4px; text-align: center; font-size: 16px; height: 42px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
             width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
             vertical-align: middle;
+            transition: opacity 0.2s ease, background-color 0.2s ease;
         }
         .set-table tr:last-child td { border-bottom: none; }
         
-        /* 🛠️ 1번 해결: 플렉스 강제 중앙 정렬을 수직 센터링 테이블 속성으로 바꾸어 완벽한 높이 균일 통일화 완수 */
         .set-table td.lane-cell {
             background: rgba(255, 255, 255, 0.005); width: 44px; max-width: 44px; border-right: 1px solid rgba(255,255,255,0.015);
             height: 42px; padding: 0; box-sizing: border-box; vertical-align: middle; text-align: center;
@@ -220,6 +237,31 @@
         
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
         .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
+
+        /* 🛠️ 2번 해결: 정갈하고 세련된 소프트 페이드 펄스 연출용 상태 변수 */
+        .text-mac-fade-pulse {
+            opacity: 0.2 !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* 🛠️ 3번 해결: 하단 결과 보드 공백을 매울 럭셔리 버튼 트레이 구역 */
+        .result-action-tray {
+            width: 100%; padding: 12px 24px 24px 24px; box-sizing: border-box;
+            display: flex; justify-content: center; flex-shrink: 0;
+        }
+        .btn-confirm-lock {
+            width: 200px; height: 44px; background: rgba(52, 199, 89, 0.1); color: #34c759;
+            border: 1px solid rgba(52, 199, 89, 0.4); border-radius: 22px; font-weight: 700;
+            font-size: 14px; letter-spacing: 0.3px; cursor: pointer; transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.08); display: none;
+        }
+        .btn-confirm-lock:hover:not(:disabled) {
+            background: #34c759; color: #ffffff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(52, 199, 89, 0.25);
+        }
+        .btn-confirm-lock:disabled {
+            background: rgba(255,255,255,0.01) !important; color: #48484a !important; border-color: rgba(255,255,255,0.04) !important;
+            box-shadow: none !important; cursor: not-allowed; transform: none !important;
+        }
 
         .mac-alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -309,7 +351,7 @@
 
             <div class="btn-container">
                 <button class="btn btn-reset" onclick="askRollmojangReset()">초기화</button>
-                <button class="btn btn-assign" onclick="runRollmojangAssignment()">팀 배정</button>
+                <button class="btn btn-assign" id="assignBtn" onclick="runRollmojangAssignment()">팀 배정</button>
             </div>
         </div>
 
@@ -321,6 +363,10 @@
                         <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
                     </div>
                 </div>
+            </div>
+            <!-- 🛠️ 3번 해결: 라인업 확정 액션 트레이 영역 빌드 완료 -->
+            <div class="result-action-tray">
+                <button class="btn-confirm-lock" id="confirmLockBtn" onclick="triggerLineupLock()">라인업 확정</button>
             </div>
         </div>
     </div>
@@ -342,6 +388,7 @@
 
     var globalResultData = null; 
     var isOperating = false;
+    var globalLockState = false; // 실시간 확정 잠금 상태 플래그
 
     var selectedRowElement = null;
     var selectedSetIndex = null;
@@ -386,7 +433,7 @@
     }
 
     function pushInputsToFirebase() {
-        if (isOperating) return;
+        if (isOperating || globalLockState) return;
         let inputs = [];
         for (let i = 0; i < 5; i++) {
             inputs.push({
@@ -408,6 +455,25 @@
         }
 
         isOperating = true;
+        
+        // 🛠️ 3번 해결: 파이어베이스 세션 상태 동기화를 기반으로 락킹 제어 플로우 바인딩
+        globalLockState = data.isConfirmed || false;
+        const assignBtn = document.getElementById("assignBtn");
+        const confirmLockBtn = document.getElementById("confirmLockBtn");
+        const resultContainer = document.getElementById("resultContainer");
+
+        if (globalLockState) {
+            document.body.className = "lock-system-active";
+            assignBtn.disabled = true;
+            confirmLockBtn.disabled = true;
+            resultContainer.classList.add("confirmed-locked");
+        } else {
+            document.body.className = "swap-mode-inactive";
+            assignBtn.disabled = false;
+            confirmLockBtn.disabled = false;
+            resultContainer.classList.remove("confirmed-locked");
+        }
+
         if (data.inputs) {
             data.inputs.forEach((item, idx) => {
                 if(document.getElementById(`p1_${idx}`).value !== item.p1) document.getElementById(`p1_${idx}`).value = item.p1;
@@ -421,12 +487,14 @@
         if (data.results) {
             globalResultData = data.results;
             renderResultTables(data.results);
+            confirmLockBtn.style.display = "block";
         } else {
             globalResultData = null;
             document.getElementById("tableWrapperBinder").innerHTML = `
                 <div class="no-result" id="noResultGrid">
                     <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
                 </div>`;
+            confirmLockBtn.style.display = "none";
         }
         isOperating = false;
     });
@@ -436,8 +504,17 @@
             db.update({
                 gameMode: "Bo3",
                 inputs: [ {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""} ],
-                results: null
+                results: null,
+                isConfirmed: false
             });
+        });
+    }
+
+    // 🛠️ 3번 해결: 라인업 동적 확정 트리거 생성 함수
+    function triggerLineupLock() {
+        if (globalLockState || !globalResultData) return;
+        openMacAlert("라인업 최종 확정", "현재 세트 결과로 매칭을 최종 확정하시겠습니까?\n확정 후 초기화 전까지 재배정이 불가합니다.", "confirm", () => {
+            db.update({ isConfirmed: true });
         });
     }
 
@@ -451,6 +528,11 @@
                 <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
             </div>`;
         selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+        globalLockState = false;
+        document.body.className = "swap-mode-inactive";
+        document.getElementById("assignBtn").disabled = false;
+        document.getElementById("confirmLockBtn").style.display = "none";
+        document.getElementById("resultContainer").classList.remove("confirmed-locked");
     }
 
     function customShuffleArray(array) {
@@ -461,6 +543,7 @@
     }
 
     function runRollmojangAssignment() {
+        if (globalLockState) return;
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
             let p2Val = document.getElementById(`p2_${i}`).value.trim();
@@ -595,7 +678,7 @@
             serializedResults.push({ setIndex: set, lines: setLineArray });
         }
 
-        db.update({ results: serializedResults });
+        db.update({ results: serializedResults, isConfirmed: false });
     }
 
     function renderResultTables(results) {
@@ -646,8 +729,8 @@
                 htmlPayload += `
                     <tr ${rowClass}>
                         <td class="lane-cell">${laneContent}</td>
-                        <td class="${teamACellClass}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}">${lineObj.red}</td>
+                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
+                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
                     </tr>
                 `;
             });
@@ -667,21 +750,8 @@
         }
     }
 
-    // 창 크기 변경 시 실시간 정렬 보완 핸들러 추가
-    window.addEventListener("resize", () => {
-        if (globalResultData) {
-            const scrollCore = document.getElementById("resultScrollCore");
-            if (globalResultData.length >= 4 || window.innerWidth < 1024 || window.innerHeight < 640) {
-                scrollCore.style.justifyContent = "flex-start";
-                scrollCore.style.alignItems = "flex-start";
-            } else {
-                scrollCore.style.justifyContent = "center";
-                scrollCore.style.alignItems = "center";
-            }
-        }
-    });
-
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
+        if (globalLockState) return; // 🛠️ 3번 해결: 라인업 확정 시 스왑 기능 전면 차단
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
             if (linesArray[lineDocsIdx].isFixed) return;
@@ -716,20 +786,29 @@
                     return;
                 }
 
-                let holdBlue = linesArray[firstLineIdx].blue;
-                let holdRed = linesArray[firstLineIdx].red;
+                // 🛠️ 2번 해결: 양쪽 노드를 깔끔하고 기품 있게 밀어내는 소프트 페이드 펄스 연출 구동
+                let tds1 = selectedRowElement.querySelectorAll("td:not(.lane-cell)");
+                let tds2 = element.querySelectorAll("td:not(.lane-cell)");
 
-                linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
-                linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
+                tds1.forEach(td => td.classList.add("text-mac-fade-pulse"));
+                tds2.forEach(td => td.classList.add("text-mac-fade-pulse"));
 
-                linesArray[secondLineIdx].blue = holdBlue;
-                linesArray[secondLineIdx].red = holdRed;
+                setTimeout(() => {
+                    let holdBlue = linesArray[firstLineIdx].blue;
+                    let holdRed = linesArray[firstLineIdx].red;
 
-                selectedRowElement.classList.remove("selected-token");
-                element.classList.remove("selected-token");
-                selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+                    linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
+                    linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
 
-                db.update({ results: globalResultData });
+                    linesArray[secondLineIdx].blue = holdBlue;
+                    linesArray[secondLineIdx].red = holdRed;
+
+                    selectedRowElement.classList.remove("selected-token");
+                    element.classList.remove("selected-token");
+                    selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
+
+                    db.update({ results: globalResultData });
+                }, 200);
             }
         }
     }
