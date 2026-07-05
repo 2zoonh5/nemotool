@@ -47,10 +47,12 @@
             background: linear-gradient(180deg, #ffffff 0%, #a1a1a3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
+        /* 💻 [황금 공간 분할 아키텍처]: 수평과 대칭 라인을 완벽 동기화 */
         .app-content {
             display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: stretch; width: 100%;
         }
 
+        /* ✨ [Mac OS 프리미엄 스튜디오 패널] */
         .studio-panel {
             background: var(--bg-panel); 
             border: 1px solid var(--border-system);
@@ -60,6 +62,7 @@
             box-sizing: border-box; min-height: 575px;
         }
         
+        /* 상단 환경 설정 구역 수평 정렬화 */
         .control-system-row { display: flex; gap: 10px; width: 100%; align-items: flex-end; }
         
         .form-row { 
@@ -156,7 +159,7 @@
 
         /* 미배정 드래그 대기 풀 */
         .leader-pick-pool-zone {
-            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 6px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
+            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 4px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
         }
         .pool-zone-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); }
         .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -228,7 +231,6 @@
 
 <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
 
-<!-- 🎰 가챠 시네마틱 오버레이 -->
 <div class="gacha-cinema-overlay" id="gachaCinemaOverlay">
     <div class="cinema-title" id="cinemaTitleTrack">SUDDENATTACK MATCH MAP LINEUP</div>
     <div class="cinema-slots-container" id="cinemaSlotsContainer"></div>
@@ -242,7 +244,7 @@
     <!-- 💻 수평 밸런스가 조율된 대칭형 2열 패널 스페이스 -->
     <div class="app-content">
         
-        <!-- [좌측 인풋 패널 구역] -->
+        <!-- [좌측 컨트롤 스튜디오 패널] -->
         <div class="left-column-area">
             <div class="studio-panel">
                 <div class="control-system-row">
@@ -282,7 +284,7 @@
             </div>
         </div>
 
-        <!-- [우측 결과 패널 구역] -->
+        <!-- [우측 결과 스튜디오 패널] -->
         <div class="right-column-area studio-panel" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
@@ -297,13 +299,11 @@
                 </div>
             </div>
 
-            <!-- 팀뽑기 드래그 대기 풀 -->
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
                 <div class="pool-zone-title">미배정 대기 명단 (호명 후 상단 팀 칸으로 드래그앤드롭하세요)</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
-            <!-- 하단 7세트 매치 고정 맵 보드 -->
             <div class="history-track-anchor map-static-result-board" id="mapStaticResultBoard">
                 <div class="static-title">MATCH MAP LINEUP (7판 4선승제)</div>
                 <div class="static-row-binder" id="staticRowBinder"></div>
@@ -334,7 +334,6 @@
         }
     }
 
-    // 가로 5열 32px 사각 인풋 싱크 바인딩
     const tableWrapper = document.getElementById("tierTableWrapper");
     for (let t = 1; t <= 5; t++) {
         let col = document.createElement("div");
@@ -755,7 +754,7 @@
                 `;
             });
         } else {
-            document.getElementById("mapStaticResultBoard").style.none";
+            document.getElementById("mapStaticResultBoard").style.display = "none";
         }
     }
 </script>
