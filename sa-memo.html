@@ -34,7 +34,7 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
+            max-width: 1400px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
         }
 
         .mac-app-header h1 {
@@ -42,156 +42,124 @@
             background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* 💻 핵심 세로 종렬 분할 그리드 */
+        /* 💻 3번 반영: 대칭 격리형 좌/우 2열 배치 대공사 */
         .app-content {
-            display: grid; grid-template-columns: 440px 1fr; gap: 20px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: 400px 1fr; gap: 24px; align-items: start; width: 100%;
         }
 
+        /* 왼쪽 열: 설정 + 1~5티어 종형 명단 나열 */
+        .left-column-area {
+            display: flex; flex-direction: column; gap: 16px;
+        }
         .setup-box {
             background: var(--bg-glass); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             display: flex; flex-direction: column; gap: 14px; backdrop-filter: blur(30px); box-sizing: border-box;
         }
-        
-        .mode-panel-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-        }
+        .mode-panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .form-row { 
             display: flex; flex-direction: column; gap: 4px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 8px 12px; 
-            border: 1px solid var(--border-glass); box-sizing: border-box; 
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 8px 12px; border: 1px solid var(--border-glass); 
         }
         .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; }
-        
         .mac-select {
             background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 20px 6px 10px; font-size: 12px; font-weight: 700; outline: none; 
-            cursor: pointer; width: 100%; box-sizing: border-box; appearance: none;
+            border-radius: 6px; padding: 6px 20px 6px 10px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; width: 100%; appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
 
-        /* 1번 수정: 1~5티어 명단 세로 정렬 리스트 */
-        .tier-sheets-scroll {
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .tier-container {
-            border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 10px;
-            background: rgba(0,0,0,0.15);
-        }
-        .tier-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); margin-bottom: 8px; }
-        
-        /* 세로로 정렬된 명단 7칸 */
+        .tier-sheets-scroll { display: flex; flex-direction: column; gap: 12px; }
+        .tier-container { border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; background: rgba(0,0,0,0.2); }
+        .tier-title { font-size: 12.5px; font-weight: 700; color: var(--sa-orange); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tier-inputs-list { display: flex; flex-direction: column; gap: 5px; }
         .tier-inputs-list input[type="text"] {
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;
-            color: #fff; font-size: 13px; padding: 6px 12px; outline: none; width: 100%; box-sizing: border-box;
+            color: #fff; font-size: 13px; padding: 6px 10px; outline: none; width: 100%; box-sizing: border-box;
         }
-        .tier-inputs-list input[type="text"]:focus { border-color: var(--sa-orange); background: rgba(255,159,10,0.02); }
+        .tier-inputs-list input[type="text"]:focus { border-color: var(--sa-orange); background: rgba(255,159,10,0.01); }
 
-        .custom-map-selector-box {
-            display: none; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.01); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.04);
-        }
+        .custom-map-selector-box { display: none; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.01); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.04); }
         .custom-map-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 90px; overflow-y: auto; }
-        .map-chip {
-            font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; border: 1px solid transparent;
-        }
+        .map-chip { font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        .btn-container { display: flex; gap: 10px; margin-top: 6px; }
+        .btn-container { display: flex; gap: 10px; }
         .btn-reset { flex: 0.7; height: 40px; background: rgba(255,255,255,0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 20px; font-weight: 500; cursor: pointer; }
         .btn-assign { flex: 1.3; height: 40px; background: rgba(255,159,10,0.1); color: var(--sa-orange); border: 1px solid rgba(255,159,10,0.4); border-radius: 20px; font-weight: 700; cursor: pointer; }
         .btn-assign:hover { background: var(--sa-orange); color: #000; }
 
-        /* 우측 결과 트랙 보드 */
-        .result-container {
+        /* 오른쪽 열: 매칭 스페이스 결과 보드 */
+        .right-column-area {
             background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
-            display: flex; flex-direction: column; gap: 20px; min-height: 600px;
+            display: flex; flex-direction: column; gap: 20px; min-height: 650px; box-sizing: border-box;
         }
-        
-        /* 1번 수정: 팀 배정 결과 세로 배치 전용 타겟 필드 (두 줄 명단화) */
+
+        /* 3번 반영: 두 팀이 양옆으로 서는 명밀한 2열 레이아웃 배치 */
         .team-board-zone {
-            display: flex; flex-direction: column; gap: 16px; display: none;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none; width: 100%;
         }
         .team-card { 
             background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; 
-            min-height: 100px; transition: background 0.2s;
+            min-height: 120px; box-sizing: border-box; transition: background 0.2s;
         }
         .team-card.drag-over { background: rgba(255, 159, 10, 0.05); border-color: var(--sa-orange); }
-        .team-card.blue-team { border-left: 5px solid var(--sa-blue); }
-        .team-card.red-team { border-left: 5px solid var(--sa-red); }
-        .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: left; padding-left: 4px; }
+        .team-card.blue-team { border-top: 4px solid var(--sa-blue); }
+        .team-card.red-team { border-top: 4px solid var(--sa-red); }
+        .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: center; }
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
-        
-        .team-members-list { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; min-height: 40px; }
-        .member-badge { background: rgba(255,255,255,0.05); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; border: 1px solid rgba(255,255,255,0.02); }
+        .team-members-list { display: flex; flex-direction: column; gap: 6px; width: 100%; min-height: 50px; }
+        .member-badge { background: rgba(255,255,255,0.04); padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #fff; text-align: center; }
 
-        /* 3번 수정: 드래그 전용 미배정 대기 현황 트레이 */
+        /* 드래그 앤 드롭 미배정 보드 */
         .leader-pick-pool-zone {
             display: none; flex-direction: column; gap: 10px; background: rgba(255,159,10,0.03); border-radius: 14px; padding: 16px; border: 1px solid rgba(255,159,10,0.15);
         }
         .pool-zone-title { font-size: 13px; font-weight: 700; color: var(--sa-orange); }
         .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-        
         .pool-player-chip { 
             background: #1c1c1e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 8px; 
-            font-size: 13px; font-weight: 600; color: #fff; cursor: grab; user-select: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.1s;
+            font-size: 13px; font-weight: 600; color: #fff; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .pool-player-chip:active { cursor: grabbing; transform: scale(0.95); }
 
-        /* 🎰 7판 4선승제 슬롯 보드 */
+        /* 🎰 2번 반영: 서든어택 토너먼트 제자리 셔플식 7칸 맵 슬롯 연출 스펙 */
         .map-slots-board {
-            display: none; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);
+            display: none; flex-direction: column; gap: 12px; margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);
         }
         .slots-title { font-size: 13px; font-weight: 700; color: #8e8e93; letter-spacing: 0.5px; }
-        .slots-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
+        .slots-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%; }
         
         .map-slot-window {
-            background: #141416; border: 1px solid #2c2c2e; border-radius: 8px; overflow: hidden;
-            height: 100px; display: flex; flex-direction: column; position: relative;
+            background: #121214; border: 1px solid #2c2c2e; border-radius: 10px; overflow: hidden;
+            height: 105px; display: flex; flex-direction: column; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .map-slot-window.confirmed { border-color: var(--sa-orange); box-shadow: 0 0 12px rgba(255,159,10,0.2); }
-        .reel-viewport { flex: 1; overflow: hidden; position: relative; width: 100%; background: #000; }
-        .reel-container { position: absolute; width: 100%; top: 0; display: flex; flex-direction: column; }
-        .reel-container.spinning { transition: transform 2.8s cubic-bezier(0.15, 0.85, 0.15, 1); }
+        .map-slot-window.confirmed { border-color: var(--sa-orange); box-shadow: 0 0 15px rgba(255,159,10,0.3); }
         
-        .reel-item { height: 74px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .reel-item span { font-size: 11px; font-weight: 500; color: #636366; text-align: center; padding: 0 4px; word-break: break-all; }
-        .map-slot-window.confirmed .reel-item span { color: #fff; font-weight: 700; }
+        .slot-center-display {
+            flex: 1; display: flex; align-items: center; justify-content: center; background: #000;
+            font-size: 12px; font-weight: 500; color: #555558; text-align: center; padding: 0 6px; word-break: keep-all;
+            position: relative; overflow: hidden;
+        }
+        .map-slot-window.shuffling .slot-center-display { color: var(--sa-orange); font-weight: 700; font-size: 13px; }
+        .map-slot-window.confirmed .slot-center-display { color: #ffffff; font-weight: 700; font-size: 13px; }
         
         .slot-map-name-plate {
-            height: 24px; background: #1c1c1e; color: #aeaeb2; font-size: 11px; font-weight: 600;
+            height: 26px; background: #1c1c1e; color: #8e8e93; font-size: 11px; font-weight: 600;
             display: flex; align-items: center; justify-content: center; border-top: 1px solid #2c2c2e;
         }
         .map-slot-window.confirmed .slot-map-name-plate { background: var(--sa-orange); color: #000; font-weight: 700; }
         
-        .confirm-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 74px;
-            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center;
-            z-index: 5; color: var(--sa-orange); font-size: 11px; font-weight: 700;
+        .confirm-tag {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,159,10,0.08); display: none; align-items: center; justify-content: center;
+            color: var(--sa-orange); font-size: 11px; font-weight: 800; letter-spacing: 1px; pointer-events: none;
         }
-        .map-slot-window.confirmed .confirm-overlay { display: flex; }
+        .map-slot-window.confirmed .confirm-tag { display: flex; }
 
-        .no-result-placeholder { text-align: center; padding: 100px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto; }
-        
-        .mac-alert-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
-        }
-        .mac-alert-modal {
-            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
-        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
-        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
-        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
-        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
+        .no-result-placeholder { text-align: center; padding: 120px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto; }
     </style>
 </head>
 <body>
@@ -203,56 +171,51 @@
         <h1>서모장</h1>
     </div>
 
-    <div class="mac-alert-overlay" id="macAlertOverlay">
-        <div class="mac-alert-modal">
-            <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
-            <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
-            <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
-        </div>
-    </div>
-
+    <!-- 💻 3번 반영: 대칭 격리형 좌우 명확한 2열 파티션 레이아웃 구조 -->
     <div class="app-content">
-        <!-- ⚙️ 좌측 종렬 레이아웃 -->
-        <div class="setup-box">
-            <div class="mode-panel-row">
-                <div class="form-row">
-                    <span class="form-label">팀 배정 방식</span>
-                    <select id="teamAssignMode" class="mac-select" onchange="pushInputsToFirebase()">
-                        <option value="balance" selected>밸런스</option>
-                        <option value="allRandom">올랜덤</option>
-                        <option value="leaderPick">팀뽑기</option>
-                    </select>
+        
+        <!-- [좌측 열 스페이스] -->
+        <div class="left-column-area">
+            <div class="setup-box">
+                <div class="mode-panel-row">
+                    <div class="form-row">
+                        <span class="form-label">팀 배정 방식</span>
+                        <select id="teamAssignMode" class="mac-select" onchange="pushInputsToFirebase()">
+                            <option value="balance" selected>밸런스</option>
+                            <option value="allRandom">올랜덤</option>
+                            <option value="leaderPick">팀뽑기</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">맵 배정 방식</span>
+                        <select id="mapAssignMode" class="mac-select" onchange="toggleCustomMapBox(); pushInputsToFirebase();">
+                            <option value="allRandom">올랜덤</option>
+                            <option value="original" selected>오리지널</option>
+                            <option value="custom">커스텀</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-row">
-                    <span class="form-label">맵 배정 방식</span>
-                    <select id="mapAssignMode" class="mac-select" onchange="toggleCustomMapBox(); pushInputsToFirebase();">
-                        <option value="allRandom">올랜덤</option>
-                        <option value="original" selected>오리지널</option>
-                        <option value="custom">커스텀</option>
-                    </select>
+
+                <div class="custom-map-selector-box" id="customMapBox">
+                    <span class="custom-map-title">고정할 맵 선택 (최대 7개)</span>
+                    <div class="custom-map-chips" id="customMapChipsContainer"></div>
                 </div>
-            </div>
 
-            <!-- 커스텀 맵 선택 컨테이너 -->
-            <div class="custom-map-selector-box" id="customMapBox">
-                <span class="custom-map-title">고정할 맵 선택 (최대 7개)</span>
-                <div class="custom-map-chips" id="customMapChipsContainer"></div>
-            </div>
+                <!-- 1~5티어 세로 정렬 나열 배치 -->
+                <div class="tier-sheets-scroll" id="tierInputsWrapper"></div>
 
-            <!-- 1~5티어 종형 리스트 배치 -->
-            <div class="tier-sheets-scroll" id="tierInputsWrapper"></div>
-
-            <div class="btn-container">
-                <button class="btn-reset" onclick="askSaMemoReset()">초기화</button>
-                <button class="btn-assign" id="assignBtn" onclick="runSaAssignment()">팀 배정</button>
+                <div class="btn-container">
+                    <button class="btn-reset" onclick="askSaMemoReset()">초기화</button>
+                    <button class="btn-assign" id="assignBtn" onclick="runSaAssignment()">팀 배정</button>
+                </div>
             </div>
         </div>
 
-        <!-- 📊 우측 매칭 결과 대시보드 -->
-        <div class="result-container" id="resultContainer">
+        <!-- [우측 열 스페이스] -->
+        <div class="right-column-area" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
-            <!-- 세로형 2줄 팀 카드 명단 배치 -->
+            <!-- 가로 2열 배치형 팀 카드 명단보드 -->
             <div class="team-board-zone" id="teamBoardZone">
                 <div class="team-card blue-team" id="drop-zone-teamA" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropPlayer(event, 'teamA')">
                     <div class="team-header-title" id="blueTeamHeader">A 팀</div>
@@ -264,44 +227,23 @@
                 </div>
             </div>
 
-            <!-- 3번 수정: 팀 드래그 연동 전용 미배정 풀 구역 -->
+            <!-- 팀뽑기 드래그 대기 풀 -->
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
-                <div class="pool-zone-title">미배정 대기 명단 (마우스로 드래그해서 원하는 팀 칸에 떨어뜨리세요)</div>
+                <div class="pool-zone-title">미배정 대기 명단 (호명 후 해당 팀 카드로 드래그앤드롭하세요)</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
-            <!-- 🎰 7판 4선승제 슬롯머신 맵 보드 -->
+            <!-- 🎰 2번 반영: 서든어택 감성 중앙 텍스트 로테이션 스핀 매치 보드 -->
             <div class="map-slots-board" id="mapSlotsBoard">
                 <div class="slots-title">MATCH MAP LINEUP (7판 4선승제)</div>
                 <div class="slots-row-binder" id="slotsRowBinder"></div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script>
-    // F12 및 우클릭 격리 차단
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.addEventListener('keydown', e => {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
-        authDomain: "nemotool.firebaseapp.com",
-        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
-        projectId: "nemotool",
-        storageBucket: "nemotool.firebasestorage.app",
-        messagingSenderId: "1003940918420",
-        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database().ref("nemo_sa_memo_session");
-
     const mapPool = [
         "드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고",
         "듀오릭","팰리스","백어스","산악기지","마린베이스","이탈리아","아울렛",
@@ -310,20 +252,28 @@
     const originalMaps = ["드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고"];
 
     var isOperating = false;
-    var currentReelSeed = null; // 2번 수정: 불필요한 스핀 재생 방지용 고유 시드 비교 키
+    var currentReelSeed = null; 
     var selectedCustomMaps = [];
 
-    // 1~5티어별 7칸 세로형 자동 생성
+    // 1번 반영: 부모인 index.html의 통합 Mac Alert 모달 연동 프록시 함수
+    function callParentMacAlert(mainMsg, subMsg) {
+        if (window.parent && typeof window.parent.showMacAlert === "function") {
+            window.parent.showMacAlert(mainMsg, subMsg);
+        } else {
+            alert(mainMsg + "\n" + subMsg); // 예외 보완
+        }
+    }
+
+    // 1~5티어 순차 세로형 입력창 동적 배치
     const tierWrapper = document.getElementById("tierInputsWrapper");
     for (let t = 1; t <= 5; t++) {
         let tierBox = document.createElement("div");
         tierBox.className = "tier-container";
-        tierBox.innerHTML = `<div class="tier-title">${t}티어 (7칸)</div>`;
-        
+        tierBox.innerHTML = `<div class="tier-title">${t}티어 (Tier ${t})</div>`;
         let listContainer = document.createElement("div");
         listContainer.className = "tier-inputs-list";
         for(let i=0; i<7; i++) {
-            listContainer.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="${t}티어 유저 입력" autocomplete="off" oninput="pushInputsToFirebase()">`;
+            listContainer.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="유저 닉네임 입력" autocomplete="off" oninput="pushInputsToFirebase()">`;
         }
         tierBox.appendChild(listContainer);
         tierWrapper.appendChild(tierBox);
@@ -350,7 +300,7 @@
             selectedCustomMaps.splice(idx, 1);
         } else {
             if (selectedCustomMaps.length >= 7) {
-                openMacAlert("선택 초과", "고정 맵은 최대 7개까지만 지정이 가능합니다.", "alert");
+                callParentMacAlert("지정 한도 초과", "고정할 맵 커스텀 칩은 최대 7개까지만 선택할 수 있습니다.");
                 return;
             }
             selectedCustomMaps.push(map);
@@ -362,30 +312,6 @@
         document.querySelectorAll(".map-chip").forEach(chip => {
             chip.classList.toggle("selected", selectedCustomMaps.includes(chip.innerText));
         });
-    }
-
-    function openMacAlert(title, subText, type, onConfirm) {
-        const overlay = document.getElementById("macAlertOverlay");
-        document.getElementById("macAlertTitle").innerText = title;
-        document.getElementById("macAlertSub").innerText = subText;
-        const btnBox = document.getElementById("macAlertBtnBox");
-        btnBox.innerHTML = "";
-
-        if (type === "confirm") {
-            const cancelBtn = document.createElement("button");
-            cancelBtn.className = "mac-alert-btn cancel"; cancelBtn.innerText = "취소";
-            cancelBtn.onclick = () => { overlay.style.display = "none"; };
-            const confirmBtn = document.createElement("button");
-            confirmBtn.className = "mac-alert-btn confirm"; confirmBtn.innerText = "확인";
-            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
-            btnBox.appendChild(cancelBtn); btnBox.appendChild(confirmBtn);
-        } else {
-            const alertBtn = document.createElement("button");
-            alertBtn.className = "mac-alert-btn confirm"; alertBtn.innerText = "확인";
-            alertBtn.onclick = () => { overlay.style.display = "none"; };
-            btnBox.appendChild(alertBtn);
-        }
-        overlay.style.display = "flex";
     }
 
     function pushInputsToFirebase() {
@@ -434,12 +360,11 @@
         }
 
         if (data.results) {
-            // 2번 수정: 파이어베이스의 랜덤 시드가 변경되었을 때만 애니메이션과 함께 새로 렌더링
             if (currentReelSeed !== data.results.seed) {
                 currentReelSeed = data.results.seed;
-                renderResults(data.results, true);
+                renderResults(data.results, true); // 새 팀배정 시에만 2번 서든 룰렛 가동
             } else {
-                renderResults(data.results, false); // 드래그 드롭 등 데이터 구조 변경 시 스핀 없이 즉시반영
+                renderResults(data.results, false); // 단순 드래그 갱신은 셔플 없이 유지
             }
         } else {
             currentReelSeed = null;
@@ -449,17 +374,17 @@
     });
 
     function askSaMemoReset() {
-        openMacAlert("명단 초기화", "작성된 명단과 매칭 결과를 전부 삭제하시겠습니까?", "confirm", () => {
-            let emptyInputs = {};
-            for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
-            db.set({
-                inputs: emptyInputs,
-                teamAssignMode: "balance",
-                mapAssignMode: "original",
-                selectedCustomMaps: null,
-                results: null
-            });
+        // 1번 반영: 하드코딩 모달 취소하고 부모 알림 연동 기능 호출
+        let emptyInputs = {};
+        for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
+        db.set({
+            inputs: emptyInputs,
+            teamAssignMode: "balance",
+            mapAssignMode: "original",
+            selectedCustomMaps: null,
+            results: null
         });
+        callParentMacAlert("초기화 완료", "모든 명단 정보와 경기 라인업이 삭제되었습니다.");
     }
 
     function clearResultsUI() {
@@ -492,7 +417,7 @@
         }
 
         if (totalCount === 0) {
-            openMacAlert("배정 불가", "참가자 명단이 비어있습니다.", "alert");
+            callParentMacAlert("배정 실패", "참가자 입력란이 비어있어 매칭을 생성할 수 없습니다.");
             return;
         }
 
@@ -528,7 +453,7 @@
                 if (allParticipantsByTier[t].length >= 2) validTiersForLeaders.push(t);
             }
             if (validTiersForLeaders.length === 0) {
-                openMacAlert("팀뽑기 실패", "2명 이상 등록된 티어가 없어 팀장을 선출할 수 없습니다.", "alert");
+                callParentMacAlert("선출 불가", "2명 이상의 유저가 포함된 티어가 존재하지 않아 팀장을 뽑을 수 없습니다.");
                 return;
             }
             let chosenTier = validTiersForLeaders[Math.floor(Math.random() * validTiersForLeaders.length)];
@@ -562,24 +487,20 @@
             chosenMaps = shuffle(fixedPart.concat(randomPart));
         }
 
-        let finalResults = {
-            teamA: teamA,
-            teamB: teamB,
-            remainPool: remainPool,
-            maps: chosenMaps,
-            isLeaderPick: (teamMode === "leaderPick"),
-            seed: Math.random() // 정지 조건 컨트롤용 고유 식별값
-        };
-
-        db.update({ results: finalResults });
+        db.update({
+            results: {
+                teamA: teamA,
+                teamB: teamB,
+                remainPool: remainPool,
+                maps: chosenMaps,
+                isLeaderPick: (teamMode === "leaderPick"),
+                seed: Math.random()
+            }
+        });
     }
 
-    // 3번 수정: 드래그 앤 드롭 이벤트를 위한 시스템 헨들러 선언문
-    function dragStart(e, playerName) {
-        e.dataTransfer.setData("text/plain", playerName);
-    }
+    function dragStart(e, playerName) { e.dataTransfer.setData("text/plain", playerName); }
     function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
-    document.addEventListener("dragover", e => e.preventDefault());
     function dragLeave(e) { e.currentTarget.classList.remove("drag-over"); }
 
     function dropPlayer(e, targetTeam) {
@@ -591,14 +512,12 @@
         db.once("value", (snapshot) => {
             let data = snapshot.val();
             if (!data || !data.results) return;
-
             let res = data.results;
-            // 대기 풀에서 삭제
+
             if (res.remainPool) {
                 let idx = res.remainPool.indexOf(name);
                 if (idx > -1) res.remainPool.splice(idx, 1);
             }
-            // 타겟 팀 리스트에 푸시
             if (targetTeam === 'teamA') {
                 if(!res.teamA) res.teamA = [];
                 res.teamA.push(name);
@@ -610,7 +529,7 @@
         });
     }
 
-    // 메인 그래픽 렌더링 트랙
+    // 2번 반영: 서든어택 정통 토너먼트 제자리 뜨르르르 회전 셔플 헨들러 구현부
     function renderResults(results, shouldAnimate) {
         document.getElementById("placeholderText").style.display = "none";
         
@@ -628,9 +547,8 @@
             document.getElementById("blueTeamHeader").innerText = "A 팀 (" + (results.teamA ? results.teamA.length : 0) + "명)";
             document.getElementById("redTeamHeader").innerText = "B 팀 (" + (results.teamB ? results.teamB.length : 0) + "명)";
         }
-        document.getElementById("teamBoardZone").style.display = "flex";
+        document.getElementById("teamBoardZone").style.display = "grid";
 
-        // 드래그 풀 제어
         const poolZone = document.getElementById("leaderPickPoolZone");
         const poolChipsWrap = document.getElementById("poolChipsWrap");
         poolChipsWrap.innerHTML = "";
@@ -638,9 +556,7 @@
         if (results.isLeaderPick && results.remainPool && results.remainPool.length > 0) {
             results.remainPool.forEach(p => {
                 let chip = document.createElement("div");
-                chip.className = "pool-player-chip";
-                chip.innerText = p;
-                chip.draggable = true;
+                chip.className = "pool-player-chip"; chip.innerText = p; chip.draggable = true;
                 chip.ondragstart = (e) => dragStart(e, p);
                 poolChipsWrap.appendChild(chip);
             });
@@ -649,10 +565,9 @@
             poolZone.style.display = "none";
         }
 
-        // 🎰 맵 룰렛 그리기 트랙 시작
         const binder = document.getElementById("slotsRowBinder");
         
-        // 2번 수정: 단순히 데이터 갱신(드래그 등)일 때는 스핀을 돌리지 않고 정지 레이아웃 유지
+        // 데이터 단순 갱신일 때는 고정 레이아웃 바로 바인딩
         if (!shouldAnimate) {
             binder.innerHTML = "";
             document.getElementById("mapSlotsBoard").style.display = "flex";
@@ -660,12 +575,7 @@
                 let slotWin = document.createElement("div");
                 slotWin.className = "map-slot-window confirmed";
                 slotWin.innerHTML = `
-                    <div class="reel-viewport">
-                        <div class="confirm-overlay" style="display:flex;">확정</div>
-                        <div class="reel-container" style="transform:translateY(-74px);">
-                            <div class="reel-item"><span>${finalMap}</span></div>
-                        </div>
-                    </div>
+                    <div class="slot-center-display"><div class="confirm-tag" style="display:flex;">확정</div><span>${finalMap}</span></div>
                     <div class="slot-map-name-plate">${finalMap}</div>
                 `;
                 binder.appendChild(slotWin);
@@ -673,51 +583,44 @@
             return;
         }
 
-        // 새 판이 짜여졌을 때의 스핀 연출 트랙 가동
+        // 🎰 2번 반영: 신규 팀 배정 시 진행되는 꼬리물기형 순차 제자리 셔플 룰렛 스크립트 트랙
         binder.innerHTML = "";
         document.getElementById("mapSlotsBoard").style.display = "flex";
 
         results.maps.forEach((finalMap, sIdx) => {
             let slotWin = document.createElement("div");
-            slotWin.className = "map-slot-window";
+            slotWin.className = "map-slot-window shuffling";
             slotWin.id = `slot-win-${sIdx}`;
-
-            let dummyReel = [];
-            let forbidden = [finalMap];
-            for(let i=0; i<10; i++) {
-                let randMap = mapPool[Math.floor(Math.random() * mapPool.length)];
-                if(!forbidden.includes(randMap)) dummyReel.push(randMap);
-            }
-            dummyReel.push(finalMap); // 11번째 정답 패킹
-
-            let reelHtml = dummyReel.map(m => `
-                <div class="reel-item"><span>${m}</span></div>
-            `).join('');
-
             slotWin.innerHTML = `
-                <div class="reel-viewport">
-                    <div class="confirm-overlay">확정</div>
-                    <div class="reel-container" id="reel-core-${sIdx}">${reelHtml}</div>
+                <div class="slot-center-display">
+                    <div class="confirm-tag" id="tag-${sIdx}">확정</div>
+                    <span id="shuffle-txt-${sIdx}">대기</span>
                 </div>
-                <div class="slot-map-name-plate" id="plate-name-${sIdx}">-</div>
+                <div class="slot-map-name-plate" id="plate-name-${sIdx}">제 ${sIdx+1}경기</div>
             `;
             binder.appendChild(slotWin);
 
+            // 0.05초 간격으로 내부 글자가 뜨르르르 무작위 변경되는 로컬 인터벌 구동
+            let textSpan = document.getElementById(`shuffle-txt-${sIdx}`);
+            let shuffleInterval = setInterval(() => {
+                textSpan.innerText = mapPool[Math.floor(Math.random() * mapPool.length)];
+            }, 60);
+
+            // 각 슬롯별 순차 정지 딜레이 트리거 (서든 토너먼트 오리지널 연출)
             setTimeout(() => {
-                let container = document.getElementById(`reel-core-${sIdx}`);
-                if (container) {
-                    container.className = "reel-container spinning";
-                    let targetY = 10 * 74; // 높이 값 74px 매칭 계산식
-                    container.style.transform = `translateY(-${targetY}px)`;
-                }
+                clearInterval(shuffleInterval);
+                let winEl = document.getElementById(`slot-win-${sIdx}`);
+                let plateEl = document.getElementById(`plate-name-${sIdx}`);
+                let tagEl = document.getElementById(`tag-${sIdx}`);
                 
-                setTimeout(() => {
-                    let winEl = document.getElementById(`slot-win-${sIdx}`);
-                    let plateEl = document.getElementById(`plate-name-${sIdx}`);
-                    if (winEl) winEl.classList.add("confirmed");
-                    if (plateEl) plateEl.innerText = finalMap;
-                }, 2800);
-            }, sIdx * 300);
+                if (winEl) {
+                    winEl.classList.remove("shuffling");
+                    winEl.classList.add("confirmed");
+                }
+                if (textSpan) textSpan.innerText = finalMap;
+                if (plateEl) plateEl.innerText = finalMap;
+                if (tagEl) tagEl.style.display = "flex";
+            }, 2000 + (sIdx * 400)); // 2초 뒤부터 0.4초 간격으로 왼쪽부터 한 칸씩 확정
         });
     }
 </script>
