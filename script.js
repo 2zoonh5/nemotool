@@ -9,6 +9,7 @@ let lastClosedApp = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
+    makeWindowsDraggable(); // 드래그 기능 활성화 실행
 
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
@@ -22,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAllSystemPanels();
     });
 
-    // 바탕화면 클릭 시 켜져 있는 창들을 모두 독바로 최소화
     const desktop = document.querySelector(".desktop");
     desktop.addEventListener("click", () => {
         const folderWindow = document.getElementById("folderWindow");
@@ -38,6 +38,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startMacClock();
 });
+
+// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태 우회)
+function makeWindowsDraggable() {
+    const windows = document.querySelectorAll('.window-popup');
+    
+    windows.forEach(win => {
+        const header = win.querySelector('.window-header');
+        if (!header) return;
+
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY;
+
+        header.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.mac-buttons') || e.target.closest('.nav-buttons')) return;
+            if (win.classList.contains('maximized')) return;
+
+            isDragging = true;
+            
+            const style = window.getComputedStyle(win);
+            initialX = e.clientX - parseInt(style.left || 0);
+            initialY = e.clientY - parseInt(style.top || 0);
+            
+            document.querySelectorAll('.window-popup').forEach(w => w.style.zIndex = "10");
+            win.style.zIndex = "100";
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+
+            // 상단바 영역 가림 제한 방지 처리
+            if (currentY < 25) currentY = 25;
+
+            win.style.left = `${currentX}px`;
+            win.style.top = `${currentY}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    });
+}
+
+// 2. macOS 전용 알림창 모달 핸들러 함수
+function showMacAlert(mainMsg, subMsg) {
+    document.getElementById("macAlertMain").innerText = mainMsg;
+    document.getElementById("macAlertSub").innerText = subMsg;
+    document.getElementById("macAlertOverlay").style.display = "flex";
+    closeAllDropdowns();
+}
+
+function closeMacAlert() {
+    document.getElementById("macAlertOverlay").style.display = "none";
+}
 
 function syncDesktopToDock() {
     const fixedDockList = document.getElementById("fixedDockList");
@@ -58,7 +115,6 @@ function syncDesktopToDock() {
     });
 }
 
-// 🛠️ 1번 해결: 폴더 이름뿐만 아니라 내부 앱들의 이름까지 통합 매칭 검색 가능하도록 개수선
 function searchDesktop(query) {
     const icons = document.querySelectorAll(".desktop .icon");
     const cleanQuery = query.toLowerCase().trim();
@@ -67,13 +123,11 @@ function searchDesktop(query) {
         const folderType = icon.getAttribute("data-folder");
         const folderName = icon.querySelector(".icon-name").innerText.toLowerCase();
         
-        // 해당 폴더 내부에 속해 있는 앱 이름 추출
         let internalAppNames = "";
         if (folderData[folderType]) {
             internalAppNames = folderData[folderType].apps.map(app => app.name.toLowerCase()).join(" ");
         }
 
-        // 폴더명이나 내부 앱 이름 중 하나라도 쿼리를 포함하면 매칭 통과
         if (folderName.includes(cleanQuery) || internalAppNames.includes(cleanQuery)) {
             icon.style.display = "flex";
             icon.style.opacity = "1";
@@ -135,11 +189,15 @@ function closeAllSystemPanels() {
     if(control) control.style.display = "none";
 }
 
+// 3. 감성 그라데이션 신규 추가 테마 확장 반영
 function changeBg(theme) {
     const body = document.body;
     body.className = ""; 
     if (theme === 'sunset') body.classList.add("bg-sunset");
-    if (theme === 'cyber') body.classList.add("bg-cyber");
+    else if (theme === 'cyber') body.classList.add("bg-cyber");
+    else if (['mojave', 'aqua', 'sakura', 'nebula'].includes(theme)) {
+        body.classList.add(`bg-${theme}`);
+    }
     closeAllDropdowns();
 }
 
@@ -164,6 +222,9 @@ function openFolder(type) {
         });
         content.appendChild(iconDiv);
     });
+    
+    folderWindow.style.left = "20vw";
+    folderWindow.style.top = "15vh";
     folderWindow.style.display = "flex";
     updateForwardButtonState();
 }
@@ -251,7 +312,11 @@ function backToFolder(windowId) {
         windowPopup.style.display = "none";
     }
     removeFromDock(windowId);
-    document.getElementById("folderWindow").style.display = "flex";
+    
+    const folderWindow = document.getElementById("folderWindow");
+    folderWindow.style.left = "20vw";
+    folderWindow.style.top = "15vh";
+    folderWindow.style.display = "flex";
     updateForwardButtonState();
 }
 
