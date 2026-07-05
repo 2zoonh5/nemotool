@@ -159,8 +159,24 @@
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
         .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18) !important; }
 
-        .no-result { color: #8e8e93; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; margin: auto !important; width: 100% !important; }
-        .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
+        .no-result { 
+    color: #8e8e93; 
+    text-align: center; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    
+    /* 🔥 미디어 쿼리와 부모 flex 설정을 무시하고 정중앙에 고정하는 absolute 치트키 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    margin: 0 !important;
+    pointer-events: none; /* 클릭 방해 금지 */
+}
+.no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; margin: 0; }
 
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
