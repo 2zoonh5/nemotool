@@ -9,7 +9,8 @@ let lastClosedApp = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
-    makeWindowsDraggable();
+    makeWindowsDraggable(); 
+    preventInspection(); // 2번 수정: 우클릭 및 개발자 도구 방지 스크립트 가동
 
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
@@ -39,7 +40,25 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태일때 우회)
+// 2번 수정: 우클릭 메뉴 차단 및 F12 단축키 완벽 제한 스크립트
+function preventInspection() {
+    // 마우스 우클릭 금지
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 단축키 제어 (F12, 소스 보기, 개발자도구 진입 차단)
+    document.addEventListener('keydown', e => {
+        if (
+            e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || 
+            (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
+
+// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태 우회)
 function makeWindowsDraggable() {
     const windows = document.querySelectorAll('.window-popup');
     
@@ -71,7 +90,6 @@ function makeWindowsDraggable() {
             currentX = e.clientX - initialX;
             currentY = e.clientY - initialY;
 
-            // 상단바 영역 가림 제한 방지 처리
             if (currentY < 25) currentY = 25;
 
             win.style.left = `${currentX}px`;
