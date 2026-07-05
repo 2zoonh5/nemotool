@@ -24,8 +24,8 @@
         
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
-            min-height: 100vh; user-select: none; position: relative;
+            margin: 0; padding: 24px; overflow: hidden; box-sizing: border-box;
+            height: 100vh; min-height: 100vh; user-select: none; position: relative;
         }
 
         .network-badge { 
@@ -36,36 +36,32 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; z-index: 10;
+            max-width: 1250px; margin: 0 auto; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 20px; z-index: 10;
         }
 
         .mac-app-header {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-shrink: 0;
         }
         .mac-app-header h1 {
-            font-size: 38px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
+            font-size: 34px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
             background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
         }
 
+        /* 🛠️ 1번 해결: 창 최소화 시 짤림을 막기 위해 상위 레이아웃을 flex 100% 채움 구조로 전개 */
         .app-content {
-            display: grid; grid-template-columns: minmax(360px, 440px) 1fr; gap: 30px; align-items: start; width: 100%;
+            display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%; flex: 1; min-height: 0;
         }
 
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px;
+            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
+            height: 100%; min-height: 0;
         }
         
         .mode-panel-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
-        }
-        .form-row { 
-            display: flex; flex-direction: column; gap: 6px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
-            border: 1px solid var(--border-glass); box-sizing: border-box; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box; flex-shrink: 0;
         }
         .form-row { 
             display: flex; flex-direction: column; gap: 6px;
@@ -86,7 +82,7 @@
         .mac-select option { background: #1c1c1e; color: #fff; }
         .mac-select:disabled { cursor: default; opacity: 0.7; }
 
-        .input-table-sheet { display: flex; flex-direction: column; width: 100%; }
+        .input-table-sheet { display: flex; flex-direction: column; width: 100%; flex: 1; overflow-y: auto; padding-right: 4px; }
         
         .table-row {
             display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
@@ -109,7 +105,7 @@
         }
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } 
+        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; flex-shrink: 0; } 
         
         .btn-reset {
             flex: 0.7; height: 50px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
@@ -133,38 +129,37 @@
         }
         .btn-assign:active { transform: translateY(0px) scale(0.97); }
 
+        /* 🛠️ 1번 해결: 결과 보드가 고정 높이 520px에 묶이지 않고 부모 너비를 유연하게 채우도록 수정 */
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
             backdrop-filter: blur(30px); box-sizing: border-box;
-            min-height: 520px; height: 520px; 
-            overflow: hidden; 
-            position: relative;
+            height: 100%; min-height: 0;
+            display: flex; flex-direction: column; overflow: hidden;
         }
         
-        /* 🛠️ 4번 해결: 상하 짤림 원천 차단. align-items를 flex-start로 고정하고 세로 방향 반응형 정렬 적용 */
+        /* 🛠️ 1번 해결: 스크롤 영역을 절대 정렬 방식에서 유연한 상하 스크롤 보정 모델로 전격 전환 */
         .result-scroll-core {
             width: 100%; height: 100%; padding: 24px; box-sizing: border-box;
             display: flex; gap: 24px; overflow-x: auto; overflow-y: auto;
-            align-items: flex-start; justify-content: center;
+            align-items: center; justify-content: center;
         }
 
-        /* 창 너비가 세트 배열보다 작을 경우 왼쪽 치우침 방지 */
-        @media (max-width: 1000px) {
-            .result-scroll-core { justify-content: flex-start; }
+        /* 창 크기가 결과 테이블 크기보다 심하게 작아질 경우 강제 스크롤 지원 */
+        @media (max-width: 1000px), (max-height: 620px) {
+            .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
         }
 
         .table-wrapper-binder {
-            display: flex; gap: 24px; align-items: flex-start; justify-content: center; min-height: 100%; padding-bottom: 10px; box-sizing: border-box;
+            display: flex; gap: 24px; align-items: flex-start; justify-content: center;
         }
 
         .result-scroll-core::-webkit-scrollbar { height: 6px; width: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
-        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.0); border-radius: 10px; }
-        .result-container:hover .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
-        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18) !important; }
+        .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2) !important; }
 
-        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
+        .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         .set-table {
@@ -181,11 +176,11 @@
 
         .set-table th.sub-hdr {
             font-size: 12px; font-weight: 700; padding: 0 4px; height: 36px;
-            border-bottom: 1px solid rgba(255,255,255,0.08); color: #a5a5a7; 
+            border-bottom: 1px solid rgba(255,255,255,0.08); color: #ffffff !important; 
             text-transform: uppercase; vertical-align: middle; line-height: 36px; box-sizing: border-box;
         }
         
-        /* 🛠️ 1번 해결: 우측 라인 짤림을 영구 차단하기 위해 outline 대신 안쪽 그림자(inset box-shadow)로 설계 변경 */
+        /* 🛠️ 4번 해결: Mac OS 스타일의 세련된 인셋 발광 컴포넌트 이펙트로 교체 */
         .clickable-swap-row {
             cursor: pointer;
             transition: background 0.15s ease;
@@ -194,8 +189,8 @@
             background: rgba(255, 255, 255, 0.04) !important;
         }
         .clickable-swap-row.selected-token {
-            background: rgba(0, 122, 255, 0.18) !important;
-            box-shadow: inset 0 0 0 1.5px #3498ff !important;
+            background: rgba(0, 122, 255, 0.15) !important;
+            box-shadow: inset 0 0 0 1.5px var(--mac-blue) !important;
         }
 
         .disabled-fixed-row {
@@ -205,29 +200,27 @@
             cursor: not-allowed !important;
         }
 
-        /* 🛠️ 1번&3번 해결: 부드러운 Mac OS 햅틱 텍스트 트랜지션 애니메이션 인프라 구축 및 가독성 완성 */
+        /* 🛠️ 3번&4번 해결: 이름을 화이트로 완벽 통일하고 스왑 시 고안해 낸 Mac OS 블러 페이드 아웃 연출 */
         .set-table td {
             padding: 10px 6px; text-align: center; font-size: 15px; height: 42px; 
-            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 600;
+            color: #ffffff !important; /* 3번 과제: 블루레드 진영 구분 없이 명단 색상 깔끔하게 폰트 통일 마감 */
             width: 95px; max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             letter-spacing: -0.2px; box-sizing: border-box;
-            transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s ease;
+            transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1), filter 0.22s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .set-table tr:last-child td { border-bottom: none; }
         .set-table td.lane-cell {
             background: rgba(255, 255, 255, 0.01); font-size: 12px; font-weight: 700; width: 44px; max-width: 44px; color: #9a9a9e !important; border-right: 1px solid rgba(255,255,255,0.03); letter-spacing: 0;
         }
 
-        /* 🛠️ 3번 해결: 가독성을 위해 Mac OS 테마 가이드라인의 고휘도 네온 컬러 서체 치환 */
         .hdr-blue { background: #007aff !important; color: #ffffff !important; font-weight: 700; }
         .hdr-red { background: #ff453a !important; color: #ffffff !important; font-weight: 700; }
         
-        .cell-blue { color: #40a9ff !important; background: rgba(0, 122, 255, 0.02) !important; }
-        .cell-red { color: #ff7875 !important; background: rgba(255, 69, 58, 0.02) !important; }
-
-        /* 비활성화 혹은 부드러운 스왑 도중 전개될 페이드 상태 */
-        .text-fade-out {
-            opacity: 0.1 !important;
+        /* 🛠️ 4번 해결: 스왑 연산 가동 시 나타날 세련된 Mac OS 전용 블러 상태 정의 */
+        .text-mac-blur-hide {
+            opacity: 0 !important;
+            filter: blur(4px) !important;
         }
 
         .mac-alert-overlay {
@@ -356,6 +349,36 @@
     var selectedSetIndex = null;
     var selectedLineIndex = null;
 
+    function openMacAlert(title, subText, type, onConfirm) {
+        const overlay = document.getElementById("macAlertOverlay");
+        document.getElementById("macAlertTitle").innerText = title;
+        document.getElementById("macAlertSub").innerText = subText;
+        const btnBox = document.getElementById("macAlertBtnBox");
+        btnBox.innerHTML = "";
+
+        if (type === "confirm") {
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "mac-alert-btn cancel";
+            cancelBtn.innerText = "취소";
+            cancelBtn.onclick = () => { overlay.style.display = "none"; };
+            
+            const confirmBtn = document.createElement("button");
+            confirmBtn.className = "mac-alert-btn confirm";
+            confirmBtn.innerText = "확인";
+            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
+            
+            btnBox.appendChild(cancelBtn);
+            btnBox.appendChild(confirmBtn);
+        } else {
+            const alertBtn = document.createElement("button");
+            alertBtn.className = "mac-alert-btn confirm";
+            alertBtn.innerText = "확인";
+            alertBtn.onclick = () => { overlay.style.display = "none"; };
+            btnBox.appendChild(alertBtn);
+        }
+        overlay.style.display = "flex";
+    }
+
     function pushInputsToFirebase() {
         if (isOperating) return;
         let inputs = [];
@@ -432,7 +455,7 @@
         }
     }
 
-    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 보존 유지
+    // ⭐ 기존 팀 배정 핵심 로직 원본 100% 철저히 보존 유지
     function runRollmojangAssignment() {
         for (let i = 0; i < 5; i++) {
             let p1Val = document.getElementById(`p1_${i}`).value.trim();
@@ -571,7 +594,7 @@
         db.update({ results: serializedResults });
     }
 
-    // 🛠️ 2번 해결: 왼쪽 열과 오른쪽 열의 팀장명을 완전 고정 추적하여 엇갈리는 버그 근절
+    // 🛠️ 2번 해결: 팀 데이터 위치는 정렬 고정하되, 진영(블루/레드) 헤더 색상은 지그재그로 교차(크로스) 매핑 완수
     function renderResultTables(results) {
         const binder = document.getElementById("tableWrapperBinder");
         binder.innerHTML = ""; 
@@ -580,18 +603,16 @@
             const table = document.createElement("table");
             table.className = "set-table";
 
-            // 고정 팀장명 가져오기 (1세트 서폿 기준 좌우 유저 고정)
+            // 고정 팀장명 가져오기 (1세트 서폿 기준 고정)
             let fixedBlueLeader = results[0].lines[4] ? results[0].lines[4].blue : "블루";
             let fixedRedLeader = results[0].lines[4] ? results[0].lines[4].red : "레드";
 
-            // 세트 번호에 관계없이 왼쪽 열은 항상 fixedBlueLeader, 오른쪽 열은 fixedRedLeader 배정
             let teamAName = `${fixedBlueLeader}팀`;
             let teamBName = `${fixedRedLeader}팀`;
 
-            let teamAHdrClass = "hdr-blue";
-            let teamBHdrClass = "hdr-red";
-            let teamACellClass = "cell-blue";
-            let teamBCellClass = "cell-red";
+            // 2번 과제: 진영 색상 헤더를 지그재그 교차하여 배치 복원
+            let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
+            let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
             
             let htmlPayload = `
                 <thead>
@@ -616,12 +637,12 @@
                     rowClass = `class="clickable-swap-row ${isSelected ? 'selected-token' : ''}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"`;
                 }
 
-                // 무조건 왼쪽은 최초 지정된 blue 데이터, 오른쪽은 red 데이터 바인딩
+                // 왼쪽 열과 오른쪽 열은 무조건 고정된 유저 쌍 데이터 보장
                 htmlPayload += `
                     <tr ${rowClass} id="cell-row-${sIdx}-${lIdx}">
                         <td class="lane-cell">${lineObj.lane}</td>
-                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
+                        <td id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
+                        <td id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
                     </tr>
                 `;
             });
@@ -631,15 +652,39 @@
             binder.appendChild(table);
         });
         
+        // 🛠️ 1번 해결: 창 크기가 작을 때 스크롤이 끊기거나 한쪽으로 쏠리지 않도록 뷰포트 반응형 분기
         const scrollCore = document.getElementById("resultScrollCore");
         if (results.length >= 4) {
             scrollCore.style.justifyContent = "flex-start";
         } else {
-            scrollCore.style.justifyContent = "center";
+            // 창의 세로/가로 길이가 좁아지면 강제로 좌측 상단 정렬로 바꿔 스크롤 확보 보장 (짤림 완전 차단)
+            if (window.innerWidth < 1000 || window.innerHeight < 620) {
+                scrollCore.style.justifyContent = "flex-start";
+                scrollCore.style.alignItems = "flex-start";
+            } else {
+                scrollCore.style.justifyContent = "center";
+                scrollCore.style.alignItems = "center";
+            }
         }
     }
 
-    // 🛠️ 1번 해결: 텍스트 투명도를 제어하여 한 단계 스무스한 Mac OS 전용 연출 레이어 설계
+    // 윈도우 크기 변경 시 실시간 정렬 보정 (짤림 방지 후속 조치)
+    window.addEventListener("resize", () => {
+        if (globalResultData) {
+            const scrollCore = document.getElementById("resultScrollCore");
+            if (window.innerWidth < 1000 || window.innerHeight < 620) {
+                scrollCore.style.justifyContent = "flex-start";
+                scrollCore.style.alignItems = "flex-start";
+            } else {
+                if (globalResultData.length < 4) {
+                    scrollCore.style.justifyContent = "center";
+                    scrollCore.style.alignItems = "center";
+                }
+            }
+        }
+    });
+
+    // 🛠️ 4번 해결: Mac OS 전용 스무스 블러 스왑 인터랙션 오케스트레이션
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
@@ -678,22 +723,20 @@
                     return;
                 }
 
-                // 애니메이션 연출 타겟 DOM 캐싱
+                // 🛠️ 4번 해결: 스왑될 4개 텍스트 노드를 부드럽게 흐리며 블러 트랜지션 처리
                 let bText1 = document.getElementById(`text-blue-${setIdx}-${firstLineIdx}`);
                 let rText1 = document.getElementById(`text-red-${setIdx}-${firstLineIdx}`);
                 let bText2 = document.getElementById(`text-blue-${setIdx}-${secondLineIdx}`);
                 let rText2 = document.getElementById(`text-red-${setIdx}-${secondLineIdx}`);
 
-                // 1단계: 순식간에 투명해지며 숨김 (Fade Out)
                 if(bText1 && rText1 && bText2 && rText2) {
-                    bText1.classList.add("text-fade-out");
-                    rText1.classList.add("text-fade-out");
-                    bText2.classList.add("text-fade-out");
-                    rText2.classList.add("text-fade-out");
+                    bText1.classList.add("text-mac-blur-hide");
+                    rText1.classList.add("text-mac-blur-hide");
+                    bText2.classList.add("text-mac-blur-hide");
+                    rText2.classList.add("text-mac-blur-hide");
                 }
 
                 setTimeout(() => {
-                    // 데이터 교환 단행
                     let holdBlue = linesArray[firstLineIdx].blue;
                     let holdRed = linesArray[firstLineIdx].red;
 
@@ -708,9 +751,8 @@
                     selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
                     document.body.className = "swap-mode-inactive";
 
-                    // 원격 노드 일괄 트리거 파이어 (전체 동기화)
                     db.update({ results: globalResultData });
-                }, 200); // 0.2초 페이드 아웃 유지 시간 후 교체
+                }, 220); // 블러 아웃이 완료되는 타이밍에 갱신 파이어
             }
         }
     }
