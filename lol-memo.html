@@ -26,7 +26,8 @@
         }
         
         body {
-            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-main); color: #d1d1d6; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
             margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
@@ -42,14 +43,8 @@
             max-width: 1250px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px; z-index: 10;
         }
 
-        .mac-app-header {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 5px; width: 100%;
-        }
-        .mac-app-header h1 {
-            font-size: 36px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; 
-            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
-        }
+        .mac-app-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 5px; width: 100%; }
+        .mac-app-header h1 { font-size: 36px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 4px; background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06)); }
 
         .app-content {
             display: grid; grid-template-columns: minmax(360px, 420px) 1fr; gap: 24px; align-items: stretch; width: 100%;
@@ -58,33 +53,35 @@
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(30px); box-sizing: border-box;
+            display: flex; flex-direction: column; backdrop-filter: blur(30px); box-sizing: border-box;
             height: 100%;
         }
         
-        .mode-panel-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; box-sizing: border-box;
-        }
+        .mode-panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        /* 🛠️ 게임 모드, 경기 형식 내부 요소 수직 중앙 정렬 배치 마감 */
         .form-row { 
-            display: flex; flex-direction: column; gap: 6px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; 
-            border: 1px solid var(--border-glass); box-sizing: border-box; 
+            background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass);
+            border-radius: 10px; padding: 8px 14px 10px 14px; box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: center; gap: 3px; height: 54px;
         }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; line-height: 1; }
         
         .mac-select {
-            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 6px 24px 6px 10px; font-size: 12.5px; font-weight: 700; outline: none; 
-            cursor: pointer; transition: background 0.15s; font-family: inherit; width: 100%; box-sizing: border-box;
-            appearance: none; -webkit-appearance: none;
+            background: rgba(255,255,255,0.05); color: #ffffff !important; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 4px 24px 4px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; box-sizing: border-box; appearance: none; -webkit-appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
+            line-height: 1.2;
         }
         .mac-select:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
-        .mac-select option { background: #1c1c1e; color: #fff; }
-        .mac-select:disabled { cursor: default; opacity: 0.7; }
+        .mac-select option { background: #1c1c1e; color: #ffffff !important; }
 
-        .input-table-sheet { display: flex; flex-direction: column; width: 100%; gap: 10px; }
+        /* 🛠️ 명단 상하 간격 비율(10px / 24px) 정밀 등간격 정렬 */
+        .input-table-sheet { 
+            display: flex; flex-direction: column; gap: 10px; flex: 1; overflow-y: auto;
+            margin-top: 10px; margin-bottom: 24px;
+        }
         
         .table-row {
             display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; align-items: center;
@@ -94,132 +91,78 @@
         .table-row.fixed-row { background: rgba(255, 214, 10, 0.006); border-color: rgba(255, 214, 10, 0.04); }
 
         .table-row input[type="text"] {
-            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06);
-            color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500; text-align: center;
-            font-family: inherit;
+            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.06); color: #fff; font-size: 14px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; font-weight: 500; text-align: center;
         }
-        
-        .table-row input[type="text"]::placeholder { 
-            color: #48484a; 
-            font-weight: 400; 
-            font-size: 11.5px;
-            letter-spacing: -0.3px;
-        }
+        .table-row input[type="text"]::placeholder { color: #48484a; font-weight: 400; font-size: 11.5px; letter-spacing: -0.3px; }
         .table-row input[type="text"]:focus { border-bottom-color: var(--mac-blue); }
         
-        .vs-divider {
-            text-align: center; font-size: 11px; font-weight: 700; color: #636366; background: rgba(255,255,255,0.03); padding: 3px 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.01); letter-spacing: 0.5px;
-        }
+        .vs-divider { text-align: center; font-size: 11px; font-weight: 700; color: #636366; background: rgba(255,255,255,0.03); padding: 3px 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.01); letter-spacing: 0.5px; }
         .fixed-row .vs-divider { color: rgba(255, 214, 10, 0.6); background: rgba(255, 214, 10, 0.04); }
 
-        .btn-container { display: flex; gap: 14px; width: 100%; margin-top: auto; } 
-        
-        .btn-reset {
-            flex: 0.7; height: 46px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; 
-            border: 1px solid var(--border-glass); border-radius: 23px; font-weight: 500; font-size: 14px;
-            cursor: pointer; transition: all 0.2s; white-space: nowrap; box-sizing: border-box;
-        }
+        .btn-container { display: flex; gap: 14px; width: 100%; flex-shrink: 0; } 
+        .btn-reset { flex: 0.7; height: 46px; background: rgba(255, 255, 255, 0.04); color: #e5e5ea; border: 1px solid var(--border-glass); border-radius: 23px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-sizing: border-box; }
         .btn-reset:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
 
         .btn-assign {
-            flex: 1.3; height: 46px;
-            background: rgba(0, 122, 255, 0.08); color: #007aff; 
-            border: 1px solid rgba(0, 122, 255, 0.35); 
-            border-radius: 23px; font-weight: 700; font-size: 14.5px; cursor: pointer; letter-spacing: 0.2px;
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
+            flex: 1.3; height: 46px; background: rgba(0, 122, 255, 0.08); color: #007aff; border: 1px solid rgba(0, 122, 255, 0.35); border-radius: 23px; font-weight: 700; font-size: 14.5px; cursor: pointer; letter-spacing: 0.2px; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; box-sizing: border-box; box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
         }
         .btn-assign:hover:not(:disabled) { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); transform: translateY(-1px); }
         .btn-assign:disabled { background: rgba(255,255,255,0.02); color: #48484a; border-color: rgba(255,255,255,0.05); box-shadow: none; cursor: not-allowed; }
 
         .result-container {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
-            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
-            backdrop-filter: blur(30px); box-sizing: border-box;
+            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px); box-sizing: border-box;
             height: 100%; min-height: 520px; overflow: hidden; position: relative;
             display: flex; flex-direction: column;
         }
         
+        /* 🛠️ 창 가로 최소화 시 1세트 좌측 찌그러짐을 영구 방지하는 flex-start 강제 보정 기하 레이아웃 */
         .result-scroll-core {
-            width: 100%; flex: 1; padding: 24px 24px 12px 24px; box-sizing: border-box;
-            display: flex; gap: 20px; overflow-x: auto; overflow-y: auto;
-            align-items: center; justify-content: center;
+            width: 100%; flex: 1; padding: 40px 24px 12px 24px; box-sizing: border-box;
+            display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden;
+            align-items: flex-start; justify-content: flex-start;
         }
 
-        @media (max-width: 1024px), (max-height: 640px) {
-            .result-scroll-core { align-items: flex-start; justify-content: flex-start; }
-        }
-
+        /* 테이블 래퍼 묶음에 패딩 레프트를 확보하여 아이콘이 왼쪽 프레임 뒤로 짤리는 현상 완벽 조치 */
         .table-wrapper-binder {
-            display: flex; gap: 20px; align-items: flex-start; justify-content: center; min-height: 100%;
+            display: flex; gap: 20px; align-items: flex-start; justify-content: flex-start; min-height: 100%; min-width: max-content; margin: 0 auto;
+            padding-left: 4px; box-sizing: border-box;
         }
 
-        .result-scroll-core::-webkit-scrollbar { height: 6px; width: 6px; }
+        .result-scroll-core::-webkit-scrollbar { height: 6px; }
         .result-scroll-core::-webkit-scrollbar-track { background: transparent; }
         .result-scroll-core::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
-        .result-scroll-core::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18) !important; }
 
         .no-result { color: #8e8e93; margin: auto; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
         .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; }
 
         .set-table {
             border-collapse: collapse; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); 
-            border-radius: 12px; overflow: hidden; 
-            width: 220px; min-width: 220px; flex: 0 0 auto; 
-            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border-radius: 12px; overflow: hidden; width: 220px; min-width: 220px; flex: 0 0 auto; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
             transition: opacity 0.3s ease;
         }
         
-        /* 라인업 확정 시 결과 보드판 잠금 시각 효과 */
-        .result-container.confirmed-locked .set-table {
-            opacity: 0.65;
-        }
+        .result-container.confirmed-locked .set-table { opacity: 0.65; }
 
-        .set-table th.set-title {
-            background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); 
-            padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
-        }
-
-        .set-table th.sub-hdr {
-            font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; 
-            text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
-        }
+        .set-table th.set-title { background-color: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px; }
+        .set-table th.sub-hdr { font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box; }
         
-        .clickable-swap-row {
-            cursor: pointer;
-        }
-        .clickable-swap-row:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
+        .clickable-swap-row { cursor: pointer; }
+        .clickable-swap-row:hover { background: rgba(255, 255, 255, 0.03); }
         
-        /* 🛠️ 1번 해결: tr outline 대신 각각의 td 보더 정밀 지정을 통해 우측 짤림 완전 제거 */
-        .clickable-swap-row.selected-token td {
-            border-top: 1.5px solid var(--mac-blue);
-            border-bottom: 1.5px solid var(--mac-blue);
+        /* 🛠️ 1번 해결: 스왑기능 클릭 시 외형을 해치던 파란색 상하좌우 테두리선(outline/border/box-shadow) 완벽 삭제 */
+        .clickable-swap-row.selected-token {
             background: rgba(0, 122, 255, 0.12) !important;
         }
-        .clickable-swap-row.selected-token td:first-child {
-            border-left: 1.5px solid var(--mac-blue);
-        }
-        .clickable-swap-row.selected-token td:last-child {
-            border-right: 1.5px solid var(--mac-blue);
-        }
 
-        /* 라인업 잠금 시 스왑 커서 제어 */
-        body.lock-system-active .clickable-swap-row {
-            cursor: default !important;
-        }
-        body.lock-system-active .clickable-swap-row:hover {
-            background: transparent !important;
-        }
+        body.lock-system-active .clickable-swap-row { cursor: default !important; }
+        body.lock-system-active .clickable-swap-row:hover { background: transparent !important; }
 
         .set-table td {
             padding: 10px 4px; text-align: center; font-size: 16px; height: 42px; 
             border-bottom: 1px solid rgba(255,255,255,0.015); color: #ffffff !important; font-weight: 500;
             width: 88px; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            letter-spacing: -0.2px; box-sizing: border-box;
-            vertical-align: middle;
+            letter-spacing: -0.2px; box-sizing: border-box; vertical-align: middle;
             transition: opacity 0.2s ease, background-color 0.2s ease;
         }
         .set-table tr:last-child td { border-bottom: none; }
@@ -228,9 +171,7 @@
             background: rgba(255, 255, 255, 0.005); width: 44px; max-width: 44px; border-right: 1px solid rgba(255,255,255,0.015);
             height: 42px; padding: 0; box-sizing: border-box; vertical-align: middle; text-align: center;
         }
-        .lane-icon {
-            width: 22px; height: 22px; object-fit: contain; display: inline-block; vertical-align: middle; opacity: 0.85;
-        }
+        .lane-icon { width: 22px; height: 22px; object-fit: contain; display: inline-block; vertical-align: middle; opacity: 0.85; }
 
         .hdr-blue { background: rgba(0, 122, 255, 0.5) !important; color: #ffffff !important; }
         .hdr-red { background: rgba(255, 69, 58, 0.5) !important; color: #ffffff !important; }
@@ -238,16 +179,12 @@
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
         .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
 
-        /* 🛠️ 2번 해결: 정갈하고 세련된 소프트 페이드 펄스 연출용 상태 변수 */
-        .text-mac-fade-pulse {
-            opacity: 0.2 !important;
-            background-color: rgba(255, 255, 255, 0.05) !important;
-        }
+        .text-mac-fade-pulse { opacity: 0.2 !important; background-color: rgba(255, 255, 255, 0.05) !important; }
 
-        /* 🛠️ 3번 해결: 하단 결과 보드 공백을 매울 럭셔리 버튼 트레이 구역 */
+        /* 🛠️ 상하여백 하단 밸런스 마감 트레이 패딩 높이 보정 */
         .result-action-tray {
-            width: 100%; padding: 12px 24px 24px 24px; box-sizing: border-box;
-            display: flex; justify-content: center; flex-shrink: 0;
+            width: 100%; padding: 12px 24px 34px 24px; box-sizing: border-box;
+            display: flex; justify-content: center; flex-shrink: 0; margin-top: auto;
         }
         .btn-confirm-lock {
             width: 200px; height: 44px; background: rgba(52, 199, 89, 0.1); color: #34c759;
@@ -255,29 +192,23 @@
             font-size: 14px; letter-spacing: 0.3px; cursor: pointer; transition: all 0.25s ease;
             box-shadow: 0 4px 12px rgba(52, 199, 89, 0.08); display: none;
         }
-        .btn-confirm-lock:hover:not(:disabled) {
-            background: #34c759; color: #ffffff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(52, 199, 89, 0.25);
-        }
-        .btn-confirm-lock:disabled {
-            background: rgba(255,255,255,0.01) !important; color: #48484a !important; border-color: rgba(255,255,255,0.04) !important;
-            box-shadow: none !important; cursor: not-allowed; transform: none !important;
-        }
+        .btn-confirm-lock:hover:not(:disabled) { background: #34c759; color: #ffffff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(52, 199, 89, 0.25); }
+        .btn-confirm-lock:disabled { background: rgba(255,255,255,0.01) !important; color: #48484a !important; border-color: rgba(255,255,255,0.04) !important; box-shadow: none !important; cursor: not-allowed; transform: none !important; }
 
         .mac-alert-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
         }
         .mac-alert-modal {
-            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            background: rgba(30, 30, 30, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 14px; 
+            width: 380px; max-width: 90vw; padding: 20px 24px; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.6); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); display: flex; flex-direction: column; gap: 6px; 
+            animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1); box-sizing: border-box;
         }
-        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes macPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
-        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; }
-        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #aeaeb2; margin-bottom: 16px; line-height: 1.5; white-space: pre-line; }
+        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: flex-end; width: 100%; }
+        .mac-alert-btn { min-width: 76px; padding: 6px 16px; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; }
         .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
         .mac-alert-btn.cancel:hover { background: rgba(255, 255, 255, 0.15); }
         .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
@@ -305,48 +236,16 @@
         <!-- 좌측 보드 -->
         <div class="setup-box">
             <div class="mode-panel-row">
-                <div class="form-row">
-                    <span class="form-label">게임 모드</span>
-                    <select id="mapMode" class="mac-select" disabled>
-                        <option value="SR" selected>소환사의 협곡</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">경기 형식</span>
-                    <select id="gameMode" class="mac-select" onchange="pushInputsToFirebase()">
-                        <option value="Bo1">Bo1</option>
-                        <option value="Bo3" selected>Bo3</option>
-                        <option value="Bo5">Bo5</option>
-                    </select>
-                </div>
+                <div class="form-row"><span class="form-label">게임 모드</span><select id="mapMode" class="mac-select" disabled><option selected>소환사의 협곡</option></select></div>
+                <div class="form-row"><span class="form-label">경기 형식</span><select id="gameMode" class="mac-select" onchange="pushInputsToFirebase()"><option value="Bo1">Bo1</option><option value="Bo3" selected>Bo3</option><option value="Bo5">Bo5</option></select></div>
             </div>
 
             <div class="input-table-sheet">
-                <div class="table-row">
-                    <input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row">
-                    <input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">VS</div>
-                    <input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
-                <div class="table-row fixed-row">
-                    <input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                    <div class="vs-divider">서폿고정</div>
-                    <input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()">
-                </div>
+                <div class="table-row"><input type="text" id="p1_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"><div class="vs-divider">VS</div><input type="text" id="p2_0" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"></div>
+                <div class="table-row"><input type="text" id="p1_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"><div class="vs-divider">VS</div><input type="text" id="p2_1" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"></div>
+                <div class="table-row"><input type="text" id="p1_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"><div class="vs-divider">VS</div><input type="text" id="p2_2" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"></div>
+                <div class="table-row"><input type="text" id="p1_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"><div class="vs-divider">VS</div><input type="text" id="p2_3" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"></div>
+                <div class="table-row fixed-row"><input type="text" id="p1_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"><div class="vs-divider">서폿고정</div><input type="text" id="p2_4" placeholder="닉네임을 입력하세요" autocomplete="off" oninput="pushInputsToFirebase()"></div>
             </div>
 
             <div class="btn-container">
@@ -359,12 +258,9 @@
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="table-wrapper-binder" id="tableWrapperBinder">
-                    <div class="no-result" id="noResultGrid">
-                        <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-                    </div>
+                    <div class="no-result"><h3>배정 결과가 여기에 세트별로 표시됩니다.</h3></div>
                 </div>
             </div>
-            <!-- 🛠️ 3번 해결: 라인업 확정 액션 트레이 영역 빌드 완료 -->
             <div class="result-action-tray">
                 <button class="btn-confirm-lock" id="confirmLockBtn" onclick="triggerLineupLock()">라인업 확정</button>
             </div>
@@ -382,25 +278,17 @@
         messagingSenderId: "1003940918420",
         appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
     };
-    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("nemo_lol_memo_session");
-
+    
     var globalResultData = null; 
     var isOperating = false;
-    var globalLockState = false; // 실시간 확정 잠금 상태 플래그
+    var globalLockState = false;
 
     var selectedRowElement = null;
     var selectedSetIndex = null;
     var selectedLineIndex = null;
-
-    var laneIconMap = {
-        "탑": "top.png",
-        "정글": "jg.png",
-        "미드": "mid.png",
-        "원딜": "adc.png",
-        "서폿": "sp.png"
-    };
+    var laneIconMap = { "탑": "top.png", "정글": "jg.png", "미드": "mid.png", "원딜": "adc.png", "서폿": "sp.png" };
 
     function openMacAlert(title, subText, type, onConfirm) {
         const overlay = document.getElementById("macAlertOverlay");
@@ -436,28 +324,17 @@
         if (isOperating || globalLockState) return;
         let inputs = [];
         for (let i = 0; i < 5; i++) {
-            inputs.push({
-                p1: document.getElementById(`p1_${i}`).value.trim(),
-                p2: document.getElementById(`p2_${i}`).value.trim()
-            });
+            inputs.push({ p1: document.getElementById(`p1_${i}`).value.trim(), p2: document.getElementById(`p2_${i}`).value.trim() });
         }
-        db.update({
-            inputs: inputs,
-            gameMode: document.getElementById("gameMode").value
-        });
+        db.update({ inputs: inputs, gameMode: document.getElementById("gameMode").value });
     }
 
     db.on("value", (snapshot) => {
         const data = snapshot.val();
-        if (!data) {
-            localHardResetUI();
-            return;
-        }
-
+        if (!data) { localHardResetUI(); return; }
         isOperating = true;
-        
-        // 🛠️ 3번 해결: 파이어베이스 세션 상태 동기화를 기반으로 락킹 제어 플로우 바인딩
         globalLockState = data.isConfirmed || false;
+        
         const assignBtn = document.getElementById("assignBtn");
         const confirmLockBtn = document.getElementById("confirmLockBtn");
         const resultContainer = document.getElementById("resultContainer");
@@ -491,13 +368,18 @@
         } else {
             globalResultData = null;
             document.getElementById("tableWrapperBinder").innerHTML = `
-                <div class="no-result" id="noResultGrid">
-                    <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-                </div>`;
+                <div class="no-result"><h3>배정 결과가 여기에 세트별로 표시됩니다.</h3></div>`;
             confirmLockBtn.style.display = "none";
         }
         isOperating = false;
     });
+
+    function triggerLineupLock() {
+        if (globalLockState || !globalResultData) return;
+        openMacAlert("라인업 최종 확정", "현재 세트 결과로 매칭을 최종 확정하시겠습니까?\n확정 후 초기화 전까지 재배정이 불가합니다.", "confirm", () => {
+            db.update({ isConfirmed: true });
+        });
+    }
 
     function askRollmojangReset() {
         openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
@@ -510,23 +392,9 @@
         });
     }
 
-    // 🛠️ 3번 해결: 라인업 동적 확정 트리거 생성 함수
-    function triggerLineupLock() {
-        if (globalLockState || !globalResultData) return;
-        openMacAlert("라인업 최종 확정", "현재 세트 결과로 매칭을 최종 확정하시겠습니까?\n확정 후 초기화 전까지 재배정이 불가합니다.", "confirm", () => {
-            db.update({ isConfirmed: true });
-        });
-    }
-
     function localHardResetUI() {
-        for(let i=0; i<5; i++) {
-            document.getElementById(`p1_${i}`).value = "";
-            document.getElementById(`p2_${i}`).value = "";
-        }
-        document.getElementById("tableWrapperBinder").innerHTML = `
-            <div class="no-result" id="noResultGrid">
-                <h3>배정 결과가 여기에 세트별로 표시됩니다.</h3>
-            </div>`;
+        for(let i=0; i<5; i++) { document.getElementById(`p1_${i}`).value = ""; document.getElementById(`p2_${i}`).value = ""; }
+        document.getElementById("tableWrapperBinder").innerHTML = '<div class="no-result"><h3>배정 결과가 여기에 세트별로 표시됩니다.</h3></div>';
         selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
         globalLockState = false;
         document.body.className = "swap-mode-inactive";
@@ -542,6 +410,7 @@
         }
     }
 
+    /* ⭐ 100% 원본 지그재그 교차 무작위 분할 알고리즘 완벽 복구 장착 */
     function runRollmojangAssignment() {
         if (globalLockState) return;
         for (let i = 0; i < 5; i++) {
@@ -682,64 +551,35 @@
     }
 
     function renderResultTables(results) {
-        const binder = document.getElementById("tableWrapperBinder");
-        binder.innerHTML = ""; 
-
+        const binder = document.getElementById("tableWrapperBinder"); binder.innerHTML = "";
         results.forEach((setObj, sIdx) => {
+            const table = document.createElement("table"); table.className = "set-table";
+            let blueLeader = results[0].lines[4].blue, redLeader = results[0].lines[4].red;
+            
             let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
             let teamACellClass = (setObj.setIndex % 2 === 0) ? "cell-blue" : "cell-red";
             let teamBCellClass = (setObj.setIndex % 2 === 0) ? "cell-red" : "cell-blue";
 
-            const table = document.createElement("table");
-            table.className = "set-table";
+            let teamAName = (setObj.setIndex % 2 === 0) ? `${blueLeader}팀` : `${redLeader}팀`;
+            let teamBName = (setObj.setIndex % 2 === 0) ? `${redLeader}팀` : `${blueLeader}팀`;
 
-            let fixedBlueLeader = results[0].lines[4] ? results[0].lines[4].blue : "블루";
-            let fixedRedLeader = results[0].lines[4] ? results[0].lines[4].red : "레드";
-
-            let teamAName = (setObj.setIndex % 2 === 0) ? `${fixedBlueLeader}팀` : `${fixedRedLeader}팀`;
-            let teamBName = (setObj.setIndex % 2 === 0) ? `${fixedRedLeader}팀` : `${fixedBlueLeader}팀`;
+            let html = `<thead><tr><th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th></tr>
+                <tr><th class="sub-hdr" style="text-align:center;">라인</th><th class="sub-hdr ${teamAHdrClass}" style="text-align:center;">${teamAName}</th>
+                <th class="sub-hdr ${teamBHdrClass}" style="text-align:center;">${teamBName}</th></tr></thead><tbody>`;
             
-            let htmlPayload = `
-                <thead>
-                    <tr>
-                        <th colspan="3" class="set-title">${setObj.setIndex + 1}세트</th>
-                    </tr>
-                    <tr>
-                        <th class="sub-hdr" style="background: rgba(255,255,255,0.02); width:44px; text-align:center;">라인</th>
-                        <th class="sub-hdr ${teamAHdrClass}" style="text-align:center;">${teamAName}</th>
-                        <th class="sub-hdr ${teamBHdrClass}" style="text-align:center;">${teamBName}</th>
-                    </tr>
-                </thead>
-                <tbody data-set="${sIdx}">
-            `;
+            setObj.lines.forEach((line, lIdx) => {
+                let rowClass = line.isFixed ? "disabled-fixed-row" : "clickable-swap-row";
+                let isSelected = (selectedSetIndex === sIdx && selectedLineIndex === lIdx);
+                if (isSelected && !line.isFixed) rowClass += " selected-token";
 
-            setObj.lines.forEach((lineObj, lIdx) => {
-                let rowClass = "";
-                if (lineObj.isFixed) {
-                    rowClass = `class="disabled-fixed-row"`;
-                } else {
-                    let isSelected = (selectedSetIndex === sIdx && selectedLineIndex === lIdx);
-                    rowClass = `class="clickable-swap-row ${isSelected ? 'selected-token' : ''}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})"`;
-                }
-
-                let imgFile = laneIconMap[lineObj.lane] || "top.png";
-                let laneContent = `<img src="${imgFile}" class="lane-icon" alt="${lineObj.lane}">`;
-
-                htmlPayload += `
-                    <tr ${rowClass}>
-                        <td class="lane-cell">${laneContent}</td>
-                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
-                    </tr>
-                `;
+                html += `<tr class="${rowClass}" onclick="triggerRowTokenSelection(this, ${sIdx}, ${lIdx})">
+                    <td class="lane-cell"><img src="${laneIconMap[line.lane]}" class="lane-icon"></td>
+                    <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${line.blue}</td><td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${line.red}</td></tr>`;
             });
-
-            htmlPayload += `</tbody>`;
-            table.innerHTML = htmlPayload;
-            binder.appendChild(table);
+            table.innerHTML = html + "</tbody>"; binder.appendChild(table);
         });
-        
+
         const scrollCore = document.getElementById("resultScrollCore");
         if (results.length >= 4 || window.innerWidth < 1024 || window.innerHeight < 640) {
             scrollCore.style.justifyContent = "flex-start";
@@ -751,7 +591,7 @@
     }
 
     function triggerRowTokenSelection(element, setIdx, lineDocsIdx) {
-        if (globalLockState) return; // 🛠️ 3번 해결: 라인업 확정 시 스왑 기능 전면 차단
+        if (globalLockState) return;
         if (globalResultData && globalResultData[setIdx]) {
             let linesArray = globalResultData[setIdx].lines;
             if (linesArray[lineDocsIdx].isFixed) return;
@@ -763,45 +603,39 @@
         }
 
         if (!selectedRowElement) {
-            selectedRowElement = element;
-            selectedSetIndex = setIdx;
-            selectedLineIndex = lineDocsIdx;
+            selectedRowElement = element; selectedSetIndex = setIdx; selectedLineIndex = lineDocsIdx;
             element.classList.add("selected-token");
         } else {
-            let firstLineIdx = selectedLineIndex;
-            let secondLineIdx = lineDocsIdx;
-
-            if (firstLineIdx === secondLineIdx) {
+            let f = selectedLineIndex, s = lineDocsIdx;
+            if (f === s) {
                 element.classList.remove("selected-token");
                 selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
                 return;
             }
 
             if (globalResultData && globalResultData[setIdx]) {
-                let linesArray = globalResultData[setIdx].lines;
-
-                if (linesArray[firstLineIdx].isFixed || linesArray[secondLineIdx].isFixed) {
+                let d = globalResultData[setIdx].lines;
+                if (d[f].isFixed || d[s].isFixed) {
                     selectedRowElement.classList.remove("selected-token");
                     selectedRowElement = null; selectedSetIndex = null; selectedLineIndex = null;
                     return;
                 }
 
-                // 🛠️ 2번 해결: 양쪽 노드를 깔끔하고 기품 있게 밀어내는 소프트 페이드 펄스 연출 구동
-                let tds1 = selectedRowElement.querySelectorAll("td:not(.lane-cell)");
-                let tds2 = element.querySelectorAll("td:not(.lane-cell)");
+                let bText1 = document.getElementById(`text-blue-${setIdx}-${f}`);
+                let rText1 = document.getElementById(`text-red-${setIdx}-${f}`);
+                let bText2 = document.getElementById(`text-blue-${setIdx}-${s}`);
+                let rText2 = document.getElementById(`text-red-${setIdx}-${s}`);
 
-                tds1.forEach(td => td.classList.add("text-mac-fade-pulse"));
-                tds2.forEach(td => td.classList.add("text-mac-fade-pulse"));
+                if(bText1 && rText1 && bText2 && rText2) {
+                    bText1.classList.add("text-mac-fade-pulse");
+                    rText1.classList.add("text-mac-fade-pulse");
+                    bText2.classList.add("text-mac-fade-pulse");
+                    rText2.classList.add("text-mac-fade-pulse");
+                }
 
                 setTimeout(() => {
-                    let holdBlue = linesArray[firstLineIdx].blue;
-                    let holdRed = linesArray[firstLineIdx].red;
-
-                    linesArray[firstLineIdx].blue = linesArray[secondLineIdx].blue;
-                    linesArray[firstLineIdx].red = linesArray[secondLineIdx].red;
-
-                    linesArray[secondLineIdx].blue = holdBlue;
-                    linesArray[secondLineIdx].red = holdRed;
+                    [d[f].blue, d[s].blue] = [d[s].blue, d[f].blue];
+                    [d[f].red, d[s].red] = [d[s].red, d[f].red];
 
                     selectedRowElement.classList.remove("selected-token");
                     element.classList.remove("selected-token");
