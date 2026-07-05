@@ -2,9 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>NEMO GACHA SYSTEM</title>
+  <title>가챠머신</title>
   
-  <!-- 🔥 Firebase SDK 라이브러리 탑재 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -34,7 +33,6 @@
       max-width: 1200px; width: 100%; z-index: 10; flex-wrap: wrap;
     }
 
-    /* 📊 좌측 컨트롤 패널 */
     .sheet-control-panel {
       flex: 1.3; min-width: 480px; background: var(--bg-glass); border: 1px solid var(--border-glass);
       border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
@@ -42,7 +40,6 @@
     }
     .sheet-top-row { display: flex; gap: 14px; align-items: center; width: 100%; }
     
-    /* 🖥️ Mac OS 스타일 스텝퍼 */
     .mac-stepper-box {
       background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); 
       border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; gap: 12px; height: 52px; box-sizing: border-box;
@@ -66,7 +63,6 @@
     }
     .btn-reset:hover { background: rgba(255, 255, 255, 0.12); }
     
-    /* ⚡ Mac App Store 감성의 가챠머신 실행 버튼 */
     .btn-click {
       flex: 1.4; 
       background: rgba(226, 180, 189, 0.08); 
@@ -94,7 +90,6 @@
     }
     .btn-click:disabled { background: #2c2c2e; color: #48484a; border-color: transparent; cursor: default; box-shadow: none; transform: none; }
 
-    /* 참가자 리스트 */
     .participant-table { display: flex; flex-direction: column; } 
     .table-header { display: grid; grid-template-columns: 1.4fr 3fr 1.1fr; padding: 0 12px; font-size: 12.5px; color: #8e8e93; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; }
     .table-header center { text-align: center; }
@@ -134,7 +129,6 @@
     .table-row.done .result-score { color: #ff453a; }
     .table-row.done.jackpot-row .result-score { color: var(--mac-accent); text-shadow: 0 0 8px var(--mac-accent); }
 
-    /* 🎰 우측 가챠 머신 패널 */
     .gacha-machine-panel { flex: 0.7; min-width: 260px; display: flex; flex-direction: column; align-items: center; gap: 24px; z-index: 10; }
     .header-main { font-family: 'Poiret One', cursive; font-size: 38px; font-weight: 400; color: var(--mac-accent); margin: 0; letter-spacing: 6px; text-shadow: 0 4px 15px rgba(226, 180, 189, 0.15); }
     .machine-frame { background: #161618; padding: 16px; border-radius: 44px; border: 1px solid #2c2c2e; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 245px; box-sizing: border-box; }
@@ -155,7 +149,6 @@
     .btn-save { display: none; padding: 14px 45px; background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .btn-save:hover { background: #ffffff; color: #1c1c1e; }
 
-    /* 💾 하단 결과 기록 시트 */
     .history-sheet {
       max-width: 1200px; width: 100%; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 18px; padding: 22px; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -182,7 +175,6 @@
     .network-badge { position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
     .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
-    /* 🖥️ Mac OS 스타일 알림창 모달 */
     .mac-alert-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
@@ -380,7 +372,6 @@
       overlay.style.display = "flex";
     }
 
-    // 최대값 스텝퍼 조절
     function stepMaxVal(amount) {
       if (isRunning) return;
       var input = document.getElementById("maxValInput");
@@ -582,7 +573,6 @@
       var fullReelSequence = []; 
       var modeSequence = [];
 
-      // 🛠️ [버그 차단]: 전체 범위에서 안전하게 난수를 뽑도록 필터 헬퍼 함수 대수선
       function getFilteredRandomNum(max, lastNum, forbiddenList) {
         let val;
         let attempts = 0;
@@ -604,25 +594,20 @@
         var rand = Math.random();
         modeSequence.push((rand < 0.2) ? 'A' : (rand < 0.6 ? 'B' : 'C'));
 
-        // 🛠️ 버그 차단: 이전 참가자들의 누적값을 완전히 배제하고, 오직 현재 참가자의 당첨값(p.score)만 스포일러 금지 필터에 적용!!
         let spoilerForbidden = [p.score];
 
-        // 27칸 고정 슬롯 블록 생성
         for (let k = 0; k < 27; k++) {
           if (k === 0 && pIdx === 0) {
             fullReelSequence.push(0);
             lastNum = 0;
           } else if (k === 24) {
-            // 정확히 24번째 칸에 기확정 결과값 안착
             fullReelSequence.push(p.score);
             lastNum = p.score;
           } else if (k === 23 || k === 25) {
-            // 🛠️ 6번째 사람도 무조건 숫자가 풍족하도록 전체 0~최대값 범위 내에서 본인의 당첨값만 쏙 피해서 위아래 연출 난수 매핑! (고갈 버그 해결)
             let num = getFilteredRandomNum(maxVal, lastNum, spoilerForbidden);
             fullReelSequence.push(num);
             lastNum = num;
           } else {
-            // 그 외 지나가는 일반 회전 영역은 연속 중복만 피해서 넉넉하게 무작위 난수 배치!
             let num = getFilteredRandomNum(maxVal, lastNum);
             fullReelSequence.push(num);
             lastNum = num;
