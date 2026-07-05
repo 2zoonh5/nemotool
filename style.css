@@ -127,7 +127,7 @@ body.bg-nebula {
 .window-header { 
     background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; 
     align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box;
-    cursor: move; /* 드래그 아이콘 유도 */
+    cursor: default; /* 1번 수정: 동서남북 화살표 제거하고 macOS 기본 마우스 화살표로 고정 */
 }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
 
