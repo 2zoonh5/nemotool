@@ -139,8 +139,9 @@
             display: flex; flex-direction: column;
         }
         
+        /* 🛠️ 2번 해결: 우측 결과창을 조금 더 아래로 내려서 여유로운 간격 조절 */
         .result-scroll-core {
-            width: 100%; flex: 1; padding: 24px 24px 12px 24px; box-sizing: border-box;
+            width: 100%; flex: 1; padding: 42px 24px 12px 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: auto;
             align-items: center; justify-content: center;
         }
@@ -179,9 +180,10 @@
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
 
+        /* 🛠️ 4번 해결: 팀명과 탑라인 사이 테두리를 선명한 macOS 스타일로 구분 */
         .set-table th.sub-hdr {
             font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); color: #8e8e93; 
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15); color: #8e8e93; 
             text-transform: uppercase; vertical-align: middle; line-height: 32px; box-sizing: border-box;
         }
         
@@ -192,17 +194,9 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* 🛠️ 1번 해결: tr outline 대신 각각의 td 보더 정밀 지정을 통해 우측 짤림 완전 제거 */
+        /* 🛠️ 1번 해결: 클릭 시 파란색 테두리(border)만 완전히 제거하고 배경색만 유지 */
         .clickable-swap-row.selected-token td {
-            border-top: 1.5px solid var(--mac-blue);
-            border-bottom: 1.5px solid var(--mac-blue);
             background: rgba(0, 122, 255, 0.12) !important;
-        }
-        .clickable-swap-row.selected-token td:first-child {
-            border-left: 1.5px solid var(--mac-blue);
-        }
-        .clickable-swap-row.selected-token td:last-child {
-            border-right: 1.5px solid var(--mac-blue);
         }
 
         /* 라인업 잠금 시 스왑 커서 제어 */
@@ -725,11 +719,15 @@
                 let imgFile = laneIconMap[lineObj.lane] || "top.png";
                 let laneContent = `<img src="${imgFile}" class="lane-icon" alt="${lineObj.lane}">`;
 
+                /* 🛠️ 3번 해결: 홀수 세트(2세트 등)에서 좌우 진영이 바뀔 때 셀 값 데이터도 매칭 헤더에 맞춰 알맞게 크로스 정렬 */
+                let cellLeftValue = (setObj.setIndex % 2 === 0) ? lineObj.blue : lineObj.red;
+                let cellRightValue = (setObj.setIndex % 2 === 0) ? lineObj.red : lineObj.blue;
+
                 htmlPayload += `
                     <tr ${rowClass}>
                         <td class="lane-cell">${laneContent}</td>
-                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${lineObj.blue}</td>
-                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${lineObj.red}</td>
+                        <td class="${teamACellClass}" id="text-blue-${sIdx}-${lIdx}">${cellLeftValue}</td>
+                        <td class="${teamBCellClass}" id="text-red-${sIdx}-${lIdx}">${cellRightValue}</td>
                     </tr>
                 `;
             });
