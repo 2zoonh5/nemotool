@@ -9,7 +9,7 @@ let lastClosedApp = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
-    makeWindowsDraggable(); // 드래그 기능 활성화 실행
+    makeWindowsDraggable();
 
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태 우회)
+// 1. 드래그 이동 핸들러 자바스크립트 구현 (최대화 상태일때 우회)
 function makeWindowsDraggable() {
     const windows = document.querySelectorAll('.window-popup');
     
