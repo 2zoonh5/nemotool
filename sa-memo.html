@@ -16,18 +16,18 @@
             --bg-panel: #16161a;
             --bg-card: #1f1f24;
             --bg-input: #111113;
-            --border-panel: rgba(255, 255, 255, 0.08);
+            --border-system: rgba(255, 255, 255, 0.08);
             --border-input: rgba(255, 255, 255, 0.04);
             --sa-orange: #ff9f0a;
-            --sa-blue: #007aff;
+            --sa-blue: #0a84ff;
             --sa-red: #ff453a;
             --text-main: #f5f5f7;
-            --text-gray: #8e8e93;
+            --text-dim: #8e8e93;
         }
         
         body {
             background: var(--bg-main); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Noto Sans KR", sans-serif;
-            margin: 0; padding: 24px; overflow-y: auto; box-sizing: border-box;
+            margin: 0; padding: 20px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
 
@@ -39,7 +39,7 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1440px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
+            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 14px;
         }
 
         .mac-app-header h1 {
@@ -47,57 +47,61 @@
             background: linear-gradient(180deg, #ffffff 0%, #a1a1a3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
+        /* 💻 [황금 공간 분할 아키텍처]: 수평과 대칭 라인을 완벽 동기화 */
         .app-content {
-            display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; align-items: stretch; width: 100%;
+            display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: stretch; width: 100%;
         }
 
+        /* ✨ [Mac OS 프리미엄 스튜디오 패널] */
         .studio-panel {
             background: var(--bg-panel); 
-            border: 1px solid var(--border-panel);
-            border-radius: 6px; padding: 20px; 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            display: flex; flex-direction: column; gap: 14px; 
-            box-sizing: border-box; min-height: 565px;
+            border: 1px solid var(--border-system);
+            border-radius: 6px; padding: 22px; 
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            display: flex; flex-direction: column; gap: 16px; 
+            box-sizing: border-box; min-height: 575px;
         }
         
-        /* 헤더 컨트롤 라인 */
+        /* 상단 환경 설정 구역 수평 정렬화 */
         .control-system-row { display: flex; gap: 10px; width: 100%; align-items: flex-end; }
         
         .form-row { 
             flex: 1; display: flex; flex-direction: column; gap: 5px;
-            background: var(--bg-card); border-radius: 4px; padding: 6px 12px; border: 1px solid var(--border-panel); 
+            background: var(--bg-card); border-radius: 6px; padding: 6px 12px; border: 1px solid var(--border-system); 
+            box-sizing: border-box; height: 52px; /* 초기화 버튼과 칼매칭 */
         }
-        .form-label { font-size: 10.5px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-label { font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
         
         .mac-select {
             background: rgba(0, 0, 0, 0.3); color: #ffffff; border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 4px; padding: 6px 20px 6px 8px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; width: 100%; appearance: none;
+            border-radius: 4px; padding: 5px 20px 5px 8px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; width: 100%; appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
         }
 
-        /* 📸 [네모 정형 그리드 매칭] */
+        /* 📸 [티어 테이블 그리드 인프라]: 가로 간격 최적화 */
         .tier-table-wrapper {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%;
         }
         .tier-column {
-            border: 1px solid var(--border-panel); border-radius: 4px; overflow: hidden; background: rgba(0, 0, 0, 0.2);
-            display: flex; flex-direction: column;
+            border: 1px solid var(--border-system); border-radius: 6px; overflow: hidden; background: rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .tier-column-header {
-            padding: 8px 2px; font-size: 12px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
+            padding: 9px 2px; font-size: 12px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
-        .tier-column:nth-child(1) .tier-column-header { background: rgba(255, 69, 58, 0.2); border-bottom: 1px solid rgba(255, 69, 58, 0.3); }
-        .tier-column:nth-child(2) .tier-column-header { background: rgba(10, 132, 255, 0.2); border-bottom: 1px solid rgba(10, 132, 255, 0.3); }
-        .tier-column:nth-child(3) .tier-column-header { background: rgba(48, 209, 88, 0.2); border-bottom: 1px solid rgba(48, 209, 88, 0.3); }
-        .tier-column:nth-child(4) .tier-column-header { background: rgba(255, 214, 10, 0.2); border-bottom: 1px solid rgba(255, 214, 10, 0.3); }
-        .tier-column:nth-child(5) .tier-column-header { background: rgba(191, 90, 242, 0.2); border-bottom: 1px solid rgba(191, 90, 242, 0.3); }
+        /* 🎨 오리지널 매트 다크 테마 시스템 컬러 코딩 */
+        .tier-column:nth-child(1) .tier-column-header { background: #321919; border-bottom: 2px solid var(--sa-red); }
+        .tier-column:nth-child(2) .tier-column-header { background: #13233c; border-bottom: 2px solid var(--sa-blue); }
+        .tier-column:nth-child(3) .tier-column-header { background: #162a1c; border-bottom: 2px solid #30d158; }
+        .tier-column:nth-child(4) .tier-column-header { background: #322b11; border-bottom: 2px solid #ffd60a; }
+        .tier-column:nth-child(5) .tier-column-header { background: #281735; border-bottom: 2px solid #bf5af2; }
 
         .tier-inputs-vertical-list {
-            padding: 8px; display: flex; flex-direction: column; gap: 6px;
+            padding: 8px 6px; display: flex; flex-direction: column; gap: 6px;
         }
         
-        /* 명단 인풋창 사각형 규격화 */
+        /* 🔗 [디자인 통일]: 명단 인풋 텍스트 상자 */
         .tier-inputs-vertical-list input[type="text"] {
             background: var(--bg-input); border: 1px solid var(--border-input); border-radius: 4px;
             color: #ffffff; font-size: 13px; height: 32px; padding: 4px; outline: none; width: 100%; box-sizing: border-box; text-align: center; font-weight: 500;
@@ -114,25 +118,27 @@
         .map-chip { font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.04); border-radius: 3px; cursor: pointer; }
         .map-chip.selected { background: rgba(255,159,10,0.2); border-color: var(--sa-orange); color: #fff; }
 
-        /* 하단 2분할 액션 컨트롤러 디자인 */
+        /* 🛠️ 하단 2분할 스케일업 대형 액션 컨트롤러 디자인 */
         .control-action-row { display: flex; gap: 10px; width: 100%; margin-top: auto; }
-        .btn-action-base { height: 38px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 13px; border: 1px solid transparent; box-sizing: border-box; transition: all 0.2s ease; }
+        .btn-action-base { border-radius: 6px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; transition: all 0.2s ease; }
         
-        .btn-reset { width: 85px; height: 34px; background: rgba(255,255,255,0.04); color: var(--text-gray); border-color: var(--border-panel); font-weight: 500; margin-bottom: 2px; }
-        .btn-reset:hover { background: rgba(255, 69, 58, 0.1); color: var(--sa-red); border-color: rgba(255, 69, 58, 0.2); }
+        /* 상단 드롭다운 라인 높이와 1px 보더 매칭 처리 완료 */
+        .btn-reset { width: 90px; height: 52px; background: #24242b; color: #e5e5ea; border-color: var(--border-system); font-size: 13px; }
+        .btn-reset:hover { background: rgba(255, 69, 58, 0.15); color: var(--sa-red); border-color: rgba(255, 69, 58, 0.3); }
         
-        .btn-team-assign { flex: 1; background: rgba(0, 122, 255, 0.08); color: var(--sa-blue); border-color: rgba(0, 122, 255, 0.3); }
-        .btn-team-assign:hover { background: var(--sa-blue); color: #ffffff; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25); }
+        /* 가로폭 확장된 메인 와이드 버튼트랙 */
+        .btn-team-assign { flex: 1; height: 42px; background: rgba(0, 122, 255, 0.08); color: var(--sa-blue); border-color: rgba(0, 122, 255, 0.3); font-size: 13.5px; }
+        .btn-team-assign:hover { background: var(--sa-blue); color: #ffffff; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25); }
         
-        .btn-map-assign { flex: 1; background: rgba(255, 159, 10, 0.08); color: var(--sa-orange); border-color: rgba(255, 159, 10, 0.3); }
-        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; box-shadow: 0 4px 12px rgba(255, 159, 10, 0.25); }
+        .btn-map-assign { flex: 1; height: 42px; background: rgba(255, 159, 10, 0.08); color: var(--sa-orange); border-color: rgba(255, 159, 10, 0.3); font-size: 13.5px; }
+        .btn-map-assign:hover { background: var(--sa-orange); color: #000000; box-shadow: 0 4px 14px rgba(255, 159, 10, 0.25); }
 
         /* 📊 우측 매칭 스페이스 결과 보드 */
         .team-board-zone {
             display: grid; grid-template-columns: 1fr 1fr; gap: 14px; display: none; width: 100%;
         }
         .team-card { 
-            background: rgba(0,0,0,0.25); border: 1px solid var(--border-panel); border-radius: 4px; padding: 14px; 
+            background: rgba(0,0,0,0.25); border: 1px solid var(--border-system); border-radius: 6px; padding: 14px; 
             box-sizing: border-box;
         }
         .team-card.drag-over { background: rgba(0, 122, 255, 0.02); border-color: var(--sa-blue); }
@@ -143,7 +149,7 @@
         .blue-team .team-header-title { color: var(--sa-blue); }
         .red-team .team-header-title { color: var(--sa-red); }
         
-        /* 🔗 결과창 명단 사각형 규격 동기화 */
+        /* 🔗 결과창 명단 사각형 규격 32px 완전 동기화 */
         .team-members-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .member-badge { 
             background: var(--bg-input); border: 1px solid var(--border-input); height: 32px; padding: 0; border-radius: 4px; 
@@ -153,7 +159,7 @@
 
         /* 미배정 드래그 대기 풀 */
         .leader-pick-pool-zone {
-            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 4px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
+            display: none; flex-direction: column; gap: 8px; background: rgba(255,159,10,0.02); border-radius: 6px; padding: 12px; border: 1px solid rgba(255,159,10,0.12);
         }
         .pool-zone-title { font-size: 12px; font-weight: 700; color: var(--sa-orange); }
         .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -169,7 +175,7 @@
         .static-title { font-size: 11.5px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
         .static-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; }
         .static-map-card {
-            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-panel); border-radius: 4px; height: 52px;
+            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-system); border-radius: 6px; height: 52px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; color: #ffffff;
         }
         .static-map-card .card-num { font-size: 9px; color: var(--sa-orange); margin-bottom: 2px; font-weight: 700; }
@@ -189,7 +195,7 @@
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 85%; max-width: 950px;
         }
         .cinema-slot-box {
-            background: #0f0f11; border: 2px solid #1c1c1f; border-radius: 4px; height: 140px;
+            background: #0f0f11; border: 2px solid #1c1c1f; border-radius: 6px; height: 140px;
             display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
         }
@@ -225,6 +231,7 @@
 
 <div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
 
+<!-- 🎰 가챠 시네마틱 오버레이 -->
 <div class="gacha-cinema-overlay" id="gachaCinemaOverlay">
     <div class="cinema-title" id="cinemaTitleTrack">SUDDENATTACK MATCH MAP LINEUP</div>
     <div class="cinema-slots-container" id="cinemaSlotsContainer"></div>
@@ -235,9 +242,10 @@
         <h1>서모장</h1>
     </div>
 
+    <!-- 💻 수평 밸런스가 조율된 대칭형 2열 패널 스페이스 -->
     <div class="app-content">
         
-        <!-- [좌측 컨트롤 스튜디오 패널] -->
+        <!-- [좌측 인풋 패널 구역] -->
         <div class="left-column-area">
             <div class="studio-panel">
                 <div class="control-system-row">
@@ -257,6 +265,7 @@
                             <option value="custom">커스텀</option>
                         </select>
                     </div>
+                    <!-- 🛠️ 정밀 수평 매칭이 성립된 초기화 버튼 -->
                     <button class="btn-action-base btn-reset" onclick="askSaMemoReset()">초기화</button>
                 </div>
 
@@ -265,8 +274,10 @@
                     <div class="custom-map-chips" id="customMapChipsContainer"></div>
                 </div>
 
+                <!-- 가로 5열 인풋 32px 사각 매칭 테이블 -->
                 <div class="tier-table-wrapper" id="tierTableWrapper"></div>
 
+                <!-- 🛠️ 와이드 사이즈업 하단 팀배정 / 맵배정 2열 트랙 -->
                 <div class="control-action-row">
                     <button class="btn-action-base btn-team-assign" onclick="runSaTeamAssignment()">팀 배정</button>
                     <button class="btn-action-base btn-map-assign" onclick="runSaMapAssignment()">맵 배정</button>
@@ -274,7 +285,7 @@
             </div>
         </div>
 
-        <!-- [우측 결과 스튜디오 패널] -->
+        <!-- [우측 결과 패널 구역] -->
         <div class="right-column-area studio-panel" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
@@ -289,11 +300,13 @@
                 </div>
             </div>
 
+            <!-- 팀뽑기 드래그 대기 풀 -->
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
                 <div class="pool-zone-title">미배정 대기 명단 (호명 후 상단 팀 칸으로 드래그앤드롭하세요)</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
+            <!-- 하단 7세트 매치 고정 맵 보드 -->
             <div class="history-track-anchor map-static-result-board" id="mapStaticResultBoard">
                 <div class="static-title">MATCH MAP LINEUP (7판 4선승제)</div>
                 <div class="static-row-binder" id="staticRowBinder"></div>
@@ -316,6 +329,15 @@
     var currentMapSeed = null;
     var selectedCustomMaps = [];
 
+    function callParentMacAlert(mainMsg, subMsg) {
+        if (window.parent && typeof window.parent.showMacAlert === "function") {
+            window.parent.showMacAlert(mainMsg, subMsg);
+        } else {
+            alert(mainMsg + "\n" + subMsg);
+        }
+    }
+
+    // 가로 5열 32px 사각 인풋 싱크 바인딩
     const tableWrapper = document.getElementById("tierTableWrapper");
     for (let t = 1; t <= 5; t++) {
         let col = document.createElement("div");
@@ -604,6 +626,7 @@
         });
     }
 
+    // 🎰 [블루 점멸 서치 추첨 가챠 시퀀스]
     async function triggerBorderFlashGacha(combinedData) {
         const overlay = document.getElementById("gachaCinemaOverlay");
         const container = document.getElementById("cinemaSlotsContainer");
@@ -616,6 +639,7 @@
             container.innerHTML = "";
 
             let finalSelectedMap = combinedData.maps[matchIdx];
+
             let currentCandidates = [finalSelectedMap];
             let filterPool = mapPool.filter(m => m !== finalSelectedMap);
             shuffle(filterPool);
@@ -673,6 +697,7 @@
         renderStaticResultBoard(combinedData);
     }
 
+    // 결과 렌더링 함수
     function renderStaticResultBoard(combinedData) {
         if ((combinedData.teamA && combinedData.teamA.length > 0) || (combinedData.maps && combinedData.maps.length > 0)) {
             document.getElementById("placeholderText").style.display = "none";
@@ -733,7 +758,7 @@
                 `;
             });
         } else {
-            document.getElementById("mapStaticResultBoard").style.display = "none";
+            document.getElementById("mapStaticResultBoard").style.none";
         }
     }
 </script>
