@@ -118,7 +118,7 @@
         .team-board-zone {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px; display: none;
         }
-        .team-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; }
+        .team-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; min-height: 120px; }
         .team-card.blue-team { border-top: 4px solid var(--sa-blue); }
         .team-card.red-team { border-top: 4px solid var(--sa-red); }
         .team-header-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; text-align: center; }
@@ -127,7 +127,15 @@
         .team-members-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; }
         .member-badge { background: rgba(255,255,255,0.03); padding: 6px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.02); }
 
-        /* 🎰 서든어택 토너먼트 감성 7판 4선승제 맵 리스트 슬롯 연출 */
+        /* 👑 팀뽑기 전용 남은 유저 명단 드롭 현황판 */
+        .leader-pick-pool-zone {
+            display: none; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); border-radius: 14px; padding: 16px; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .pool-zone-title { font-size: 13px; font-weight: 700; color: #ff9f0a; }
+        .pool-chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pool-player-chip { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #fff; }
+
+        /* 🎰 7판 4선승제 맵 리스트 슬롯 연출 */
         .map-slots-board {
             display: none; flex-direction: column; gap: 12px; margin-top: auto;
         }
@@ -169,25 +177,6 @@
         .no-result-placeholder {
             text-align: center; padding: 80px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto;
         }
-
-        /* Mac OS 알림창 모달 명세 */
-        .mac-alert-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
-        }
-        .mac-alert-modal {
-            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px; width: 270px; padding: 20px 16px 14px 16px; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
-        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; white-space: pre-line; }
-        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
-        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -235,7 +224,7 @@
                 <div class="custom-map-chips" id="customMapChipsContainer"></div>
             </div>
 
-            <!-- 1~5티어별 7칸 입력 컴포넌트 스크롤트랙 -->
+            <!-- 1~5티어별 7칸 입력 컴포넌트 명단 영역 -->
             <div class="tier-sheets-scroll" id="tierInputsWrapper"></div>
 
             <div class="btn-container">
@@ -244,11 +233,11 @@
             </div>
         </div>
 
-        <!-- 📊 우측 경기 매칭 결과 보드 -->
+        <!-- 📊 우측 매칭 결과 및 가챠 보드 -->
         <div class="result-container" id="resultContainer">
             <div class="no-result-placeholder" id="placeholderText">팀 배정 및 맵 매칭 결과가 여기에 표시됩니다.</div>
             
-            <!-- 팀 라인업 보드 -->
+            <!-- 팀 명단 대시보드 -->
             <div class="team-board-zone" id="teamBoardZone">
                 <div class="team-card blue-team">
                     <div class="team-header-title" id="blueTeamHeader">A 팀</div>
@@ -260,7 +249,13 @@
                 </div>
             </div>
 
-            <!-- 🎰 7판 4선승제 서든어택 토너먼트 스타일 슬롯머신 맵 보드 -->
+            <!-- 👑 팀뽑기 전용 남은 유저 리스트 현황판 -->
+            <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
+                <div class="pool-zone-title">선택을 기다리는 대기 명단 (직접 호명하며 뽑아주세요)</div>
+                <div class="pool-chips-wrap" id="poolChipsWrap"></div>
+            </div>
+
+            <!-- 🎰 7판 4선승제 슬롯머신 맵 보드 -->
             <div class="map-slots-board" id="mapSlotsBoard">
                 <div class="slots-title">MATCH MAP LINEUP (7판 4선승제)</div>
                 <div class="slots-row-binder" id="slotsRowBinder"></div>
@@ -270,7 +265,7 @@
 </div>
 
 <script>
-    // F12 및 우클릭 완전 차단
+    // F12 및 우클릭 격리 차단
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', e => {
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
@@ -303,12 +298,12 @@
     var isAnimationRunning = false;
     var selectedCustomMaps = [];
 
-    // 구조 빌드: 1~5티어별 7칸 생성
+    // 1~5티어별 7칸 자동 생성 실행문
     const tierWrapper = document.getElementById("tierInputsWrapper");
     for (let t = 1; t <= 5; t++) {
         let tierBox = document.createElement("div");
         tierBox.className = "tier-container";
-        tierBox.innerHTML = `<div class="tier-title"><span>${t} Tier</span></div>`;
+        tierBox.innerHTML = `<div class="tier-title"><span>${t} 티어 (Tier ${t})</span></div>`;
         
         let grid1 = document.createElement("div");
         grid1.className = "tier-inputs-grid";
@@ -317,14 +312,14 @@
         let grid2 = document.createElement("div");
         grid2.className = "tier-inputs-grid";
         for(let i=4; i<7; i++) grid2.innerHTML += `<input type="text" id="t_${t}_${i}" placeholder="-" autocomplete="off" oninput="pushInputsToFirebase()">`;
-        grid2.innerHTML += `<span style="opacity:0"></span>`; // 그리드 공백 채움
+        grid2.innerHTML += `<span style="opacity:0"></span>`;
         
         tierBox.appendChild(grid1);
         tierBox.appendChild(grid2);
         tierWrapper.appendChild(tierBox);
     }
 
-    // 커스텀 맵 칩 버튼 생성
+    // 커스텀 맵 선택용 인게임 토큰 조립
     const chipsContainer = document.getElementById("customMapChipsContainer");
     mapPool.forEach(map => {
         let chip = document.createElement("div");
@@ -347,7 +342,7 @@
             selectedCustomMaps.splice(idx, 1);
         } else {
             if (selectedCustomMaps.length >= 7) {
-                openMacAlert("선택 초과", "고정 맵은 최대 7개까지만 선택할 수 있습니다.", "alert");
+                openMacAlert("선택 초과", "고정 맵은 최대 7개까지만 지정이 가능합니다.", "alert");
                 return;
             }
             selectedCustomMaps.push(map);
@@ -413,7 +408,7 @@
                 if (data.inputs[t]) {
                     data.inputs[t].forEach((val, i) => {
                         let el = document.getElementById(`t_${t}_${i}`);
-                        if (el.value !== val) el.value = val;
+                        if (el && el.value !== val) el.value = val;
                     });
                 }
             }
@@ -440,7 +435,7 @@
     });
 
     function askSaMemoReset() {
-        openMacAlert("명단 초기화", "작성된 티어별 명단과 배정 결과를 전부 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("명단 초기화", "작성된 티어별 명단과 결과를 전부 삭제하시겠습니까?", "confirm", () => {
             let emptyInputs = {};
             for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
             db.set({
@@ -456,6 +451,7 @@
     function clearResultsUI() {
         document.getElementById("placeholderText").style.display = "block";
         document.getElementById("teamBoardZone").style.display = "none";
+        document.getElementById("leaderPickPoolZone").style.display = "none";
         document.getElementById("mapSlotsBoard").style.display = "none";
     }
 
@@ -470,7 +466,6 @@
     function runSaAssignment() {
         if (isAnimationRunning) return;
         
-        // 데이터 수집
         let allParticipantsByTier = {};
         let totalCount = 0;
         for (let t = 1; t <= 5; t++) {
@@ -484,8 +479,8 @@
             }
         }
 
-        if (totalCount === 0 || totalCount % 2 !== 0) {
-            openMacAlert("배정 불가", "참가자 인원이 비어있거나 짝수(5:5, 6:6 등)가 아닙니다.\n현재 총원: " + totalCount + "명", "alert");
+        if (totalCount === 0) {
+            openMacAlert("배정 불가", "참가자 명단이 비어있습니다.", "alert");
             return;
         }
 
@@ -494,14 +489,15 @@
 
         let teamA = [];
         let teamB = [];
+        let remainPool = []; // 팀뽑기용 대기자 명단 리스트
 
         // 1. 팀 배정 분기 알고리즘
         if (teamMode === "allRandom") {
             let flatList = [];
             for (let t in allParticipantsByTier) flatList = flatList.concat(allParticipantsByTier[t]);
             shuffle(flatList);
-            teamA = flatList.slice(0, flatList.length / 2);
-            teamB = flatList.slice(flatList.length / 2);
+            teamA = flatList.slice(0, Math.ceil(flatList.length / 2));
+            teamB = flatList.slice(Math.ceil(flatList.length / 2));
         } 
         else if (teamMode === "balance") {
             for (let t = 1; t <= 5; t++) {
@@ -527,21 +523,17 @@
             let chosenTier = validTiersForLeaders[Math.floor(Math.random() * validTiersForLeaders.length)];
             let tierPool = shuffle([...allParticipantsByTier[chosenTier]]);
             
-            let leaderA = tierPool[0] + " (👑)";
-            let leaderB = tierPool[1] + " (👑)";
-            teamA.push(leaderA);
-            teamB.push(leaderB);
+            // 두 팀의 팀장 선출 고정
+            teamA.push(tierPool[0] + " (👑)");
+            teamB.push(tierPool[1] + " (👑)");
 
-            let remainPool = [];
+            // 팀장 둘을 제외한 모든 유저를 대기 풀(remainPool)로 이동
             for (let t = 1; t <= 5; t++) {
                 allParticipantsByTier[t].forEach(p => {
                     if (p !== tierPool[0] && p !== tierPool[1]) remainPool.push(p);
                 });
             }
-            shuffle(remainPool);
-            remainPool.forEach((p, idx) => {
-                if (idx % 2 === 0) teamA.push(p); else teamB.push(p);
-            });
+            shuffle(remainPool); // 대기열 무작위 정렬
         }
 
         // 2. 7개 매치 맵 배정 알고리즘
@@ -555,30 +547,30 @@
         } 
         else if (mapMode === "custom") {
             let fixedPart = [...selectedCustomMaps];
-            let remainPool = mapPool.filter(m => !fixedPart.includes(m));
-            shuffle(remainPool);
+            let restPool = mapPool.filter(m => !fixedPart.includes(m));
+            shuffle(restPool);
             let needed = 7 - fixedPart.length;
-            let randomPart = remainPool.slice(0, needed);
+            let randomPart = restPool.slice(0, needed);
             chosenMaps = shuffle(fixedPart.concat(randomPart));
         }
 
-        // 결과 패키징 및 파이어베이스 발송
         let finalResults = {
             teamA: teamA,
             teamB: teamB,
+            remainPool: remainPool,
             maps: chosenMaps,
-            seed: Math.random() // 애니메이션 리트리거용 랜덤시드
+            isLeaderPick: (teamMode === "leaderPick"),
+            seed: Math.random()
         };
 
         db.update({ results: finalResults });
     }
 
-    // 🎰 토너먼트 가챠 연출용 비동기 스택 제어문
+    // 🎰 룰렛 슬롯머신 맵 보드 인터페이스 동기화 함수
     async function renderResults(results) {
         isAnimationRunning = true;
         document.getElementById("placeholderText").style.display = "none";
         
-        // 팀 레이아웃 동기화
         const blueList = document.getElementById("blueTeamList");
         const redList = document.getElementById("redTeamList");
         blueList.innerHTML = ""; redList.innerHTML = "";
@@ -586,16 +578,30 @@
         results.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}</div>`);
         results.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}</div>`);
         
-        if (results.teamA[0] && results.teamA[0].includes("👑")) {
+        if (results.isLeaderPick && results.teamA[0] && results.teamB[0]) {
             document.getElementById("blueTeamHeader").innerText = results.teamA[0].replace(" (👑)", "") + "팀";
             document.getElementById("redTeamHeader").innerText = results.teamB[0].replace(" (👑)", "") + "팀";
         } else {
             document.getElementById("blueTeamHeader").innerText = "A 팀 (" + results.teamA.length + "명)";
-            document.getElementById("redTeamHeader").innerText = "B 팀 (" + results.redTeamHeader = "B 팀 (" + results.teamB.length + "명)";
+            document.getElementById("redTeamHeader").innerText = "B 팀 (" + results.teamB.length + "명)";
         }
         document.getElementById("teamBoardZone").style.display = "grid";
 
-        // 롤러 슬롯 프레임 빌드
+        // 팀뽑기 방식일 때 남은 대기열 명단 판넬 노출
+        const poolZone = document.getElementById("leaderPickPoolZone");
+        const poolChipsWrap = document.getElementById("poolChipsWrap");
+        poolChipsWrap.innerHTML = "";
+        
+        if (results.isLeaderPick && results.remainPool && results.remainPool.length > 0) {
+            results.remainPool.forEach(p => {
+                poolChipsWrap.innerHTML += `<div class="pool-player-chip">${p}</div>`;
+            });
+            poolZone.style.display = "flex";
+        } else {
+            poolZone.style.display = "none";
+        }
+
+        // 룰렛 트랙 초기 바인딩
         const binder = document.getElementById("slotsRowBinder");
         binder.innerHTML = "";
         document.getElementById("mapSlotsBoard").style.display = "flex";
@@ -607,14 +613,13 @@
             slotWin.className = "map-slot-window";
             slotWin.id = `slot-win-${sIdx}`;
 
-            // 가상 롤러 시퀀스 조립
             let dummyReel = [];
             let forbidden = [finalMap];
             for(let i=0; i<15; i++) {
                 let randMap = mapPool[Math.floor(Math.random() * mapPool.length)];
                 if(!forbidden.includes(randMap)) dummyReel.push(randMap);
             }
-            dummyReel.push(finalMap); // 16번째 마지막 칸에 정답 배치
+            dummyReel.push(finalMap);
 
             let reelHtml = dummyReel.map(m => `
                 <div class="reel-item">
@@ -631,21 +636,23 @@
             `;
             binder.appendChild(slotWin);
 
-            // 개별 슬롯 순차 정지 딜레이 트리거 프로미스 푸시
             slotPromises.push(new Promise(resolve => {
                 setTimeout(() => {
                     let container = document.getElementById(`reel-core-${sIdx}`);
-                    container.className = "reel-container spinning";
-                    // 16번째 타겟 좌표 이동 (아이템 높이 84px)
-                    let targetY = 15 * 84; 
-                    container.style.transform = `translateY(-${targetY}px)`;
+                    if (container) {
+                        container.className = "reel-container spinning";
+                        let targetY = 15 * 84; 
+                        container.style.transform = `translateY(-${targetY}px)`;
+                    }
                     
                     setTimeout(() => {
-                        document.getElementById(`slot-win-${sIdx}`).classList.add("confirmed");
-                        document.getElementById(`plate-name-${sIdx}`).innerText = finalMap;
+                        let winEl = document.getElementById(`slot-win-${sIdx}`);
+                        let plateEl = document.getElementById(`plate-name-${sIdx}`);
+                        if (winEl) winEl.classList.add("confirmed");
+                        if (plateEl) plateEl.innerText = finalMap;
                         resolve();
-                    }, 3000); // 3초 스핀
-                }, sIdx * 350); // 0.35초 간격 순차 연출
+                    }, 3000);
+                }, sIdx * 350);
             }));
         });
 
