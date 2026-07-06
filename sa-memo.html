@@ -481,30 +481,19 @@
     });
 
     function askSaMemoReset() {
-        // 부모 창의 맥 스타일 얼럿 레이어가 존재하는지 확인
-        if (window.parent && typeof window.parent.showMacAlert === "function") {
-            if (confirm("모든 매칭 데이터와 참가자 명단을 삭제하고 초기화하시겠습니까?")) {
-                executeSaMemoReset();
-            }
-        } else {
-            if (confirm("모든 매칭 데이터와 참가자 명단을 삭제하고 초기화하시겠습니까?")) {
-                executeSaMemoReset();
-            }
+        if (confirm("입력창의 모든 티어 명단과 배정 결과를 삭제하고 초기화하시겠습니까?")) {
+            let emptyInputs = {};
+            for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
+            db.set({
+                inputs: emptyInputs,
+                teamAssignMode: "balance",
+                mapAssignMode: "original",
+                selectedCustomMaps: null,
+                teamResults: null,
+                mapResults: null
+            });
+            callParentMacAlert("초기화 완료", "모든 매칭 데이터가 정상 리셋되었습니다.");
         }
-    }
-
-    function executeSaMemoReset() {
-        let emptyInputs = {};
-        for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
-        db.set({
-            inputs: emptyInputs,
-            teamAssignMode: "balance",
-            mapAssignMode: "original",
-            selectedCustomMaps: null,
-            teamResults: null,
-            mapResults: null
-        });
-        callParentMacAlert("초기화 완료", "모든 매칭 데이터가 정상 리셋되었습니다.");
     }
 
     function clearResultsUI() {
