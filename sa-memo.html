@@ -642,7 +642,7 @@
 
         db.child("mapResults").update({
             maps: chosenMaps,
-            mapSeed: Math.random()
+            mapSeed: Math.random(),
             mapTimestamp: Date.now()
         });
     }
