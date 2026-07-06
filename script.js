@@ -10,7 +10,7 @@ let lastClosedApp = null;
 document.addEventListener("DOMContentLoaded", () => {
     syncDesktopToDock();
     makeWindowsDraggable(); 
-    preventInspection(); // 우클릭 및 개발자 도구 방지 스크립트 가동
+    preventInspection();
 
     document.querySelectorAll("[data-folder]").forEach(folder => {
         folder.addEventListener("dblclick", (e) => { 
@@ -40,12 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     startMacClock();
 });
 
-// 우클릭 메뉴 차단 및 F12 단축키 완벽 제한 스크립트
 function preventInspection() {
-    // 마우스 우클릭 금지
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // 단축키 제어 (F12, 소스 보기, 개발자도구 진입 차단)
     document.addEventListener('keydown', e => {
         if (
             e.key === 'F12' || 
@@ -58,26 +55,23 @@ function preventInspection() {
     });
 }
 
-// 1. 드래그 이동 핸들러 자바스크립트 구현 (버그 및 렉 완벽 해결 버전)
 function makeWindowsDraggable() {
     let activeWindow = null;
     let offsetX = 0;
     let offsetY = 0;
     let isDragging = false;
-    let ticking = false; // requestAnimationFrame 최적화용 플래그
+    let ticking = false;
 
     document.querySelectorAll(".window-popup").forEach(win => {
         const header = win.querySelector(".window-header");
         if (!header) return;
 
         header.addEventListener("mousedown", (e) => {
-            // 버튼 클릭 시 드래그 방지
             if (
                 e.target.closest(".mac-buttons") ||
                 e.target.closest(".nav-buttons")
             ) return;
 
-            // 최대화 상태일 때는 드래그 금지
             if (win.classList.contains("maximized")) return;
 
             isDragging = true;
@@ -86,13 +80,11 @@ function makeWindowsDraggable() {
             offsetX = e.clientX - win.offsetLeft;
             offsetY = e.clientY - win.offsetTop;
 
-            // 제트인덱스(z-index) 최상위로 올리기
             document.querySelectorAll(".window-popup").forEach(w => {
                 w.style.zIndex = "10";
             });
             win.style.zIndex = "100";
 
-            // 드래그 중 iframe 간섭 차단 및 텍스트 선택 방지
             document.body.style.userSelect = "none";
             document.querySelectorAll("iframe").forEach(ifrm => {
                 ifrm.style.pointerEvents = "none";
