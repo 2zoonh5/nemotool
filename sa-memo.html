@@ -26,7 +26,7 @@
         }
         
         body {
-            background: var(--bg-main); color: #d1d1d6; font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Noto Sans KR", sans-serif;
+            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
             margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
             min-height: 100vh; user-select: none; position: relative;
         }
@@ -244,6 +244,17 @@
         .mac-alert-btn.cancel:hover { background: rgba(255, 255, 255, 0.15); }
         .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
         .mac-alert-btn.confirm:hover { background: #148cff; }
+        .tier-indicator-badge {
+            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 8px;
+            text-transform: uppercase; letter-spacing: 0.3px; display: inline-block; vertical-align: middle;
+        }
+        .tib-1 { background: rgba(255, 69, 58, 0.12); color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.2); }
+        .tib-2 { background: rgba(10, 132, 255, 0.12); color: #0a84ff; border: 1px solid rgba(10, 132, 255, 0.2); }
+        .tib-3 { background: rgba(48, 209, 88, 0.12); color: #30d158; border: 1px solid rgba(48, 209, 88, 0.2); }
+        .tib-4 { background: rgba(255, 214, 10, 0.12); color: #ffd60a; border: 1px solid rgba(255, 214, 10, 0.2); }
+        .tib-5 { background: rgba(191, 90, 242, 0.12); color: #bf5af2; border: 1px solid rgba(191, 90, 242, 0.2); }
+        
+        .pool-player-chip { display: inline-flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -754,8 +765,22 @@
         const redList = document.getElementById("redTeamList");
         blueList.innerHTML = ""; redList.innerHTML = "";
         
+        function getPlayerTierBadgeHTML(playerName) {
+            if (!playerName) return "";
+            let cleanName = playerName.trim();
+            for (let t = 1; t <= 5; t++) {
+                for (let i = 0; i < 7; i++) {
+                    let inputEl = document.getElementById(`t_${t}_${i}`);
+                    if (inputEl && inputEl.value.trim() === cleanName) {
+                        return `<span class="tier-indicator-badge tib-${t}">${t}T</span>`;
+                    }
+                }
+            }
+            return "";
+        }
+        
         if(combinedData.teamA && combinedData.teamA.length > 0) {
-            combinedData.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}</div>`);
+            combinedData.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}${getPlayerTierBadgeHTML(p)}</div>`);
             if (combinedData.isLeaderPick && combinedData.teamA[0] && combinedData.teamB[0]) {
                 document.getElementById("blueTeamHeader").innerText = combinedData.teamA[0] + "팀";
                 document.getElementById("redTeamHeader").innerText = combinedData.teamB[0] + "팀";
@@ -769,7 +794,7 @@
         }
 
         if(combinedData.teamB && combinedData.teamB.length > 0) {
-            combinedData.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}</div>`);
+            combinedData.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}${getPlayerTierBadgeHTML(p)}</div>`);
         }
 
         const poolZone = document.getElementById("leaderPickPoolZone");
@@ -779,7 +804,9 @@
         if (combinedData.isLeaderPick && combinedData.remainPool && combinedData.remainPool.length > 0) {
             combinedData.remainPool.forEach(p => {
                 let chip = document.createElement("div");
-                chip.className = "pool-player-chip"; chip.innerText = p; chip.draggable = true;
+                chip.className = "pool-player-chip"; 
+                chip.innerHTML = `${p}${getPlayerTierBadgeHTML(p)}`; 
+                chip.draggable = true;
                 chip.ondragstart = (e) => { e.dataTransfer.setData("text/plain", p); };
                 poolChipsWrap.appendChild(chip);
             });
