@@ -245,7 +245,7 @@
         .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
         .mac-alert-btn.confirm:hover { background: #148cff; }
         .tier-indicator-badge {
-            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 8px;
+            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-right: 8px;
             text-transform: uppercase; letter-spacing: 0.3px; display: inline-block; vertical-align: middle;
         }
         .tib-1 { background: rgba(255, 69, 58, 0.12); color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.2); }
@@ -780,7 +780,7 @@
         }
         
         if(combinedData.teamA && combinedData.teamA.length > 0) {
-            combinedData.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${p}${getPlayerTierBadgeHTML(p)}</div>`);
+            combinedData.teamA.forEach(p => blueList.innerHTML += `<div class="member-badge">${getPlayerTierBadgeHTML(p)}${p}</div>`);
             if (combinedData.isLeaderPick && combinedData.teamA[0] && combinedData.teamB[0]) {
                 document.getElementById("blueTeamHeader").innerText = combinedData.teamA[0] + "팀";
                 document.getElementById("redTeamHeader").innerText = combinedData.teamB[0] + "팀";
@@ -794,18 +794,33 @@
         }
 
         if(combinedData.teamB && combinedData.teamB.length > 0) {
-            combinedData.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${p}${getPlayerTierBadgeHTML(p)}</div>`);
+            combinedData.teamB.forEach(p => redList.innerHTML += `<div class="member-badge">${getPlayerTierBadgeHTML(p)}${p}</div>`);
         }
 
         const poolZone = document.getElementById("leaderPickPoolZone");
         const poolChipsWrap = document.getElementById("poolChipsWrap");
         poolChipsWrap.innerHTML = "";
         
-        if (combinedData.isLeaderPick && combinedData.remainPool && combinedData.remainPool.length > 0) {
-            combinedData.remainPool.forEach(p => {
+        if (combinedData.isLeaderPick && combinedData.remainPool && combinedData.remainPool.length > 0) { 
+            let sortedPool = [...combinedData.remainPool].sort((a, b) => {
+                let tierA = 99, tierB = 99;
+                for (let t = 1; t <= 5; t++) {
+                    for (let i = 0; i < 7; i++) {
+                        let inputEl = document.getElementById(`t_${t}_${i}`);
+                        if (inputEl) {
+                            if (inputEl.value.trim() === a.trim()) tierA = t;
+                            if (inputEl.value.trim() === b.trim()) tierB = t;
+                        }
+                    }
+                }         
+                if (tierA !== tierB) return tierA - tierB;
+                return a.localeCompare(b, 'ko');
+            });
+
+            sortedPool.forEach(p => {
                 let chip = document.createElement("div");
                 chip.className = "pool-player-chip"; 
-                chip.innerHTML = `${p}${getPlayerTierBadgeHTML(p)}`; 
+                chip.innerHTML = `${getPlayerTierBadgeHTML(p)}${p}`; 
                 chip.draggable = true;
                 chip.ondragstart = (e) => { e.dataTransfer.setData("text/plain", p); };
                 poolChipsWrap.appendChild(chip);
