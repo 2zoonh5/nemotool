@@ -138,7 +138,6 @@
             display: flex; flex-direction: column;
         }
         
-        /* 🛠️ 2번 해결: 우측 결과창을 조금 더 아래로 내려서 여유로운 간격 조절 */
         .result-scroll-core {
             width: 100%; flex: 1; padding: 42px 24px 12px 24px; box-sizing: border-box;
             display: flex; gap: 20px; overflow-x: auto; overflow-y: auto;
@@ -166,14 +165,13 @@
     align-items: center; 
     justify-content: center; 
     
-    /* 🔥 미디어 쿼리와 부모 flex 설정을 무시하고 정중앙에 고정하는 absolute 치트키 */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
     margin: 0 !important;
-    pointer-events: none; /* 클릭 방해 금지 */
+    pointer-events: none;
 }
 .no-result h3 { font-size: 14px; font-weight: 500; color: #48484a; margin: 0; }
 
@@ -185,7 +183,6 @@
             transition: opacity 0.3s ease;
         }
         
-        /* 라인업 확정 시 결과 보드판 잠금 시각 효과 */
         .result-container.confirmed-locked .set-table {
             opacity: 0.65;
         }
@@ -195,7 +192,6 @@
             padding: 12px 10px; font-size: 14px; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 0.5px;
         }
 
-        /* 🛠️ 4번 해결: 팀명과 탑라인 사이 테두리를 선명한 macOS 스타일로 구분 */
         .set-table th.sub-hdr {
             font-size: 11px; font-weight: 700; padding: 0 4px; height: 32px;
             border-bottom: 2px solid rgba(255, 255, 255, 0.15); color: #8e8e93; 
@@ -209,12 +205,10 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* 🛠️ 1번 해결: 클릭 시 파란색 테두리(border)만 완전히 제거하고 배경색만 유지 */
         .clickable-swap-row.selected-token td {
             background: rgba(0, 122, 255, 0.12) !important;
         }
 
-        /* 라인업 잠금 시 스왑 커서 제어 */
         body.lock-system-active .clickable-swap-row {
             cursor: default !important;
         }
@@ -246,13 +240,11 @@
         .cell-blue { background: rgba(0, 122, 255, 0.03) !important; }
         .cell-red { background: rgba(255, 69, 58, 0.03) !important; }
 
-        /* 정갈하고 세련된 소프트 페이드 펄스 연출용 상태 변수 */
         .text-mac-fade-pulse {
             opacity: 0.2 !important;
             background-color: rgba(255, 255, 255, 0.05) !important;
         }
 
-        /* 하단 결과 보드 공백을 매울 럭셔리 버튼 트레이 구역 */
         .result-action-tray {
             width: 100%; padding: 12px 24px 24px 24px; box-sizing: border-box;
             display: flex; justify-content: center; flex-shrink: 0;
@@ -310,7 +302,6 @@
     </div>
 
     <div class="app-content">
-        <!-- 좌측 보드 -->
         <div class="setup-box">
             <div class="mode-panel-row">
                 <div class="form-row">
@@ -363,7 +354,6 @@
             </div>
         </div>
 
-        <!-- 우측 결과 보드 -->
         <div class="result-container" id="resultContainer">
             <div class="result-scroll-core" id="resultScrollCore">
                 <div class="table-wrapper-binder" id="tableWrapperBinder">
@@ -404,6 +394,7 @@
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("nemo_lol_memo_session");
+    const lanePath = "lane/";
 
     var globalResultData = null; 
     var isOperating = false;
@@ -414,11 +405,11 @@
     var selectedLineIndex = null;
 
     var laneIconMap = {
-        "탑": "top.png",
-        "정글": "jg.png",
-        "미드": "mid.png",
-        "원딜": "adc.png",
-        "서폿": "sp.png"
+        "탑": lanePath + "top.png",
+        "정글": lanePath + "jg.png",
+        "미드": lanePath + "mid.png",
+        "원딜": lanePath + "adc.png",
+        "서폿": lanePath + "sp.png"
     };
 
     function openMacAlert(title, subText, type, onConfirm) {
@@ -703,7 +694,6 @@
         binder.innerHTML = ""; 
 
         results.forEach((setObj, sIdx) => {
-            // 🛠️ 3번 해결: 오직 상단 진영 배경색(레드/블루) 및 내부 셀 배경색 클래스만 홀수 세트(2세트 등)에서 교차시킴
             let teamAHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-blue" : "hdr-red";
             let teamBHdrClass = (setObj.setIndex % 2 === 0) ? "hdr-red" : "hdr-blue";
             let teamACellClass = (setObj.setIndex % 2 === 0) ? "cell-blue" : "cell-red";
@@ -712,11 +702,9 @@
             const table = document.createElement("table");
             table.className = "set-table";
 
-            // 1세트 서폿(팀장) 기준 고정 팀명 추출
             let fixedBlueLeader = results[0].lines[4] ? results[0].lines[4].blue : "블루";
             let fixedRedLeader = results[0].lines[4] ? results[0].lines[4].red : "레드";
 
-            // 🛠️ 3번 해결: 좌측팀 텍스트와 우측팀 텍스트 이름은 세트와 상관없이 항상 본인 열 자리에 고정!
             let teamAName = `${fixedBlueLeader}팀`;
             let teamBName = `${fixedRedLeader}팀`;
             
@@ -746,7 +734,6 @@
                 let imgFile = laneIconMap[lineObj.lane] || "top.png";
                 let laneContent = `<img src="${imgFile}" class="lane-icon" alt="${lineObj.lane}">`;
 
-                // 🛠️ 3번 해결: 물리적인 좌우 멤버 데이터 배치 역시 전혀 뒤바뀌지 않고 항상 고정!
                 let cellLeftValue = lineObj.blue;
                 let cellRightValue = lineObj.red;
 
