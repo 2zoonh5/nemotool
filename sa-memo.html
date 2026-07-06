@@ -513,7 +513,7 @@
     });
 
     function askSaMemoReset() {
-        openMacAlert("전체 초기화", "입력창의 참가자 명단과 모든 배정 결과를 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("라인업 초기화", "입력창의 참가자 명단과 모든 배정 결과를 삭제하시겠습니까?", "confirm", () => {
             let emptyInputs = {};
             for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
             db.set({
