@@ -182,8 +182,10 @@
 
         .gacha-cinema-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 6, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 24px;
+            background: rgba(5, 5, 6, 0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 99999; display: none; align-items: center; 
+            justify-content: flex-start; padding-top: 12vh; box-sizing: border-box;
+            flex-direction: column; gap: 24px;
         }
         .cinema-title { font-size: 17px; font-weight: 700; color: #ffffff; letter-spacing: 2px; font-family: 'Space Mono', monospace; }
         .cinema-title span { color: var(--sa-orange); }
