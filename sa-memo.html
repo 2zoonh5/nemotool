@@ -192,7 +192,7 @@
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 85%; max-width: 950px;
         }
         .cinema-slot-box {
-            background: #0f0f11; border: 2px solid #1c1c1f; border-radius: 6px; height: 140px;
+            background: #0f0f11; border: 2px solid #1c1c1f; border-radius: 6px; height: 160px;
             display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
         }
@@ -319,12 +319,12 @@
             </div>
 
             <div class="leader-pick-pool-zone" id="leaderPickPoolZone">
-                <div class="pool-zone-title">미배정 명단 (Drag & Drop)</div>
+                <div class="pool-zone-title">미배정 명단</div>
                 <div class="pool-chips-wrap" id="poolChipsWrap"></div>
             </div>
 
             <div class="history-track-anchor map-static-result-board" id="mapStaticResultBoard">
-                <div class="static-title">맵 라인업 (Bo7)</div>
+                <div class="static-title">맵 라인업 (7판 4선)</div>
                 <div class="static-row-binder" id="staticRowBinder"></div>
             </div>
         </div>
@@ -513,7 +513,7 @@
     });
 
     function askSaMemoReset() {
-        openMacAlert("초기화", "입력창의 참가자 명단과 모든 배정 결과를 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("전체 초기화", "입력창의 참가자 명단과 모든 배정 결과를 삭제하시겠습니까?", "confirm", () => {
             let emptyInputs = {};
             for(let t=1; t<=5; t++) emptyInputs[t] = Array(7).fill("");
             db.set({
@@ -677,7 +677,7 @@
         overlay.style.display = "flex";
 
         for (let matchIdx = 0; matchIdx < 7; matchIdx++) {
-            titleTrack.innerHTML = `${matchIdx + 1} 세트 맵 선택 중...`;
+            titleTrack.innerHTML = `<span>${matchIdx + 1}</span> 세트 맵 선택 중...`;
             container.innerHTML = "";
 
             let finalSelectedMap = combinedData.maps[matchIdx];
@@ -697,7 +697,6 @@
                     <div class="cinema-view-frame">
                         <div class="cinema-confirm-tag" id="c-tag-${idx}">확정</div>
                         <div class="map-mock-img" style="background: rgba(255,255,255,0.03);"></div>
-                        <span>[ MAP IMAGE ]</span>
                     </div>
                     <div class="cinema-name-plate">${mapName}</div>
                 `;
