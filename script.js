@@ -95,7 +95,6 @@ function makeWindowsDraggable() {
     document.addEventListener("mousemove", (e) => {
         if (!isDragging || !activeWindow) return;
 
-        // 브라우저가 화면을 갱신할 수 있을 때만 위치 계산 (렉 줄이기 및 부드러운 이동)
         if (!ticking) {
             window.requestAnimationFrame(() => {
                 if (!isDragging || !activeWindow) {
@@ -106,15 +105,14 @@ function makeWindowsDraggable() {
                 let x = e.clientX - offsetX;
                 let y = e.clientY - offsetY;
 
-                // 상단 메뉴바(25px) 밑으로 내려가지 않도록 가이드 제한
                 if (y < 25) y = 25;
 
                 activeWindow.style.left = x + "px";
                 activeWindow.style.top = y + "px";
 
-                ticking = false; // 드래그 계산 완료 후 플래그 해제
+                ticking = false;
             });
-            ticking = true; // 프레임이 실행되는 동안 추가 이벤트 무시
+            ticking = true;
         }
     });
 
@@ -124,7 +122,6 @@ function makeWindowsDraggable() {
         isDragging = false;
         activeWindow = null;
         
-        // 드래그 종료 후 원상복구
         document.body.style.userSelect = "";
         document.querySelectorAll("iframe").forEach(ifrm => {
             ifrm.style.pointerEvents = "auto";
@@ -132,7 +129,6 @@ function makeWindowsDraggable() {
     });
 }
 
-// 2. macOS 전용 알림창 모달 핸들러 함수
 function showMacAlert(mainMsg, subMsg) {
     document.getElementById("macAlertMain").innerText = mainMsg;
     document.getElementById("macAlertSub").innerText = subMsg;
@@ -237,7 +233,6 @@ function closeAllSystemPanels() {
     if(control) control.style.display = "none";
 }
 
-// 3. 감성 그라데이션 신규 추가 테마 확장 반영
 function changeBg(theme) {
     const body = document.body;
     body.className = ""; 
