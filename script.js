@@ -1,7 +1,7 @@
 const folderData = {
-    pubg: { title: "배틀그라운드", apps: [{ id: "pubg-gacha", name: "가챠머신", icon: "p_gacha_icon.png", targetId: "pubg-gacha-Window" }] },
-    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "l_memo_icon.png", targetId: "lol-memo-Window" }] },
-    sudden: { title: "서든어택", apps: [{ id: "sa-memo", name: "서모장", icon: "s_memo_icon.png", targetId: "sa-memo-Window" }] }
+    pubg: { title: "배틀그라운드", apps: [{ id: "pubg-gacha", name: "가챠머신", icon: "ico/p_gacha_icon.png", targetId: "pubg-gacha-Window" }] },
+    lol: { title: "리그오브레전드", apps: [{ id: "lol-memo", name: "롤모장", icon: "ico/l_memo_icon.png", targetId: "lol-memo-Window" }] },
+    sudden: { title: "서든어택", apps: [{ id: "sa-memo", name: "서모장", icon: "ico/s_memo_icon.png", targetId: "sa-memo-Window" }] }
 };
 
 let minimizedWindows = {};
