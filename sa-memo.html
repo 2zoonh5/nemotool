@@ -496,7 +496,9 @@
         };
 
         if (data.teamResults || data.mapResults) {
-            if (data.mapResults && currentMapSeed !== data.mapResults.mapSeed) {
+            const isBrandNewMap = data.mapResults && (Date.now() - data.mapResults.mapTimestamp < 5000);
+
+            if (data.mapResults && currentMapSeed !== data.mapResults.mapSeed && isBrandNewMap) {
                 currentMapSeed = data.mapResults.mapSeed;
                 if (data.mapAssignMode !== 'original') {
                     triggerBorderFlashGacha(combined); 
@@ -504,6 +506,7 @@
                     renderStaticResultBoard(combined);
                 }
             } else {
+                if (data.mapResults) currentMapSeed = data.mapResults.mapSeed;
                 renderStaticResultBoard(combined);
             }
         } else {
@@ -640,6 +643,7 @@
         db.child("mapResults").update({
             maps: chosenMaps,
             mapSeed: Math.random()
+            mapTimestamp: Date.now()
         });
     }
 
