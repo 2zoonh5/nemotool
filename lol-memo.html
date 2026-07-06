@@ -509,7 +509,7 @@
     });
 
     function askRollmojangReset() {
-        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를 삭제하시겠습니까?", "confirm", () => {
+        openMacAlert("라인업 초기화", "입력창의 모든 닉네임 명단과 세트 매칭 결과를\n삭제하시겠습니까?", "confirm", () => {
             db.update({
                 gameMode: "Bo3",
                 inputs: [ {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""}, {p1:"",p2:""} ],
