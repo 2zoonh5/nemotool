@@ -170,13 +170,13 @@
         .map-static-result-board {
             display: none; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.04); margin-top: auto;
         }
-        .static-title { font-size: 11.5px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .static-title { font-size: 12px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
         .static-row-binder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; }
         .static-map-card {
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; height: 52px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; color: #ffffff;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #ffffff;
         }
-        .static-map-card .card-num { font-size: 9px; color: var(--sa-orange); margin-bottom: 2px; font-weight: 700; }
+        .static-map-card .card-num { font-size: 10px; color: var(--sa-orange); margin-bottom: 2px; font-weight: 700; }
 
         .no-result-placeholder { text-align: center; padding: 160px 0; color: #48484a; font-size: 14px; font-weight: 500; margin: auto; }
 
@@ -346,6 +346,17 @@
 </div>
 
 <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (
+            e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'i' || e.key === 'j')) || 
+            (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
     const mapPool = [
         "드래곤로드","프로방스","시티캣","크로스포트","올드타운","데저트","제3보급창고",
         "B2연구소","골든아이","듀오릭","마린베이스","백어스","산악기지","아울렛",
