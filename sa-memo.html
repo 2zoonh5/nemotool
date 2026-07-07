@@ -588,17 +588,82 @@
             teamB = flatList.slice(Math.ceil(flatList.length / 2));
         } 
         else if (teamMode === "balance") {
+
+            const tierScore = {
+                1: 5,
+                2: 4,
+                3: 3,
+                4: 2,
+                5: 1
+            };
+
+            let players = [];
+
             for (let t = 1; t <= 5; t++) {
-                let tierList = shuffle([...allParticipantsByTier[t]]);
-                tierList.forEach((player, idx) => {
-                    if (idx % 2 === 0) {
-                        if (teamA.length <= teamB.length) teamA.push(player); else teamB.push(player);
-                    } else {
-                        if (teamB.length <= teamA.length) teamB.push(player); else teamA.push(player);
-                    }
+                let list = shuffle([...allParticipantsByTier[t]]);
+
+                list.forEach(name => {
+                    players.push({
+                        name: name,
+                        tier: t,
+                        score: tierScore[t]
+                    });
                 });
             }
-        } 
+
+            players.sort((a, b) => a.tier - b.tier);
+
+            let teamAScore = 0;
+            let teamBScore = 0;
+
+            for (const player of players) {
+
+                const diffIfA = Math.abs((teamAScore + player.score) - teamBScore);
+                const diffIfB = Math.abs(teamAScore - (teamBScore + player.score));
+
+                if (teamA.length < teamB.length) {
+                    teamA.push(player.name);
+                    teamAScore += player.score;
+                    continue;
+                }
+
+                if (teamB.length < teamA.length) {
+                    teamB.push(player.name);
+                    teamBScore += player.score;
+                    continue;
+                }
+
+                if (diffIfA < diffIfB) {
+                    teamA.push(player.name);
+                    teamAScore += player.score;
+                }
+                else if (diffIfB < diffIfA) {
+                    teamB.push(player.name);
+                    teamBScore += player.score;
+                }
+                else {
+
+                    if (teamAScore < teamBScore) {
+                        teamA.push(player.name);
+                        teamAScore += player.score;
+                    }
+                    else if (teamBScore < teamAScore) {
+                        teamB.push(player.name);
+                        teamBScore += player.score;
+                    }
+                    else {
+
+                        if (Math.random() < 0.5) {
+                            teamA.push(player.name);
+                            teamAScore += player.score;
+                        } else {
+                            teamB.push(player.name);
+                            teamBScore += player.score;
+                        }
+                    }
+                }
+            }
+        }
         else if (teamMode === "leaderPick") {
             let validTiersForLeaders = [];
             for (let t = 1; t <= 5; t++) {
