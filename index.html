@@ -176,6 +176,28 @@
         </div>
     </div>
 
+    <div class="window-popup app-window" id="pubg-bingo-Window" data-icon="ico/p_bingo_icon.png">
+        <div class="window-header">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn" onclick="backToFolder('pubg-bingo-Window')">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="nav-btn forward-btn disabled">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+            <span class="window-title">빙고판</span>
+            <div class="mac-buttons">
+                <button class="window-btn minimize-btn" onclick="minimizeWindow('pubg-bingo-Window')"></button>
+                <button class="window-btn maximize-btn" onclick="toggleMaximize('pubg-bingo-Window')"></button>
+                <button class="window-btn close-btn" onclick="closeApp('pubg-bingo-Window')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <iframe src="pubg-bingo.html" frameborder="0"></iframe>
+        </div>
+    </div>
+
     <div class="mac-dock-container active">
         <div class="mac-dock">
             <div id="fixedDockList" style="display: flex; gap: 14px;"></div>
