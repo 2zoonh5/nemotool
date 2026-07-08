@@ -16,8 +16,6 @@ body {
 
 body.bg-sunset { background: linear-gradient(135deg, #4b1248 0%, #f0c27b 100%) !important; animation: none; }
 body.bg-cyber { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important; animation: none; }
-
-/* 감성 그라데이션 배경화면 추가 라인업 */
 body.bg-mojave { background: linear-gradient(135deg, #e65c00 0%, #F9D423 100%) !important; animation: none; }
 body.bg-aqua { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%) !important; animation: none; }
 body.bg-sakura { background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%) !important; animation: none; }
@@ -27,7 +25,6 @@ body.bg-nebula {
     animation: gradientMove 15s ease infinite;
 }
 
-/* 상단바 */
 .mac-menu-bar {
     position: fixed; top: 0; left: 0; width: 100%; height: 25px;
     background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -64,7 +61,6 @@ body.bg-nebula {
 .bar-svg { width: 15px; height: 15px; fill: rgba(255, 255, 255, 0.85); cursor: pointer; transition: fill 0.15s, transform 0.1s; }
 .bar-svg:hover { fill: #ffffff; transform: scale(1.05); }
 
-/* 드롭다운 메뉴 */
 .mac-dropdown {
     display: none; position: absolute; top: 24px; left: 4px;
     background: rgba(30, 30, 30, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -75,7 +71,6 @@ body.bg-nebula {
 .dropdown-item:hover { background: #007aff; }
 .dropdown-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 6px; }
 
-/* Spotlight 검색창 */
 .mac-spotlight-window {
     display: none; position: fixed; top: 35px; right: 80px; width: 280px;
     background: rgba(30, 30, 30, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
@@ -88,7 +83,6 @@ body.bg-nebula {
     flex: 1; background: transparent; border: none; color: #fff; font-size: 13px; outline: none;
 }
 
-/* 제어 센터 패널 */
 .mac-control-center {
     display: none; position: fixed; top: 35px; right: 15px; width: 250px;
     background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
@@ -100,7 +94,6 @@ body.bg-nebula {
 .cc-label-row { display: flex; justify-content: space-between; opacity: 0.9; }
 .cc-slider-box input[type="range"] { width: 100%; accent-color: #007aff; cursor: pointer; height: 5px; margin: 2px 0; }
 
-/* 바탕화면 */
 .desktop {
     padding: 50px 30px 120px 30px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px;
     height: calc(100vh - 120px); align-content: flex-start; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; z-index: 1;
@@ -115,7 +108,6 @@ body.bg-nebula {
 .icon img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
 .icon .icon-name { color: #ffffff; font-size: 12px; font-weight: 500; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7); word-break: keep-all; }
 
-/* 윈도우 팝업 */
 .window-popup {
     display: none; position: fixed; top: 15vh; left: 20vw; width: 60vw; height: 55vh;
     background: #ffffff; border-radius: 14px; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
@@ -127,7 +119,7 @@ body.bg-nebula {
 .window-header { 
     background: #f0f0f2; color: #333333; padding: 10px 18px; display: flex; justify-content: space-between; 
     align-items: center; border-bottom: 1px solid #d1d1d6; position: relative; height: 42px; box-sizing: border-box;
-    cursor: default; /* 1번 수정: 동서남북 화살표 제거하고 macOS 기본 마우스 화살표로 고정 */
+    cursor: default;
 }
 .window-title { font-size: 13px; font-weight: 600; color: #3a3a3c; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
 
@@ -156,7 +148,6 @@ body.bg-nebula {
 .window-body { flex: 1; background: #ffffff; overflow: auto; }
 .window-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-/* 폴더 내부 공간 스타일 */
 .folder-content { 
     padding: 35px 40px; 
     display: flex; 
@@ -197,7 +188,6 @@ body.bg-nebula {
     border-color: transparent; 
 }
 
-/* 대형 3D Glassmorphism 독 바 */
 .mac-dock-container {
     position: fixed; bottom: 12px; left: 50%;
     transform: translateX(-50%); z-index: 10010;
@@ -225,7 +215,6 @@ body.bg-nebula {
 
 .dock-divider { width: 1px; height: 38px; background: rgba(255, 255, 255, 0.28); }
 
-/* macOS 알림창 스타일 명세 */
 .mac-alert-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
