@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빙고판</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Space+Mono:wght@700&display=swap');
+        
+        :root {
+            --bg-main: #0c0c0e;
+            --bg-glass-active: rgba(255, 255, 255, 0.04);
+            --bg-glass-passive: rgba(255, 255, 255, 0.015);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --mac-blue: #007aff;
+            --mac-orange: #ff9f0a;
+            --mac-red: #ff453a;
+            --text-dim: #aeaeb2;
+            --text-gray: #8e8e93;
+        }
+        
+        body {
+            background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
+            margin: 0; padding: 40px 24px; overflow-y: auto; box-sizing: border-box;
+            min-height: 100vh; user-select: none; position: relative;
+        }
+
+        .network-badge { 
+            position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
+            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
+            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
+        }
+        .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
+
+        .container {
+            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 24px;
+        }
+
+        .mac-app-header h1 {
+            font-size: 36px; font-weight: 700; text-align: center; margin: 0 0 5px 0; letter-spacing: 4px; 
+            background: linear-gradient(180deg, #ffffff 0%, #b5b5b7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.06));
+        }
+
+        .app-content {
+            display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: stretch; width: 100%;
+        }
+        
+        .left-column {
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .setup-box {
+            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; gap: 14px; backdrop-filter: blur(30px);
+            box-sizing: border-box;
+        }
+        
+        .control-system-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        
+        .form-row { 
+            display: flex; flex-direction: column; gap: 4px;
+            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border-glass); 
+            box-sizing: border-box; height: 62px; justify-content: center;
+        }
+        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; margin-bottom: 2px; }
+        
+        .mac-select, .mac-input {
+            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 4px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; box-sizing: border-box; height: 28px;
+        }
+        .mac-select option { background: #1c1c1e; color: #fff; }
+
+        .team-manager-zone {
+            display: flex; flex-direction: column; gap: 10px; margin-top: 5px;
+        }
+        .zone-title { font-size: 12px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .team-list-container {
+            display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px;
+        }
+        
+        .team-row-item {
+            display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center;
+            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 12px;
+        }
+        .team-row-item.active-turn {
+            border-color: var(--mac-blue); background: rgba(0, 122, 255, 0.05);
+        }
+        .team-color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .team-name-text { font-size: 14px; font-weight: 600; color: #fff; }
+        
+        .chicken-stepper {
+            display: flex; align-items: center; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
+        }
+        .chicken-btn { background: transparent; border: none; color: #fff; font-size: 11px; padding: 4px 8px; cursor: pointer; }
+        .chicken-btn:hover { background: rgba(255,255,255,0.1); }
+        .chicken-count { font-size: 12px; font-weight: 700; width: 34px; text-align: center; color: #ffd60a; font-family: 'Space Mono', monospace; }
+
+        .btn-action-base { 
+            height: 44px; border-radius: 22px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; 
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); font-size: 14px;
+        }
+        .btn-add { background: rgba(255,255,255,0.04); border-color: var(--border-glass); color: #fff; width: 100%; height: 36px; border-radius: 8px; font-size: 12.5px; }
+        .btn-add:hover { background: rgba(255,255,255,0.1); }
+        .btn-reset { background: rgba(255, 69, 58, 0.08); color: #ff453a; border-color: rgba(255, 69, 58, 0.3); }
+        .btn-reset:hover { background: #ff453a; color: #fff; }
+        .btn-turn { background: rgba(0, 122, 255, 0.08); color: #007aff; border-color: rgba(0, 122, 255, 0.35); }
+        .btn-turn:hover { background: var(--mac-blue); color: #fff; }
+        .btn-trash { background: transparent; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; }
+        .btn-trash svg { width: 16px; height: 16px; fill: #ff453a; }
+
+        .chicken-chance-bar {
+            background: rgba(255, 214, 10, 0.04); border: 1px solid rgba(255, 214, 10, 0.15); border-radius: 12px; padding: 12px;
+            display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;
+        }
+        .chance-title { font-size: 13px; font-weight: 700; color: #ffd60a; display: flex; align-items: center; gap: 6px; }
+        .mac-toggle-btn {
+            background: rgba(255,255,255,0.06); color: #8e8e93; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-glass); cursor: pointer; transition: all 0.2s;
+        }
+        .mac-toggle-btn.active {
+            background: #ffd60a; color: #000; border-color: #ffd60a; box-shadow: 0 0 12px rgba(255,214,10,0.4);
+        }
+
+        .right-column-area {
+            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; gap: 20px; min-height: 600px; box-sizing: border-box; position: relative;
+        }
+
+        .scoreboard-layout {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; width: 100%;
+        }
+        .score-card {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; text-align: center;
+        }
+        .score-card-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .score-main-value { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .score-sub-value { font-size: 11px; color: #8e8e93; font-weight: 500; }
+
+        .bingo-board-wrapper {
+            flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; padding: 20px 0;
+        }
+        .bingo-grid {
+            display: grid; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); padding: 10px; border-radius: 16px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .bingo-cell {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
+            font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: #8e8e93; transition: all 0.2s ease; position: relative;
+        }
+        .bingo-cell:hover {
+            background: rgba(255,255,255,0.06); transform: scale(1.02); color: #fff;
+        }
+        .bingo-cell.shield-locked::after {
+            content: '🍗'; position: absolute; bottom: 2px; right: 2px; font-size: 10px; filter: drop-shadow(0 0 2px #000);
+        }
+
+        .mac-alert-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
+        }
+        .mac-alert-modal {
+            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px; width: 280px; padding: 20px 16px 14px 16px; text-align: center;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
+            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+        .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; white-space: pre-line; }
+        .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
+        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="network-badge"><div class="network-dot"></div><span>실시간</span></div>
+
+<div class="mac-alert-overlay" id="macAlertOverlay">
+    <div class="mac-alert-modal">
+        <div class="mac-alert-msg-main" id="macAlertTitle">안내</div>
+        <div class="mac-alert-msg-sub" id="macAlertSub">상세 메시지</div>
+        <div class="mac-alert-btn-container" id="macAlertBtnBox"></div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="mac-app-header">
+        <h1>배틀그라운드 빙고</h1>
+    </div>
+
+    <div class="app-content">
+        <div class="left-column">
+            <div class="setup-box">
+                <div class="control-system-row">
+                    <div class="form-row">
+                        <span class="form-label">게임 모드</span>
+                        <select id="gameMode" class="mac-select" onchange="pushConfigToFirebase()">
+                            <option value="bingo" selected>일반 빙고</option>
+                            <option value="conquer">땅따먹기</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">빙고 칸 수</span>
+                        <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions(); pushConfigToFirebase();">
+                            <option value="3">3 x 3</option>
+                            <option value="4">4 x 4</option>
+                            <option value="5">5 x 5</option>
+                            <option value="8">8 x 8</option>
+                            <option value="10" selected>10 x 10</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-system-row">
+                    <div class="form-row">
+                        <span class="form-label">내용물 설정</span>
+                        <select id="contentType" class="mac-select" onchange="pushConfigToFirebase()">
+                            <option value="num" selected>숫자 (1~100)</option>
+                            <option value="mix">숫자 + 알파벳</option>
+                            <option value="alpha">알파벳 전용</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">목표 빙고 수</span>
+                        <select id="targetBingo" class="mac-select" onchange="pushConfigToFirebase()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setup-box">
+                <div class="chicken-chance-bar">
+                    <div class="chance-title">🍗 치킨 고정 찬스</div>
+                    <button class="mac-toggle-btn" id="chanceToggle" onclick="toggleChickenChance()">OFF</button>
+                </div>
+            </div>
+
+            <div class="setup-box" style="flex: 1;">
+                <div class="team-manager-zone">
+                    <span class="zone-title">참여 팀 관리</span>
+                    <div class="team-list-container" id="teamListContainer"></div>
+                    <button class="btn-add" onclick="addNewTeam()">+ 새로운 팀 추가</button>
+                </div>
+                
+                <div class="control-system-row" style="margin-top: auto; padding-top: 10px;">
+                    <button class="btn-action-base btn-reset" onclick="askBingoReset()">전체 초기화</button>
+                    <button class="btn-action-base btn-turn" onclick="passNextTurn()">개별 턴 넘기기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column-area">
+            <div class="scoreboard-layout" id="scoreboardZone"></div>
+            <div class="bingo-board-wrapper">
+                <div class="bingo-grid" id="bingoGridContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 우클릭 및 F12 방지 기본 보안
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','i','j'].includes(e.key)) || (e.ctrlKey && ['U','u'].includes(e.key))) {
+            e.preventDefault(); return false;
+        }
+    });
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzRTNZDkTGT9v0KaBKYqqy7AWb3PZ1SJc",
+        authDomain: "nemotool.firebaseapp.com",
+        databaseURL: "https://nemotool-default-rtdb.firebaseio.com",
+        projectId: "nemotool",
+        storageBucket: "nemotool.firebasestorage.app",
+        messagingSenderId: "1003940918420",
+        appId: "1:1003940918420:web:4f30a616c31fce71c0f081"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("nemo_pubg_bingo_session");
+
+    const sysColors = [
+        { name: "빨간색", hex: "#ff453a" },
+        { name: "주황색", hex: "#ff9f0a" },
+        { name: "노란색", hex: "#ffd60a" },
+        { name: "초록색", hex: "#30d158" },
+        { name: "파란색", hex: "#0a84ff" },
+        { name: "보라색", hex: "#bf5af2" }
+    ];
+
+    let isOperating = false;
+    let localChickenChanceActive = false;
+    let serverTeams = [];
+    let serverCells = {};
+    let activeTurnIndex = 0;
+
+    function openMacAlert(title, subText, type, onConfirm) {
+        const overlay = document.getElementById("macAlertOverlay");
+        document.getElementById("macAlertTitle").innerText = title;
+        document.getElementById("macAlertSub").innerText = subText;
+        const btnBox = document.getElementById("macAlertBtnBox");
+        btnBox.innerHTML = "";
+
+        if (type === "confirm") {
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "mac-alert-btn cancel"; cancelBtn.innerText = "취소";
+            cancelBtn.onclick = () => { overlay.style.display = "none"; };
+            const confirmBtn = document.createElement("button");
+            confirmBtn.className = "mac-alert-btn confirm"; confirmBtn.innerText = "확인";
+            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
+            btnBox.appendChild(cancelBtn); btnBox.appendChild(confirmBtn);
+        } else {
+            const alertBtn = document.createElement("button");
+            alertBtn.className = "mac-alert-btn confirm"; alertBtn.innerText = "확인";
+            alertBtn.onclick = () => { overlay.style.display = "none"; };
+            btnBox.appendChild(alertBtn);
+        }
+        overlay.style.display = "flex";
+    }
+
+    function updateTargetBingoOptions() {
+        const size = parseInt(document.getElementById("boardSize").value);
+        const targetSelect = document.getElementById("targetBingo");
+        const currentVal = targetSelect.value;
+        targetSelect.innerHTML = "";
+        
+        let maxBingo = size === 3 ? 3 : (size === 4 ? 4 : 5);
+        for(let i = 1; i <= maxBingo; i++) {
+            targetSelect.innerHTML += `<option value="${i}">${i}줄 빙고</option>`;
+        }
+        if (currentVal && currentVal <= maxBingo) targetSelect.value = currentVal;
+        else targetSelect.value = "3";
+    }
+    updateTargetBingoOptions();
+
+    function generateMatrixContent(type, index) {
+        const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (type === "alpha") {
+            let first = alphas[Math.floor((index - 1) / 26) % 26];
+            let second = alphas[(index - 1) % 26];
+            return index <= 26 ? second : first + second;
+        } else if (type === "mix") {
+            if (index % 2 === 0) return alphas[Math.floor(index / 2) % 26] + (index % 10);
+            return String(index);
+        }
+        return String(index);
+    }
+
+    function pushConfigToFirebase() {
+        if (isOperating) return;
+        db.child("config").update({
+            gameMode: document.getElementById("gameMode").value,
+            boardSize: parseInt(document.getElementById("boardSize").value),
+            contentType: document.getElementById("contentType").value,
+            targetBingo: parseInt(document.getElementById("targetBingo").value)
+        });
+    }
+
+    db.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+            setupDefaultSession();
+            return;
+        }
+
+        isOperating = true;
+        
+        if (data.config) {
+            document.getElementById("gameMode").value = data.config.gameMode;
+            if (parseInt(document.getElementById("boardSize").value) !== data.config.boardSize) {
+                document.getElementById("boardSize").value = data.config.boardSize;
+                updateTargetBingoOptions();
+            }
+            document.getElementById("contentType").value = data.config.contentType;
+            document.getElementById("targetBingo").value = data.config.targetBingo;
+        }
+
+        serverTeams = data.teams || [];
+        serverCells = data.cells || {};
+        activeTurnIndex = data.activeTurnIndex || 0;
+
+        renderTeamManagerUI();
+        renderBingoGridUI(data.config?.boardSize || 10, data.config?.contentType || "num");
+        calculateAndRenderScores(data.config?.boardSize || 10, data.config?.targetBingo || 3);
+
+        isOperating = false;
+    });
+
+    function setupDefaultSession() {
+        let initialTeams = [
+            { id: 0, name: "A팀 (알파)", color: sysColors[4].hex, chickens: 0 },
+            { id: 1, name: "B팀 (브라보)", color: sysColors[0].hex, chickens: 0 }
+        ];
+        db.set({
+            config: { gameMode: "bingo", boardSize: 10, contentType: "num", targetBingo: 3 },
+            teams: initialTeams,
+            activeTurnIndex: 0,
+            cells: {}
+        });
+    }
+
+    function renderTeamManagerUI() {
+        const container = document.getElementById("teamListContainer");
+        container.innerHTML = "";
+        
+        serverTeams.forEach((team, idx) => {
+            const isTurn = (idx === activeTurnIndex);
+            let item = document.createElement("div");
+            item.className = `team-row-item ${isTurn ? 'active-turn' : ''}`;
+            item.onclick = () => { if(!isOperating) db.child("activeTurnIndex").set(idx); };
+            
+            item.innerHTML = `
+                <span class="team-color-dot" style="background: ${team.color}"></span>
+                <span class="team-name-text">${team.name}</span>
+                <div class="chicken-stepper" onclick="event.stopPropagation()">
+                    <button class="chicken-btn" onclick="adjustChicken(${idx}, -1)">-</button>
+                    <span class="chicken-count">🍗 ${team.chickens}</span>
+                    <button class="chicken-btn" onclick="adjustChicken(${idx}, 1)">+</button>
+                </div>
+                <button class="btn-trash" onclick="event.stopPropagation(); removeTeamItem(${idx})">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function addNewTeam() {
+        if (serverTeams.length >= 6) {
+            openMacAlert("생성 불가", "최대 6개 팀까지만 참여 가능합니다.", "alert");
+            return;
+        }
+        let nextColor = sysColors[serverTeams.length % sysColors.length].hex;
+        let alphabet = ["A", "B", "C", "D", "E", "F"][serverTeams.length];
+        serverTeams.push({
+            id: Date.now(),
+            name: `${alphabet}팀`,
+            color: nextColor,
+            chickens: 0
+        });
+        db.child("teams").set(serverTeams);
+    }
+
+    function removeTeamItem(idx) {
+        if (serverTeams.length <= 1) {
+            openMacAlert("삭제 불가", "최소 1개 이상의 팀이 존재해야 합니다.", "alert");
+            return;
+        }
+        serverTeams.splice(idx, 1);
+        let nextTurn = activeTurnIndex >= serverTeams.length ? 0 : activeTurnIndex;
+        db.update({ teams: serverTeams, activeTurnIndex: nextTurn });
+    }
+
+    function adjustChicken(teamIdx, amount) {
+        let current = serverTeams[teamIdx].chickens || 0;
+        let next = current + amount;
+        if (next < 0) next = 0;
+        db.child(`teams/${teamIdx}/chickens`).set(next);
+    }
+
+    function toggleChickenChance() {
+        if (serverTeams.length === 0) return;
+        const currentTeam = serverTeams[activeTurnIndex];
+        if (!localChickenChanceActive && (!currentTeam.chickens || currentTeam.chickens <= 0)) {
+            openMacAlert("잔여 치킨 부족", "보유한 치킨 개수가 없어 고정 찬스를 사용할 수 없습니다.", "alert");
+            return;
+        }
+        localChickenChanceActive = !localChickenChanceActive;
+        const toggleBtn = document.getElementById("chanceToggle");
+        toggleBtn.className = `mac-toggle-btn ${localChickenChanceActive ? 'active' : ''}`;
+        toggleBtn.innerText = localChickenChanceActive ? "ON" : "OFF";
+    }
+
+    function passNextTurn() {
+        if (serverTeams.length <= 1) return;
+        let next = (activeTurnIndex + 1) % serverTeams.length;
+        db.child("activeTurnIndex").set(next);
+        if(localChickenChanceActive) toggleChickenChance();
+    }
+
+    function renderBingoGridUI(size, type) {
+        const grid = document.getElementById("bingoGridContainer");
+        grid.innerHTML = "";
+        grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+        
+        let containerWidth = document.getElementById("resultContainer").clientWidth - 52;
+        let cellSize = Math.floor((containerWidth - (size * 6)) / size);
+        if (cellSize > 65) cellSize = 65;
+        if (cellSize < 40) cellSize = 40;
+
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                let cellId = `cell_${r}_${c}`;
+                let cellData = serverCells[cellId];
+                let cellIndex = (r * size) + c + 1;
+                
+                let box = document.createElement("div");
+                box.className = "bingo-cell";
+                box.style.width = `${cellSize}px`;
+                box.style.height = `${cellSize}px`;
+                box.innerText = generateMatrixContent(type, cellIndex);
+
+                if (cellData) {
+                    box.style.backgroundColor = cellData.color;
+                    box.style.color = "#ffffff";
+                    box.style.borderColor = "transparent";
+                    if (cellData.shield) box.classList.add("shield-locked");
+                }
+
+                box.onclick = () => handleCellClick(cellId);
+                grid.appendChild(box);
+            }
+        }
+    }
+
+    function handleCellClick(cellId) {
+        if (serverTeams.length === 0) return;
+        const currentTeam = serverTeams[activeTurnIndex];
+        const mode = document.getElementById("gameMode").value;
+        const targetCell = serverCells[cellId];
+
+        if (targetCell && targetCell.shield) {
+            openMacAlert("점령 불가", "치킨 방어막으로 고정된 칸은 침범하거나 변경할 수 없습니다.", "alert");
+            return;
+        }
+
+        if (targetCell && mode === "bingo") {
+            openMacAlert("선택 불가", "일반 빙고 모드에서는 이미 선점된 칸을 변경할 수 없습니다.", "alert");
+            return;
+        }
+
+        if (localChickenChanceActive) {
+            db.child(`cells/${cellId}`).set({
+                color: currentTeam.color,
+                teamName: currentTeam.name,
+                shield: true
+            });
+            adjustChicken(activeTurnIndex, -1);
+            toggleChickenChance();
+        } else {
+            db.child(`cells/${cellId}`).set({
+                color: currentTeam.color,
+                teamName: currentTeam.name,
+                shield: false
+            });
+        }
+    }
+
+    function calculateAndRenderScores(size, targetBingo) {
+        const scoreboard = document.getElementById("scoreboardZone");
+        scoreboard.innerHTML = "";
+        
+        let totalCellsCount = size * size;
+
+        serverTeams.forEach(team => {
+            let occupied = 0;
+            let matrix = Array(size).fill(0).map(() => Array(size).fill(false));
+
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    let cell = serverCells[`cell_${r}_${c}`];
+                    if (cell && cell.color === team.color) {
+                        occupied++;
+                        matrix[r][c] = true;
+                    }
+                }
+            }
+
+            let bingoLines = 0;
+            // 가로행 체크
+            for (let r = 0; r < size; r++) {
+                if (matrix[r].every(v => v)) bingoLines++;
+            }
+            // 세로열 체크
+            for (let c = 0; c < size; c++) {
+                let colCheck = true;
+                for (let r = 0; r < size; r++) { if (!matrix[r][c]) { colCheck = false; break; } }
+                if (colCheck) bingoLines++;
+            }
+            // 대각선 ↘ 체크
+            let diag1 = true;
+            for (let i = 0; i < size; i++) { if (!matrix[i][i]) { diag1 = false; break; } }
+            if (diag1) bingoLines++;
+            
+            // 대각선 ↙ 체크
+            let diag2 = true;
+            for (let i = 0; i < size; i++) { if (!matrix[i][size - 1 - i]) { diag2 = false; break; } }
+            if (diag2) bingoLines++;
+
+            let pct = totalCellsCount > 0 ? Math.round((occupied / totalCellsCount) * 100) : 0;
+
+            let card = document.createElement("div");
+            card.className = "score-card";
+            card.innerHTML = `
+                <div class="score-card-title" style="color: ${team.color}">
+                    <span class="team-color-dot" style="background: ${team.color}"></span> ${team.name}
+                </div>
+                <div class="score-main-value">${bingoLines} / ${targetBingo} 줄</div>
+                <div class="score-sub-value">점유율 ${pct}% (${occupied}칸)</div>
+            `;
+            scoreboard.appendChild(card);
+
+            if (bingoLines >= targetBingo && !isOperating) {
+                isOperating = true;
+                openMacAlert("🏆 승리 팀 발생", `축하합니다!\n${team.name}이(가) 목표치인 ${targetBingo}줄 빙고를 달성하여 승리했습니다!`, "alert");
+            }
+        });
+    }
+
+    function askBingoReset() {
+        openMacAlert("판 초기화", "현재 세션의 모든 빙고판 기록과 점수를 삭제하고 새 게임을 시작하시겠습니까?", "confirm", () => {
+            db.child("cells").set(null);
+            serverTeams.forEach(t => t.chickens = 0);
+            db.child("teams").set(serverTeams);
+            db.child("activeTurnIndex").set(0);
+            if (localChickenChanceActive) toggleChickenChance();
+        });
+    }
+</script>
+</body>
+</html>
