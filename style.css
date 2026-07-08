@@ -232,3 +232,17 @@ body.bg-nebula {
 .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
 .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
 .mac-alert-btn.confirm:hover { background: #148cff; }
+
+.app-window[id="pubg-bingo-Window"] {
+    width: 75vw;
+    height: 70vh;
+    left: 12vw;
+    top: 10vh;
+}
+
+.mac-toggle-btn {
+    transition: background-color 0.2s cubic-bezier(0.25, 1, 0.5, 1), transform 0.1s ease;
+}
+.mac-toggle-btn:active {
+    transform: scale(0.96);
+}
