@@ -9,12 +9,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Space+Mono:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap');
         
         :root {
             --bg-main: #0c0c0e;
+            --bg-sidebar: rgba(30, 30, 32, 0.6);
             --bg-glass-active: rgba(255, 255, 255, 0.04);
-            --bg-glass-passive: rgba(255, 255, 255, 0.015);
             --border-glass: rgba(255, 255, 255, 0.06);
             --mac-blue: #007aff;
             --mac-blue-hover: #148cff;
@@ -26,173 +26,147 @@
         
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 20px 24px; overflow-y: auto; box-sizing: border-box;
-            min-height: 100vh; user-select: none; position: relative;
+            margin: 0; padding: 0; overflow: hidden; box-sizing: border-box; height: 100vh; user-select: none;
         }
 
         .network-badge { 
             position: absolute; top: 12px; left: 20px; display: flex; align-items: center; gap: 6px; 
-            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.3); 
-            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); 
+            font-size: 11px; color: #34c759; font-weight: 600; background: rgba(0,0,0,0.4); 
+            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); z-index: 99;
         }
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
-        .container {
-            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
+        /* 🛠️ MacOS 시스템 설정 뷰 스타일의 2분할 레이아웃으로 싹 리디자인 */
+        .mac-settings-window {
+            display: grid; grid-template-columns: 320px 1fr; width: 100vw; height: 100vh; background: var(--bg-main);
         }
 
-        .app-content {
-            display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: stretch; width: 100%;
-        }
-        
-        .left-column {
-            display: flex; flex-direction: column; gap: 14px;
+        /* 왼쪽 시스템 사이드바 */
+        .mac-sidebar {
+            background: var(--bg-sidebar); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--border-glass); padding: 50px 16px 20px 16px;
+            display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; height: 100%; min-width: 0;
         }
 
-        /* 🛠️ MacOS 설정 뷰 디자인 컴팩트화 */
-        .setup-box {
-            background: var(--bg-glass-active); border: 1px solid var(--border-glass);
-            border-radius: 16px; padding: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; gap: 12px; backdrop-filter: blur(30px);
-            box-sizing: border-box;
+        .sidebar-section-title {
+            font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase;
+            letter-spacing: 0.5px; padding-left: 8px; margin-bottom: 4px;
         }
-        
-        .mac-settings-group {
-            display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); 
-            border: 1px solid var(--border-glass); border-radius: 10px; overflow: hidden;
+
+        .mac-list-group {
+            background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); border-radius: 10px;
+            overflow: hidden; display: flex; flex-direction: column; width: 100%; box-sizing: border-box;
         }
-        
-        .mac-settings-row {
+
+        .mac-list-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); min-height: 48px; box-sizing: border-box;
+            padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); min-height: 40px; box-sizing: border-box;
         }
-        .mac-settings-row:last-child { border-bottom: none; }
-        
-        .row-info { display: flex; flex-direction: column; gap: 2px; }
-        .row-title { font-size: 12.5px; font-weight: 600; color: #ffffff; }
-        .row-desc { font-size: 10.5px; color: var(--text-gray); }
-        
-        .mac-select-wrapper { width: 130px; }
+        .mac-list-row:last-child { border-bottom: none; }
+        .row-title { font-size: 12px; font-weight: 500; color: #ffffff; }
+
         .mac-select {
-            background: rgba(255,255,255,0.06); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 3px 6px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; width: 100%; box-sizing: border-box; height: 26px;
+            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 5px; padding: 2px 4px; font-size: 11.5px; outline: none; cursor: pointer; width: 105px; height: 24px; text-align: right;
         }
         .mac-select option { background: #1c1c1e; color: #fff; }
 
-        /* 참여 팀 목록 고정 스펙 고도화 */
-        .team-manager-zone {
-            display: flex; flex-direction: column; gap: 8px; width: 100%;
-        }
-        .zone-title { font-size: 11px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .team-list-container {
-            display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 2px;
+        /* 팀 관리 리스트 고정 높이 지정 및 내부 스크롤 완벽 대응 */
+        .team-scroll-area {
+            flex: 1; overflow-y: auto; max-height: 180px; padding-right: 2px; display: flex; flex-direction: column; gap: 6px;
         }
         
-        .team-row-item {
-            display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center;
-            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 10px;
-            cursor: pointer; transition: border-color 0.15s; height: 38px; box-sizing: border-box;
+        .team-item-row {
+            display: grid; grid-template-columns: auto 1fr auto auto; gap: 8px; align-items: center;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+            padding: 6px 10px; border-radius: 8px; height: 36px; box-sizing: border-box; cursor: pointer;
         }
-        .team-row-item.selected-marker {
-            border-color: var(--mac-blue); background: rgba(0, 122, 255, 0.05);
+        .team-item-row.selected-marker {
+            border-color: var(--mac-blue); background: rgba(0, 122, 255, 0.12);
         }
-        .team-color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .team-name-text { font-size: 12.5px; font-weight: 600; color: #fff; }
-        
+        .team-color-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .team-name-text { font-size: 12px; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
         .chicken-stepper {
-            display: flex; align-items: center; background: rgba(255,255,255,0.04); border-radius: 5px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;
+            display: flex; align-items: center; background: rgba(255,255,255,0.04); border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; height: 20px;
         }
-        .chicken-btn { background: transparent; border: none; color: #fff; font-size: 11px; padding: 2px 6px; cursor: pointer; }
+        .chicken-btn { background: transparent; border: none; color: #fff; font-size: 10px; padding: 0 5px; cursor: pointer; height: 100%; }
         .chicken-btn:hover { background: rgba(255,255,255,0.1); }
-        .chicken-count { font-size: 11px; font-weight: 700; width: 28px; text-align: center; color: #ffd60a; font-family: 'Space Mono', monospace; }
+        .chicken-count { font-size: 11px; font-weight: 700; width: 22px; text-align: center; color: #ffd60a; font-family: 'Space Mono', monospace; }
 
-        .btn-action-base { 
-            height: 36px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; 
-            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); font-size: 13px; width: 100%;
+        /* 맥 버튼 디자인 통일 */
+        .mac-btn {
+            height: 30px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer;
+            border: 1px solid var(--border-glass); transition: all 0.15s; box-sizing: border-box;
         }
-        .btn-apply { background: var(--mac-blue); color: #ffffff; border-color: var(--mac-blue); }
-        .btn-apply:hover { background: var(--mac-blue-hover); box-shadow: 0 4px 12px rgba(0,122,255,0.3); }
+        .mac-btn.primary { background: var(--mac-blue); color: #fff; border-color: var(--mac-blue); font-weight: 600; }
+        .mac-btn.primary:hover { background: var(--mac-blue-hover); }
+        .mac-btn.secondary { background: rgba(255,255,255,0.04); color: #fff; }
+        .mac-btn.secondary:hover { background: rgba(255,255,255,0.08); }
+        .mac-btn.danger { background: rgba(255, 69, 58, 0.06); color: #ff453a; border-color: rgba(255, 69, 58, 0.15); }
+        .mac-btn.danger:hover { background: #ff453a; color: #fff; }
         
-        .btn-add { background: rgba(255,255,255,0.03); border-color: var(--border-glass); color: #fff; height: 32px; border-radius: 6px; font-size: 11.5px; cursor: pointer; }
-        .btn-add:hover { background: rgba(255,255,255,0.08); }
-        
-        .btn-reset { background: rgba(255, 69, 58, 0.05); color: #ff453a; border-color: rgba(255, 69, 58, 0.15); height: 32px; font-size: 12px; border-radius: 6px;}
-        .btn-reset:hover { background: #ff453a; color: #fff; }
-        .btn-trash { background: transparent; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; }
-        .btn-trash svg { width: 14px; height: 14px; fill: #ff453a; }
+        .btn-trash { background: transparent; border: none; cursor: pointer; padding: 2px; display: flex; align-items: center; }
+        .btn-trash svg { width: 13px; height: 13px; fill: #ff453a; }
 
-        .chicken-chance-bar {
-            background: rgba(255, 214, 10, 0.03); border: 1px solid rgba(255, 214, 10, 0.12); border-radius: 10px; padding: 10px 12px;
-            display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%;
-        }
-        .chance-title { font-size: 12.5px; font-weight: 700; color: #ffd60a; display: flex; align-items: center; gap: 6px; }
         .mac-toggle-btn {
-            background: rgba(255,255,255,0.05); color: #8e8e93; font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-glass); cursor: pointer; transition: all 0.2s;
+            background: rgba(255,255,255,0.06); color: #8e8e93; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; border: 1px solid var(--border-glass); cursor: pointer;
         }
-        .mac-toggle-btn.active {
-            background: #ffd60a; color: #000; border-color: #ffd60a; box-shadow: 0 0 10px rgba(255,214,10,0.3);
-        }
+        .mac-toggle-btn.active { background: #ffd60a; color: #000; border-color: #ffd60a; }
 
-        .right-column-area {
-            background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
-            display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; position: relative;
+        /* 오른쪽 메인 콘텐츠 대시보드 박스 */
+        .main-dashboard {
+            padding: 40px 30px 20px 30px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; height: 100vh; overflow: hidden;
         }
 
         .scoreboard-layout {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; width: 100%;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; width: 100%; flex-shrink: 0;
         }
         .score-card {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); padding: 8px 10px; border-radius: 10px; text-align: center;
+            background: rgba(20, 20, 22, 0.5); border: 1px solid var(--border-glass); padding: 10px 14px; border-radius: 12px; text-align: center; backdrop-filter: blur(20px);
         }
-        .score-card-title { font-size: 11.5px; font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .score-main-value { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 1px; }
-        .score-sub-value { font-size: 10.5px; color: #8e8e93; font-weight: 500; }
+        .score-card-title { font-size: 11.5px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .score-main-value { font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700; color: #fff; }
+        .score-sub-value { font-size: 10.5px; color: #8e8e93; }
 
+        /* 빙고판 격자 크기 강제 완전 고정 패치 */
         .bingo-board-wrapper {
-            width: 100%; display: flex; align-items: center; justify-content: center; padding: 10px 0;
+            flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 0;
         }
         .bingo-grid {
-            display: grid; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); 
-            padding: 16px; border-radius: 18px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
-            width: 100%; max-width: 580px; aspect-ratio: 1 / 1; box-sizing: border-box;
+            display: grid; gap: 6px; background: rgba(0,0,0,0.35); border: 1px solid var(--border-glass); 
+            padding: 16px; border-radius: 20px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+            width: 100%; max-width: 540px; aspect-ratio: 1 / 1; box-sizing: border-box;
         }
         
         .bingo-cell {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.03); border-radius: 6px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
-            font-family: 'Space Mono', monospace; font-weight: 700; color: #8e8e93; transition: all 0.12s ease; position: relative;
-            box-sizing: border-box; width: 100%; aspect-ratio: 1 / 1;
+            font-family: 'Space Mono', monospace; font-weight: 700; color: #8e8e93; transition: all 0.1s; position: relative; box-sizing: border-box;
         }
-        .bingo-cell:hover {
-            background: rgba(255,255,255,0.06); transform: scale(1.04); color: #fff; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+        .bingo-cell:hover { background: rgba(255,255,255,0.06); transform: scale(1.04); color: #fff; z-index: 2; }
         .bingo-cell.shield-locked::after {
-            content: '🍗'; position: absolute; bottom: 3px; right: 3px; font-size: 10px; filter: drop-shadow(0 0 2px #000);
+            content: '🍗'; position: absolute; bottom: 3px; right: 3px; font-size: 9px; filter: drop-shadow(0 0 2px #000);
         }
 
+        /* 알림창 */
         .mac-alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 99999;
         }
         .mac-alert-modal {
-            background: rgba(30, 30, 30, 0.75); border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(35, 35, 35, 0.85); border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 14px; width: 280px; padding: 20px 16px 14px 16px; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(25px);
-            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; gap: 4px; animation: macPop 0.18s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        @keyframes macPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes macPop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .mac-alert-msg-main { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
         .mac-alert-msg-sub { font-size: 11.5px; font-weight: 500; color: #a5a5a7; margin-bottom: 16px; line-height: 1.4; white-space: pre-line; }
         .mac-alert-btn-container { display: flex; gap: 8px; justify-content: center; }
-        .mac-alert-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
-        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .mac-alert-btn.confirm { background: #007aff; color: #ffffff; }
-
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 10px; }
+        .mac-alert-btn { flex: 1; padding: 6px 0; font-size: 12.5px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; }
+        .mac-alert-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+        .mac-alert-btn.confirm { background: var(--mac-blue); color: #ffffff; }
     </style>
 </head>
 <body>
@@ -207,110 +181,77 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="app-content">
-        <div class="left-column">
-            <!-- 🛠️ MacOS 시스템 설정 인터페이스 패널 그룹화 개편 -->
-            <div class="setup-box">
-                <div class="mac-settings-group">
-                    <div class="mac-settings-row">
-                        <div class="row-info">
-                            <span class="row-title">게임 모드</span>
-                            <span class="row-desc">일반 선점형 또는 뺏기 모드</span>
-                        </div>
-                        <div class="mac-select-wrapper">
-                            <select id="gameMode" class="mac-select">
-                                <option value="bingo" selected>일반 빙고</option>
-                                <option value="conquer">땅따먹기</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="mac-settings-row">
-                        <div class="row-info">
-                            <span class="row-title">빙고 칸 수</span>
-                            <span class="row-desc">보드 규격 크기 제어</span>
-                        </div>
-                        <div class="mac-select-wrapper">
-                            <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions()">
-                                <option value="3">3 x 3</option>
-                                <option value="4">4 x 4</option>
-                                <option value="5">5 x 5</option>
-                                <option value="8">8 x 8</option>
-                                <option value="10" selected>10 x 10</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mac-settings-row">
-                        <div class="row-info">
-                            <span class="row-title">내용물 형식</span>
-                            <span class="row-desc">칸 내부 데이터 마킹 종류</span>
-                        </div>
-                        <div class="mac-select-wrapper">
-                            <select id="contentType" class="mac-select">
-                                <option value="num" selected>숫자 (1~100)</option>
-                                <option value="alpha">알파벳 (A-Z)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mac-settings-row">
-                        <div class="row-info">
-                            <span class="row-title">정렬/배열 방식</span>
-                            <span class="row-desc">인덱스 풀 배치 방식</span>
-                        </div>
-                        <div class="mac-select-wrapper">
-                            <select id="arraySortMode" class="mac-select">
-                                <option value="origin" selected>오리지널 (순서)</option>
-                                <option value="random">무작위 (랜덤)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mac-settings-row">
-                        <div class="row-info">
-                            <span class="row-title">목표 빙고 수</span>
-                            <span class="row-desc">종료 트리거 라인 수</span>
-                        </div>
-                        <div class="mac-select-wrapper">
-                            <select id="targetBingo" class="mac-select"></select>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn-action-base btn-apply" onclick="applyNewGameSettings()">새 게임 적용 및 시작</button>
+<div class="mac-settings-window">
+    <!-- 왼쪽 사이드바 (환경설정 패널 컴포넌트화) -->
+    <div class="mac-sidebar">
+        <span class="sidebar-section-title">규칙 및 판 설정</span>
+        <div class="mac-list-group">
+            <div class="mac-list-row">
+                <span class="row-title">게임 모드</span>
+                <select id="gameMode" class="mac-select">
+                    <option value="bingo" selected>일반 빙고</option>
+                    <option value="conquer">땅따먹기</option>
+                </select>
             </div>
-
-            <div class="setup-box">
-                <div class="chicken-chance-bar">
-                    <div class="chance-title">🍗 치킨 고정 찬스</div>
-                    <button class="mac-toggle-btn" id="chanceToggle" onclick="toggleChickenChance()">OFF</button>
-                </div>
-                <div class="mac-settings-row" style="background:rgba(0,0,0,0.1); border-radius:10px; padding:8px 12px; min-height:40px;">
-                    <div class="row-info"><span class="row-desc">선택된 마킹 팀</span></div>
-                    <span id="currentTurnText" style="font-size:12.5px; font-weight:700; color:var(--mac-blue);">선택 대기</span>
-                </div>
+            <div class="mac-list-row">
+                <span class="row-title">빙고 칸 수</span>
+                <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions()">
+                    <option value="3">3 x 3</option>
+                    <option value="4">4 x 4</option>
+                    <option value="5">5 x 5</option>
+                    <option value="8">8 x 8</option>
+                    <option value="10" selected>10 x 10</option>
+                </select>
             </div>
-
-            <div class="setup-box team-manager-box" style="flex: 1;">
-                <div class="team-manager-zone">
-                    <span class="zone-title">참여 팀 관리</span>
-                    <div class="team-list-container" id="teamListContainer"></div>
-                    <button class="btn-add" onclick="addNewTeam()">+ 새로운 팀 추가</button>
-                </div>
+            <div class="mac-list-row">
+                <span class="row-title">내용물 형식</span>
+                <select id="contentType" class="mac-select">
+                    <option value="num" selected>숫자 (1-100)</option>
+                    <option value="alpha">알파벳 (A-Z)</option>
+                </select>
             </div>
-
-            <div class="setup-box">
-                <button class="btn-reset" onclick="askBingoReset()">빙고판 전체 데이터 초기화</button>
+            <div class="mac-list-row">
+                <span class="row-title">배열 방식</span>
+                <select id="arraySortMode" class="mac-select">
+                    <option value="origin" selected>오리지널</option>
+                    <option value="random">무작위 랜덤</option>
+                </select>
+            </div>
+            <div class="mac-list-row">
+                <span class="row-title">목표 빙고 수</span>
+                <select id="targetBingo" class="mac-select"></select>
             </div>
         </div>
 
-        <div class="right-column-area" id="resultContainer">
-            <div class="scoreboard-layout" id="scoreboardZone"></div>
-            <div class="bingo-board-wrapper">
-                <div class="bingo-grid" id="bingoGridContainer"></div>
+        <!-- 🛠️ 치명적 오류의 주범이었던 비동기 동기화 해제 후 일괄 트리거 버튼화 수동 격리 -->
+        <button class="mac-btn primary" onclick="executeApplyNewGame()">새 게임 적용 및 시작</button>
+
+        <span class="sidebar-section-title" style="margin-top: 8px;">획득 버프 컨트롤</span>
+        <div class="mac-list-group">
+            <div class="mac-list-row" style="min-height: 44px;">
+                <span class="row-title">🍗 치킨 고정 찬스</span>
+                <button class="mac-toggle-btn" id="chanceToggle" onclick="toggleChickenChance()">OFF</button>
             </div>
+            <div class="mac-list-row" style="background: rgba(0,0,0,0.1); min-height: 36px;">
+                <span class="row-title" style="color: var(--text-gray); font-size: 11px;">마킹 전용 타겟 팀</span>
+                <span id="currentTurnText" style="font-size: 11.5px; font-weight: 700; color: var(--mac-blue);">선택 대기</span>
+            </div>
+        </div>
+
+        <span class="sidebar-section-title" style="margin-top: 8px;">참여 팀 빌더</span>
+        <div class="team-scroll-area" id="teamListContainer"></div>
+        <button class="mac-btn secondary" onclick="addNewTeam()">+ 새로운 팀 생성</button>
+
+        <div style="margin-top: auto; padding-top: 10px;">
+            <button class="mac-btn danger" onclick="askBingoReset()">빙고판 전체 완전 초기화</button>
+        </div>
+    </div>
+
+    <!-- 오른쪽 메인 대시보드 -->
+    <div class="main-dashboard" id="resultContainer">
+        <div class="scoreboard-layout" id="scoreboardZone"></div>
+        <div class="bingo-board-wrapper">
+            <div class="bingo-grid" id="bingoGridContainer"></div>
         </div>
     </div>
 </div>
@@ -345,6 +286,30 @@
     let activeTurnIndex = 0;
     let localWinTriggered = false;
 
+    function openMacAlert(title, subText, type, onConfirm) {
+        const overlay = document.getElementById("macAlertOverlay");
+        document.getElementById("macAlertTitle").innerText = title;
+        document.getElementById("macAlertSub").innerText = subText;
+        const btnBox = document.getElementById("macAlertBtnBox");
+        btnBox.innerHTML = "";
+
+        if (type === "confirm") {
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "mac-alert-btn cancel"; cancelBtn.innerText = "취소";
+            cancelBtn.onclick = () => { overlay.style.display = "none"; };
+            const confirmBtn = document.createElement("button");
+            confirmBtn.className = "mac-alert-btn confirm"; confirmBtn.innerText = "확인";
+            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
+            btnBox.appendChild(cancelBtn); btnBox.appendChild(confirmBtn);
+        } else {
+            const alertBtn = document.createElement("button");
+            alertBtn.className = "mac-alert-btn confirm"; alertBtn.innerText = "확인";
+            alertBtn.onclick = () => { overlay.style.display = "none"; };
+            btnBox.appendChild(alertBtn);
+        }
+        overlay.style.display = "flex";
+    }
+
     function updateTargetBingoOptions() {
         const size = parseInt(document.getElementById("boardSize").value);
         const targetSelect = document.getElementById("targetBingo");
@@ -357,7 +322,7 @@
         }
         targetSelect.innerHTML += `<option value="999">올빙고 (All)</option>`;
         
-        if (currentVal && parseInt(currentVal) <= maxBingo) targetSelect.value = currentVal;
+        if (currentVal) targetSelect.value = currentVal;
         else targetSelect.value = "3";
     }
     updateTargetBingoOptions();
@@ -371,8 +336,8 @@
         return array;
     }
 
-    // 🛠️ 핵심 해결: 유저가 적용 버튼을 누를 때만 파이어베이스 트랜잭션 패키지를 일괄 밀어넣도록 설계 변경 (스크립트 락 완전 방지)
-    function applyNewGameSettings() {
+    // 🛠️ 수동 세팅 전송: 모듈 일괄 주입으로 비동기 스크립트 충돌 원천 차단
+    function executeApplyNewGame() {
         const size = parseInt(document.getElementById("boardSize").value);
         const cType = document.getElementById("contentType").value;
         const sMode = document.getElementById("arraySortMode").value;
@@ -380,7 +345,7 @@
         const gameMode = document.getElementById("gameMode").value;
 
         if (size >= 8 && cType === "alpha") {
-            openMacAlert("알파벳 모드 제한", "알파벳 전용 모드는 26글자 고정 한계로 인해\n5x5 이하 크기의 빙고판에서만 실행이 허용됩니다.", "alert");
+            openMacAlert("알파벳 제한 안내", "알파벳 전용 모드는 26자 고정 제한으로 인해\n5x5 이하 크기의 빙고판에서만 개설할 수 있습니다.", "alert");
             return;
         }
 
@@ -406,19 +371,11 @@
         localWinTriggered = false;
         
         db.update({
-            config: {
-                gameMode: gameMode,
-                boardSize: size,
-                contentType: cType,
-                arraySortMode: sMode,
-                targetBingo: targetBingo
-            },
+            config: { gameMode, boardSize: size, contentType: cType, arraySortMode: sMode, targetBingo },
             matrixSeed: matrixMap,
             cells: null
-        }, (error) => {
-            if(!error) {
-                openMacAlert("적용 완료", "새로운 게임 설정과 빙고판 배열이\n실시간 허브에 안정적으로 동기화되었습니다.", "alert");
-            }
+        }, (err) => {
+            if(!err) openMacAlert("시스템 동기화 완료", "새로운 설정으로 격자판 배열이 안전하게 재생성되었습니다.", "alert");
         });
     }
 
@@ -468,7 +425,6 @@
             { id: 0, name: "A팀 (블루)", color: sysColors[0].hex, chickens: 0 },
             { id: 1, name: "B팀 (레드)", color: sysColors[1].hex, chickens: 0 }
         ];
-        
         let matrixMap = {};
         for(let i=0; i<100; i++) matrixMap[i] = String(i + 1);
 
@@ -488,7 +444,7 @@
         serverTeams.forEach((team, idx) => {
             const isSelected = (idx === activeTurnIndex);
             let item = document.createElement("div");
-            item.className = `team-row-item ${isSelected ? 'selected-marker' : ''}`;
+            item.className = `team-item-row ${isSelected ? 'selected-marker' : ''}`;
             item.onclick = () => { if(!isOperating) db.child("activeTurnIndex").set(idx); };
             
             item.innerHTML = `
@@ -496,7 +452,7 @@
                 <span class="team-name-text">${team.name}</span>
                 <div class="chicken-stepper" onclick="event.stopPropagation()">
                     <button class="chicken-btn" onclick="adjustChicken(${idx}, -1)">-</button>
-                    <span class="chicken-count">🍗 ${team.chickens}</span>
+                    <span class="chicken-count">${team.chickens}</span>
                     <button class="chicken-btn" onclick="adjustChicken(${idx}, 1)">+</button>
                 </div>
                 <button class="btn-trash" onclick="event.stopPropagation(); removeTeamItem(${idx})">
@@ -509,23 +465,18 @@
 
     function addNewTeam() {
         if (serverTeams.length >= 6) {
-            openMacAlert("생성 불가", "최대 6개 팀까지만 참여 가능합니다.", "alert");
+            openMacAlert("생성 불가", "최대 6개 팀까지만 개설 가능합니다.", "alert");
             return;
         }
         let nextColor = sysColors[serverTeams.length % sysColors.length].hex;
         let alphabet = ["A", "B", "C", "D", "E", "F"][serverTeams.length];
-        serverTeams.push({
-            id: Date.now(),
-            name: `${alphabet}팀`,
-            color: nextColor,
-            chickens: 0
-        });
+        serverTeams.push({ id: Date.now(), name: `${alphabet}팀`, color: nextColor, chickens: 0 });
         db.child("teams").set(serverTeams);
     }
 
     function removeTeamItem(idx) {
         if (serverTeams.length <= 1) {
-            openMacAlert("삭제 불가", "최소 1개 이상의 팀이 존재해야 합니다.", "alert");
+            openMacAlert("삭제 불가", "최소 1개 팀은 존재해야 게임 운용이 가능합니다.", "alert");
             return;
         }
         serverTeams.splice(idx, 1);
@@ -544,7 +495,7 @@
         if (serverTeams.length === 0) return;
         const currentTeam = serverTeams[activeTurnIndex];
         if (!localChickenChanceActive && (!currentTeam.chickens || currentTeam.chickens <= 0)) {
-            openMacAlert("잔여 치킨 부족", "선택된 팀에 보유한 치킨이 없어 방어 고정 찬스를 쓸 수 없습니다.", "alert");
+            openMacAlert("잔여 치킨 부족", "선택된 팀에 획득한 치킨 개수가 없어 방어막 고정 찬스를 쓸 수 없습니다.", "alert");
             return;
         }
         localChickenChanceActive = !localChickenChanceActive;
@@ -571,7 +522,6 @@
                 let box = document.createElement("div");
                 box.className = "bingo-cell";
                 box.style.fontSize = fSize;
-                box.style.letterSpacing = "-0.5px";
                 box.innerText = currentMatrixSeed[cellIndex] || String(cellIndex + 1);
 
                 if (cellData) {
@@ -599,7 +549,7 @@
                 adjustChicken(activeTurnIndex, 1);
                 return;
             }
-            openMacAlert("점령 불가", "치킨 방어막으로 고정된 타 팀의 칸은 침범할 수 없습니다.", "alert");
+            openMacAlert("방어막 작동 칸", "치킨 방어막으로 영구 고정된 상대 팀의 칸은 뺏을 수 없습니다.", "alert");
             return;
         }
 
@@ -609,31 +559,22 @@
         }
 
         if (targetCell && targetCell.color !== currentTeam.color && mode === "bingo") {
-            openMacAlert("선점 완료 칸", "일반 빙고 모드에서는 타 팀이 이미 칠한 칸을 빼앗을 수 없습니다.", "alert");
+            openMacAlert("선점 완료", "일반 빙고 모드에서는 선점된 타 팀의 영역을 침범할 수 없습니다.", "alert");
             return;
         }
 
         if (localChickenChanceActive) {
-            db.child(`cells/${cellId}`).set({
-                color: currentTeam.color,
-                teamName: currentTeam.name,
-                shield: true
-            });
+            db.child(`cells/${cellId}`).set({ color: currentTeam.color, teamName: currentTeam.name, shield: true });
             adjustChicken(activeTurnIndex, -1);
             toggleChickenChance();
         } else {
-            db.child(`cells/${cellId}`).set({
-                color: currentTeam.color,
-                teamName: currentTeam.name,
-                shield: false
-            });
+            db.child(`cells/${cellId}`).set({ color: currentTeam.color, teamName: currentTeam.name, shield: false });
         }
     }
 
     function calculateAndRenderScores(size, targetBingo) {
         const scoreboard = document.getElementById("scoreboardZone");
         scoreboard.innerHTML = "";
-        
         let totalCellsCount = size * size;
 
         serverTeams.forEach(team => {
@@ -643,17 +584,12 @@
             for (let r = 0; r < size; r++) {
                 for (let c = 0; c < size; c++) {
                     let cell = serverCells[`cell_${r}_${c}`];
-                    if (cell && cell.color === team.color) {
-                        occupied++;
-                        matrix[r][c] = true;
-                    }
+                    if (cell && cell.color === team.color) { occupied++; matrix[r][c] = true; }
                 }
             }
 
             let bingoLines = 0;
-            for (let r = 0; r < size; r++) {
-                if (matrix[r].every(v => v)) bingoLines++;
-            }
+            for (let r = 0; r < size; r++) { if (matrix[r].every(v => v)) bingoLines++; }
             for (let c = 0; c < size; c++) {
                 let colCheck = true;
                 for (let r = 0; r < size; r++) { if (!matrix[r][c]) { colCheck = false; break; } }
@@ -662,24 +598,20 @@
             let diag1 = true;
             for (let i = 0; i < size; i++) { if (!matrix[i][i]) { diag1 = false; break; } }
             if (diag1) bingoLines++;
-            
             let diag2 = true;
             for (let i = 0; i < size; i++) { if (!matrix[i][size - 1 - i]) { diag2 = false; break; } }
             if (diag2) bingoLines++;
 
             let pct = totalCellsCount > 0 ? Math.round((occupied / totalCellsCount) * 100) : 0;
             let isAllBingoMode = (targetBingo === 999);
-
             let displayScoreText = isAllBingoMode ? `${occupied} / ${totalCellsCount} 칸` : `${bingoLines} / ${targetBingo} 줄`;
 
             let card = document.createElement("div");
             card.className = "score-card";
             card.innerHTML = `
-                <div class="score-card-title" style="color: ${team.color}">
-                    <span class="team-color-dot" style="background: ${team.color}"></span> ${team.name}
-                </div>
+                <div class="score-card-title" style="color: ${team.color}"><span class="team-color-dot" style="background: ${team.color}"></span> ${team.name}</div>
                 <div class="score-main-value">${displayScoreText}</div>
-                <div class="score-sub-value">달성도 및 점유율 ${pct}%</div>
+                <div class="score-sub-value">달성 및 점유율 ${pct}%</div>
             `;
             scoreboard.appendChild(card);
 
@@ -687,35 +619,27 @@
 
             if (winCondition && !localWinTriggered) {
                 localWinTriggered = true;
-                let msg = isAllBingoMode ? `판의 모든 칸(${totalCellsCount}칸)을 전부 점령하여 승리했습니다!` : `${targetBingo}줄 빙고를 먼저 완성하여 승리했습니다!`;
-                
-                setTimeout(() => {
-                    openMacAlert("🏆 목표 달성 완료", `축하합니다!\n${team.name}이(가) ${msg}`, "alert");
-                }, 100);
+                let msg = isAllBingoMode ? `모든 칸을 차지했습니다!` : `${targetBingo}줄 빙고를 먼저 달성했습니다!`;
+                setTimeout(() => { openMacAlert("🏆 승리 팀 확정", `축하합니다!\n${team.name}이(가) 목표 스펙을 달성했습니다.`, "alert"); }, 100);
             }
         });
     }
 
-    // 🛠️ 초기화 로직 보강: 전체 구조 초기 프리셋 강제 덮어쓰기
+    // 🛠️ 초기화 오류 완전 해결: 이제 클릭 시 완벽하게 'cells'와 'teams'를 클리어하여 리셋 보장
     function askBingoReset() {
-        openMacAlert("전체 초기화", "칸 점령 기록과 스코어뿐만 아니라\n참여 팀 목록도 기본값(A팀, B팀)으로 완벽히 초기화하시겠습니까?", "confirm", () => {
+        openMacAlert("전체 초기화", "모든 칸 점령 현황과 점수, 그리고 추가된 팀 목록을 지우고 완전히 처음 상태로 되돌리시겠습니까?", "confirm", () => {
             localWinTriggered = false;
             let defaultTeams = [
                 { id: 0, name: "A팀 (블루)", color: sysColors[0].hex, chickens: 0 },
                 { id: 1, name: "B팀 (레드)", color: sysColors[1].hex, chickens: 0 }
             ];
-            
             let matrixMap = {};
             let size = parseInt(document.getElementById("boardSize").value) || 10;
             for(let i=0; i<(size*size); i++) matrixMap[i] = String(i + 1);
 
-            db.update({
-                cells: null,
-                teams: defaultTeams,
-                activeTurnIndex: 0,
-                matrixSeed: matrixMap
+            db.update({ cells: null, teams: defaultTeams, activeTurnIndex: 0, matrixSeed: matrixMap }, (err) => {
+                if(!err && localChickenChanceActive) toggleChickenChance();
             });
-            if (localChickenChanceActive) toggleChickenChance();
         });
     }
 </script>
