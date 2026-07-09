@@ -218,22 +218,30 @@
                 </div>
 
                 <div class="control-system-row">
+                    <!-- 🛠️ 내용물 형식에서 '믹스' 삭제 및 단순화 고도화 -->
                     <div class="form-row">
-                        <span class="form-label">내용물 설정</span>
-                        <select id="contentType" class="mac-select" onchange="changeContentTypeReset()">
+                        <span class="form-label">내용물 형식</span>
+                        <select id="contentType" class="mac-select" onchange="changeMatrixStructureReset()">
                             <option value="num" selected>숫자 (1~100)</option>
-                            <option value="mix">숫자 + 알파벳 (랜덤)</option>
                             <option value="alpha">알파벳 전용 (A-Z)</option>
                         </select>
                     </div>
-                    <div class="form-row" id="turnIndicatorRow">
-                        <span class="form-label">현재 선택된 마킹 팀</span>
-                        <span id="currentTurnText" style="font-size: 13px; font-weight: 700; color: var(--mac-blue);">선택 대기</span>
+                    <!-- 🛠️ 오리지널 배치 vs 무작위 랜덤 섞기 스위치 신설 -->
+                    <div class="form-row">
+                        <span class="form-label">정렬/배열 방식</span>
+                        <select id="arraySortMode" class="mac-select" onchange="changeMatrixStructureReset()">
+                            <option value="origin" selected>오리지널 (순서대로)</option>
+                            <option value="random">무작위 (랜덤 정렬)</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="control-system-row">
-                    <div class="form-row" style="grid-column: span 2; width: 100%;">
+                    <div class="form-row" id="turnIndicatorRow">
+                        <span class="form-label">현재 선택된 마킹 팀</span>
+                        <span id="currentTurnText" style="font-size: 13px; font-weight: 700; color: var(--mac-blue);">선택 대기</span>
+                    </div>
+                    <div class="form-row">
                         <span class="form-label">목표 빙고 수</span>
                         <select id="targetBingo" class="mac-select" onchange="pushConfigToFirebase()"></select>
                     </div>
@@ -346,51 +354,62 @@
             gameMode: document.getElementById("gameMode").value,
             boardSize: parseInt(document.getElementById("boardSize").value),
             contentType: document.getElementById("contentType").value,
+            arraySortMode: document.getElementById("arraySortMode").value,
             targetBingo: parseInt(document.getElementById("targetBingo").value)
         });
     }
 
-    // 🛠️ 핵심 변경 로직: 8x8, 10x10 크기에서는 알파벳 전용 선택 불가 인터셉터 추가
-    function changeContentTypeReset() {
+    // 🛠️ 배열 방식 대응 커스텀 셔플 유틸리티 함수
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[arr[j] ? j : i]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 🛠️ 내용물 및 정렬 모드 결합 동적 패키지
+    function changeMatrixStructureReset() {
         const size = parseInt(document.getElementById("boardSize").value);
         const cType = document.getElementById("contentType").value;
+        const sMode = document.getElementById("arraySortMode").value;
 
+        // 알파벳 전용 선택 시 크기 예외 규칙 감시
         if (size >= 8 && cType === "alpha") {
             openMacAlert("설정 불가", "알파벳 전용 모드는 26글자 제한으로 인해\n5x5 이하 크기의 빙고판에서만 선택할 수 있습니다.", "alert");
-            // 기존 서버 세팅 타입으로 드롭다운 롤백 복구
             db.child("config/contentType").once("value", (snap) => {
                 document.getElementById("contentType").value = snap.val() || "num";
             });
             return;
         }
 
-        openMacAlert("내용물 변경 안내", "내용물 형식을 변경하면 동기화를 위해 현재 판의 칸 점령 데이터가 리셋됩니다.", "confirm", () => {
+        openMacAlert("구조 변경 안내", "형식을 변경하면 동기화를 위해 현재 판의 칸 점령 데이터가 리셋됩니다.", "confirm", () => {
             const totalCells = size * size;
             let matrixMap = {};
+            let tempPool = [];
             const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             
-            if (cType === "mix") {
-                let pool = [];
-                for(let i=1; i<=100; i++) pool.push(String(i));
-                for(let i=0; i<alphas.length; i++) pool.push(alphas[i]);
-                
-                for(let i=0; i<totalCells; i++) {
-                    let randIdx = Math.floor(Math.random() * pool.length);
-                    matrixMap[i] = pool[randIdx];
-                }
-            } else if (cType === "alpha") {
-                for(let i=0; i<totalCells; i++) {
-                    matrixMap[i] = alphas[i % alphas.length];
-                }
+            // 1단계: 원본 풀 데이터 바인딩
+            if (cType === "alpha") {
+                for(let i=0; i<totalCells; i++) tempPool.push(alphas[i % alphas.length]);
             } else {
-                for(let i=0; i<totalCells; i++) {
-                    matrixMap[i] = String(i + 1);
-                }
+                for(let i=1; i<=totalCells; i++) tempPool.push(String(i));
+            }
+
+            // 2단계: 랜덤 셔플 적용 가부 판단
+            if (sMode === "random") {
+                tempPool = shuffleArray(tempPool);
+            }
+
+            // 3단계: 매트릭스 인덱스 사상
+            for(let i=0; i<totalCells; i++) {
+                matrixMap[i] = tempPool[i];
             }
             
             localWinTriggered = false;
             db.update({
                 "config/contentType": cType,
+                "config/arraySortMode": sMode,
                 "config/boardSize": size,
                 "matrixSeed": matrixMap,
                 "cells": null
@@ -402,13 +421,12 @@
         const size = parseInt(document.getElementById("boardSize").value);
         const cType = document.getElementById("contentType").value;
 
-        // 크기를 키웠는데 마침 기존 선택이 알파벳이었던 상황 대응 예외처리
         if (size >= 8 && cType === "alpha") {
-            document.getElementById("contentType").value = "num"; // 기본 숫자로 강제 변환 유도
+            document.getElementById("contentType").value = "num"; 
         }
 
         db.child("config/boardSize").set(size);
-        setTimeout(() => { changeContentTypeReset(); }, 100);
+        setTimeout(() => { changeMatrixStructureReset(); }, 100);
     }
 
     db.on("value", (snapshot) => {
@@ -427,6 +445,7 @@
                 updateTargetBingoOptions();
             }
             document.getElementById("contentType").value = data.config.contentType;
+            document.getElementById("arraySortMode").value = data.config.arraySortMode || "origin";
             document.getElementById("targetBingo").value = data.config.targetBingo;
         }
 
@@ -464,7 +483,7 @@
         for(let i=0; i<100; i++) matrixMap[i] = String(i + 1);
 
         db.set({
-            config: { gameMode: "bingo", boardSize: 10, contentType: "num", targetBingo: 3 },
+            config: { gameMode: "bingo", boardSize: 10, contentType: "num", arraySortMode: "origin", targetBingo: 3 },
             teams: initialTeams,
             activeTurnIndex: 0,
             matrixSeed: matrixMap,
@@ -687,13 +706,22 @@
         });
     }
 
+    // 🛠️ 핵심 반영: 초기화 진행 시 'teams' 노드까지 초기 프리셋 상태로 리셋
     function askBingoReset() {
-        openMacAlert("판 초기화", "현재 채워진 모든 빙고 칸 정보를 초기화하고 완전히 새로 시작하시겠습니까?", "confirm", () => {
+        openMacAlert("전체 초기화", "칸 점령 기록과 스코어뿐만 아니라\n참여 팀 목록도 기본값(A팀, B팀)으로 완벽히 초기화하시겠습니까?", "confirm", () => {
             localWinTriggered = false;
-            db.child("cells").set(null);
-            serverTeams.forEach(t => t.chickens = 0);
-            db.child("teams").set(serverTeams);
-            db.child("activeTurnIndex").set(0);
+            
+            let defaultTeams = [
+                { id: 0, name: "A팀 (블루)", color: sysColors[0].hex, chickens: 0 },
+                { id: 1, name: "B팀 (레드)", color: sysColors[1].hex, chickens: 0 }
+            ];
+
+            db.update({
+                cells: null,
+                teams: defaultTeams,
+                activeTurnIndex: 0
+            });
+            
             if (localChickenChanceActive) toggleChickenChance();
         });
     }
