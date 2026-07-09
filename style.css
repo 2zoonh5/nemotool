@@ -260,3 +260,32 @@ body.bg-nebula {
     white-space: nowrap;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
 }
+
+.nav-buttons, 
+.window-header .nav-buttons,
+#folderWindow .nav-buttons {
+    display: none !important;
+}
+
+.window-header {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+    background: #1e1e1f !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.window-title {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+}
+
+.mac-buttons {
+    margin-left: auto !important;
+    z-index: 10 !important;
+}
