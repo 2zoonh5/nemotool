@@ -25,8 +25,8 @@
         
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 20px 24px; overflow: hidden; box-sizing: border-box;
-            height: 100vh; user-select: none; position: relative;
+            margin: 0; padding: 20px 24px; overflow-y: auto; box-sizing: border-box;
+            min-height: 100vh; user-select: none; position: relative;
         }
 
         .network-badge { 
@@ -37,15 +37,15 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1450px; margin: 0 auto; width: 100%; height: calc(100vh - 40px); display: flex; flex-direction: column; gap: 16px;
+            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
         }
 
         .app-content {
-            display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: stretch; width: 100%; height: 100%;
+            display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: stretch; width: 100%;
         }
         
         .left-column {
-            display: flex; flex-direction: column; gap: 16px; height: 100%; overflow-y: auto; padding-right: 2px;
+            display: flex; flex-direction: column; gap: 16px;
         }
 
         .setup-box {
@@ -124,11 +124,10 @@
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
             border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
             display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; position: relative;
-            height: 100%; max-height: calc(100vh - 40px); overflow: hidden;
         }
 
         .scoreboard-layout {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; width: 100%; flex-shrink: 0;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; width: 100%;
         }
         .score-card {
             background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 12px; text-align: center;
@@ -138,24 +137,28 @@
         .score-sub-value { font-size: 11px; color: #8e8e93; font-weight: 500; }
 
         .bingo-board-wrapper {
-            flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 0;
+            width: 100%; display: flex; align-items: center; justify-content: center; padding: 10px 0;
         }
+        
+        /* 🛠️ 수정 핵심: 가로 너비를 650px로 완전히 고정하고 그리드가 자동으로 정사각형 비율을 이루도록 설정 */
         .bingo-grid {
-            display: grid; gap: 5px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); 
-            padding: 14px; border-radius: 20px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
-            max-width: 100%; max-height: 100%; aspect-ratio: 1 / 1; box-sizing: border-box;
+            display: grid; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); 
+            padding: 16px; border-radius: 20px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+            width: 650px; box-sizing: border-box;
         }
+        
+        /* 🛠️ 수정 핵심: Grid의 자식 아이템들이 종횡비 1/1을 유지하도록 제어하여 무조건 정사각형으로 고정 */
         .bingo-cell {
             background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
             font-family: 'Space Mono', monospace; font-weight: 700; color: #8e8e93; transition: all 0.12s ease; position: relative;
-            box-sizing: border-box; width: 100%; height: 100%;
+            box-sizing: border-box; width: 100%; aspect-ratio: 1 / 1;
         }
         .bingo-cell:hover {
-            background: rgba(255,255,255,0.06); transform: scale(1.03); color: #fff; z-index: 2;
+            background: rgba(255,255,255,0.06); transform: scale(1.05); color: #fff; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .bingo-cell.shield-locked::after {
-            content: '🍗'; position: absolute; bottom: 2px; right: 2px; font-size: 10px; filter: drop-shadow(0 0 2px #000);
+            content: '🍗'; position: absolute; bottom: 3px; right: 3px; font-size: 10px; filter: drop-shadow(0 0 2px #000);
         }
 
         .mac-alert-overlay {
@@ -255,7 +258,6 @@
                 </div>
             </div>
 
-            <!-- [개선 2] 초기화 버튼 전용 맥북 가공 박스 컨테이너 고도화 -->
             <div class="setup-box">
                 <button class="btn-action-base btn-reset" onclick="askBingoReset()">빙고판 전체 초기화</button>
             </div>
@@ -323,7 +325,6 @@
         overlay.style.display = "flex";
     }
 
-    // [개선 3] 올빙고(All) 옵션 반영 로직 추가 및 확장
     function updateTargetBingoOptions() {
         const size = parseInt(document.getElementById("boardSize").value);
         const targetSelect = document.getElementById("targetBingo");
@@ -334,7 +335,7 @@
         for(let i = 1; i <= maxBingo; i++) {
             targetSelect.innerHTML += `<option value="${i}">${i}줄 빙고</option>`;
         }
-        targetSelect.innerHTML += `<option value="999">올빙고 (All)</option>`; // 특수 식별 키값 지정
+        targetSelect.innerHTML += `<option value="999">올빙고 (All)</option>`;
         
         if (currentVal) targetSelect.value = currentVal;
         else targetSelect.value = "3";
@@ -491,14 +492,11 @@
         toggleBtn.innerText = localChickenChanceActive ? "ON" : "OFF";
     }
 
-    // [개선 1] 동적 격자 픽셀 계산을 제거하고 전적으로 CSS Aspect-Ratio와 상위 Flex 한계선 제어에 위임
     function renderBingoGridUI(size, type) {
         const grid = document.getElementById("bingoGridContainer");
         grid.innerHTML = "";
         grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
         
-        // 정밀 반응형 폰트 수치 매핑
         let fSize = "16px";
         if (size >= 8) fSize = "11px";
         else if (size >= 5) fSize = "13px";
@@ -527,22 +525,38 @@
         }
     }
 
+    // 🛠️ 수정 핵심: 내 팀이 이미 점유한 칸을 다시 클릭하면 취소(지우기)되도록 로직 업데이트
     function handleCellClick(cellId) {
         if (serverTeams.length === 0) return;
         const currentTeam = serverTeams[activeTurnIndex];
         const mode = document.getElementById("gameMode").value;
         const targetCell = serverCells[cellId];
 
+        // 1. 치킨 고정(방어막) 칸 예외 처리
         if (targetCell && targetCell.shield) {
-            openMacAlert("점령 불가", "치킨 방어막으로 고정된 칸은 뺏거나 지울 수 없습니다.", "alert");
+            // 예외: 만약 방어막 상태에서 내 팀이 다시 취소하고 싶은 경우 치킨을 1개 돌려주고 해제 처리
+            if (targetCell.color === currentTeam.color) {
+                db.child(`cells/${cellId}`).set(null);
+                adjustChicken(activeTurnIndex, 1);
+                return;
+            }
+            openMacAlert("점령 불가", "치킨 방어막으로 고정된 타 팀의 칸은 침범할 수 없습니다.", "alert");
             return;
         }
 
-        if (targetCell && mode === "bingo") {
-            openMacAlert("선점 완료 칸", "일반 빙고 모드에서는 이미 칠해진 칸을 뺏을 수 없습니다.", "alert");
+        // 2. 🌟 토글(지우기) 기능: 내 팀이 이미 일반 점령한 칸을 내가 다시 클릭하면 초기화(삭제)
+        if (targetCell && targetCell.color === currentTeam.color) {
+            db.child(`cells/${cellId}`).set(null);
             return;
         }
 
+        // 3. 일반 빙고 모드인데 다른 팀 주인이 이미 선점한 경우 타임어택 종료 처리
+        if (targetCell && targetCell.color !== currentTeam.color && mode === "bingo") {
+            openMacAlert("선점 완료 칸", "일반 빙고 모드에서는 타 팀이 이미 칠한 칸을 빼앗을 수 없습니다.", "alert");
+            return;
+        }
+
+        // 4. 빈 칸이거나 땅따먹기 룰에서 상대방 영역인 경우 칠하기 진행
         if (localChickenChanceActive) {
             db.child(`cells/${cellId}`).set({
                 color: currentTeam.color,
@@ -560,7 +574,6 @@
         }
     }
 
-    // [개선 3] 올빙고 달성 계산 로직 완벽 적용
     function calculateAndRenderScores(size, targetBingo) {
         const scoreboard = document.getElementById("scoreboardZone");
         scoreboard.innerHTML = "";
@@ -614,7 +627,6 @@
             `;
             scoreboard.appendChild(card);
 
-            // 승리 상단 플래시 팝업 조건 인터셉터
             let winCondition = isAllBingoMode ? (occupied === totalCellsCount) : (bingoLines >= targetBingo);
 
             if (winCondition && !isOperating) {
