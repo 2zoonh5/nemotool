@@ -261,31 +261,25 @@ body.bg-nebula {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
 }
 
-.nav-buttons, 
-.window-header .nav-buttons,
-#folderWindow .nav-buttons {
-    display: none !important;
-}
-
-.window-header {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    position: relative !important;
-    background: #1e1e1f !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-
-.window-title {
-    position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+.window-popup iframe {
+    border: none !important;
+    outline: none !important;
     margin: 0 !important;
-    color: #ffffff !important;
-    font-weight: 500 !important;
+    padding: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: calc(100% - 30px) !important;
+    background-color: #0c0c0e !important;
 }
 
-.mac-buttons {
-    margin-left: auto !important;
-    z-index: 10 !important;
+.window-popup {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #0c0c0e !important;
+}
+
+.window-body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #0c0c0e !important;
 }
