@@ -25,8 +25,8 @@
         
         body {
             background: var(--bg-main); color: #d1d1d6; font-family: 'Noto Sans KR', sans-serif;
-            margin: 0; padding: 20px 24px; overflow-y: auto; box-sizing: border-box;
-            min-height: 100vh; user-select: none; position: relative;
+            margin: 0; padding: 20px 24px; overflow: hidden; box-sizing: border-box;
+            height: 100vh; user-select: none; position: relative;
         }
 
         .network-badge { 
@@ -37,112 +37,117 @@
         .network-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; box-shadow: 0 0 8px #34c759; }
 
         .container {
-            max-width: 1450px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;
+            max-width: 1450px; margin: 0 auto; width: 100%; height: calc(100vh - 40px); display: flex; flex-direction: column; gap: 16px;
         }
 
         .app-content {
-            display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: stretch; width: 100%;
+            display: grid; grid-template-columns: 400px 1fr; gap: 24px; align-items: stretch; width: 100%; height: 100%;
         }
         
         .left-column {
-            display: flex; flex-direction: column; gap: 16px;
+            display: flex; flex-direction: column; gap: 14px; height: 100%; overflow: hidden;
         }
 
         .setup-box {
             background: var(--bg-glass-active); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 12px; backdrop-filter: blur(30px);
-            box-sizing: border-box;
+            border-radius: 18px; padding: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; gap: 10px; backdrop-filter: blur(30px);
+            box-sizing: border-box; flex-shrink: 0;
         }
         
-        .control-system-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .control-system-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
         
         .form-row { 
             display: flex; flex-direction: column; gap: 4px;
-            background: rgba(255,255,255,0.015); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border-glass); 
-            box-sizing: border-box; height: 62px; justify-content: center;
+            background: rgba(255,255,255,0.015); border-radius: 8px; padding: 8px 12px; border: 1px solid var(--border-glass); 
+            box-sizing: border-box; height: 56px; justify-content: center;
         }
-        .form-label { font-size: 11px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; margin-bottom: 2px; }
+        .form-label { font-size: 10.5px; font-weight: 700; color: #8e8e93; letter-spacing: -0.1px; margin-bottom: 1px; }
         
         .mac-select, .mac-input {
-            background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px; padding: 4px 10px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; width: 100%; box-sizing: border-box; height: 28px;
+            background: rgba(255,255,255,0.04); color: #ffffff; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 5px; padding: 2px 6px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; width: 100%; box-sizing: border-box; height: 26px;
         }
         .mac-select option { background: #1c1c1e; color: #fff; }
 
-        .team-manager-zone {
-            display: flex; flex-direction: column; gap: 10px; width: 100%;
+        /* 🛠️ 팀 매니저 높이 고정 및 내부 스크롤 안착 */
+        .team-manager-box {
+            flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px;
         }
-        .zone-title { font-size: 12px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        .team-manager-zone {
+            display: flex; flex-direction: column; gap: 10px; width: 100%; height: 100%; min-height: 0;
+        }
+        .zone-title { font-size: 11.5px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .team-list-container {
-            display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 4px;
+            display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; padding-right: 4px; box-sizing: border-box;
         }
         
         .team-row-item {
             display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center;
-            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 12px;
-            cursor: pointer; transition: border-color 0.15s;
+            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 10px;
+            cursor: pointer; transition: border-color 0.15s; height: 44px; box-sizing: border-box;
         }
         .team-row-item.selected-marker {
-            border-color: #ffffff; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+            border-color: #ffffff; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 8px rgba(255,255,255,0.08);
         }
-        .team-color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-        .team-name-text { font-size: 14px; font-weight: 600; color: #fff; }
+        .team-color-dot { width: 10px; height: 12px; border-radius: 50%; display: inline-block; aspect-ratio: 1/1; }
+        .team-name-text { font-size: 13px; font-weight: 600; color: #fff; }
         
         .chicken-stepper {
             display: flex; align-items: center; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
         }
-        .chicken-btn { background: transparent; border: none; color: #fff; font-size: 11px; padding: 4px 8px; cursor: pointer; }
+        .chicken-btn { background: transparent; border: none; color: #fff; font-size: 11px; padding: 2px 6px; cursor: pointer; }
         .chicken-btn:hover { background: rgba(255,255,255,0.1); }
-        .chicken-count { font-size: 12px; font-weight: 700; width: 34px; text-align: center; color: #ffd60a; font-family: 'Space Mono', monospace; }
+        .chicken-count { font-size: 11.5px; font-weight: 700; width: 30px; text-align: center; color: #ffd60a; font-family: 'Space Mono', monospace; }
 
         .btn-action-base { 
-            height: 40px; border-radius: 20px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; 
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); font-size: 13.5px;
+            height: 36px; border-radius: 18px; font-weight: 700; cursor: pointer; border: 1px solid transparent; box-sizing: border-box; 
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); font-size: 13px;
         }
-        .btn-add { background: rgba(255,255,255,0.04); border-color: var(--border-glass); color: #fff; width: 100%; height: 36px; border-radius: 8px; font-size: 12.5px; cursor: pointer; }
-        .btn-add:hover { background: rgba(255,255,255,0.1); }
-        .btn-reset { background: rgba(255, 69, 58, 0.06); color: #ff453a; border-color: rgba(255, 69, 58, 0.25); width: 100%; }
-        .btn-reset:hover { background: #ff453a; color: #fff; box-shadow: 0 4px 15px rgba(255,69,58,0.3); }
+        .btn-add { background: rgba(255,255,255,0.03); border-color: var(--border-glass); color: #fff; width: 100%; height: 34px; border-radius: 8px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+        .btn-add:hover { background: rgba(255,255,255,0.08); }
+        .btn-reset { background: rgba(255, 69, 58, 0.05); color: #ff453a; border-color: rgba(255, 69, 58, 0.2); width: 100%; height: 36px; }
+        .btn-reset:hover { background: #ff453a; color: #fff; box-shadow: 0 4px 12px rgba(255,69,58,0.25); }
         .btn-trash { background: transparent; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; }
-        .btn-trash svg { width: 16px; height: 16px; fill: #ff453a; }
+        .btn-trash svg { width: 14px; height: 14px; fill: #ff453a; }
 
         .chicken-chance-bar {
-            background: rgba(255, 214, 10, 0.04); border: 1px solid rgba(255, 214, 10, 0.15); border-radius: 12px; padding: 12px;
+            background: rgba(255, 214, 10, 0.03); border: 1px solid rgba(255, 214, 10, 0.12); border-radius: 12px; padding: 10px 14px;
             display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%;
         }
-        .chance-title { font-size: 13px; font-weight: 700; color: #ffd60a; display: flex; align-items: center; gap: 6px; }
+        .chance-title { font-size: 12.5px; font-weight: 700; color: #ffd60a; display: flex; align-items: center; gap: 6px; }
         .mac-toggle-btn {
-            background: rgba(255,255,255,0.06); color: #8e8e93; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-glass); cursor: pointer; transition: all 0.2s;
+            background: rgba(255,255,255,0.05); color: #8e8e93; font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-glass); cursor: pointer; transition: all 0.2s;
         }
         .mac-toggle-btn.active {
-            background: #ffd60a; color: #000; border-color: #ffd60a; box-shadow: 0 0 12px rgba(255,214,10,0.4);
+            background: #ffd60a; color: #000; border-color: #ffd60a; box-shadow: 0 0 10px rgba(255,214,10,0.3);
         }
 
         .right-column-area {
             background: var(--bg-glass-passive); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
-            display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; position: relative;
+            border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; position: relative;
+            height: 100%; overflow: hidden;
         }
 
         .scoreboard-layout {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; width: 100%;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; width: 100%;
         }
         .score-card {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 12px; text-align: center;
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); padding: 8px 10px; border-radius: 10px; text-align: center;
         }
-        .score-card-title { font-size: 12px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .score-main-value { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 1px; }
-        .score-sub-value { font-size: 11px; color: #8e8e93; font-weight: 500; }
+        .score-card-title { font-size: 11.5px; font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .score-main-value { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 1px; }
+        .score-sub-value { font-size: 10.5px; color: #8e8e93; font-weight: 500; }
 
         .bingo-board-wrapper {
-            width: 100%; display: flex; align-items: center; justify-content: center; padding: 10px 0;
+            flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 0;
         }
         .bingo-grid {
             display: grid; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); 
-            padding: 16px; border-radius: 20px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
-            width: 650px; box-sizing: border-box;
+            padding: 14px; border-radius: 18px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+            width: 100%; max-width: 580px; max-height: 100%; aspect-ratio: 1 / 1; box-sizing: border-box;
         }
         
         .bingo-cell {
@@ -152,7 +157,7 @@
             box-sizing: border-box; width: 100%; aspect-ratio: 1 / 1;
         }
         .bingo-cell:hover {
-            background: rgba(255,255,255,0.06); transform: scale(1.05); color: #fff; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.06); transform: scale(1.04); color: #fff; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .bingo-cell.shield-locked::after {
             content: '🍗'; position: absolute; bottom: 3px; right: 3px; font-size: 10px; filter: drop-shadow(0 0 2px #000);
@@ -207,7 +212,7 @@
                     </div>
                     <div class="form-row">
                         <span class="form-label">빙고 칸 수</span>
-                        <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions(); changeBoardSizeReset();">
+                        <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions(); changeMatrixStructureSilent();">
                             <option value="3">3 x 3</option>
                             <option value="4">4 x 4</option>
                             <option value="5">5 x 5</option>
@@ -218,20 +223,18 @@
                 </div>
 
                 <div class="control-system-row">
-                    <!-- 🛠️ 내용물 형식에서 '믹스' 삭제 및 단순화 고도화 -->
                     <div class="form-row">
                         <span class="form-label">내용물 형식</span>
-                        <select id="contentType" class="mac-select" onchange="changeMatrixStructureReset()">
+                        <select id="contentType" class="mac-select" onchange="changeMatrixStructureSilent()">
                             <option value="num" selected>숫자 (1~100)</option>
                             <option value="alpha">알파벳 전용 (A-Z)</option>
                         </select>
                     </div>
-                    <!-- 🛠️ 오리지널 배치 vs 무작위 랜덤 섞기 스위치 신설 -->
                     <div class="form-row">
                         <span class="form-label">정렬/배열 방식</span>
-                        <select id="arraySortMode" class="mac-select" onchange="changeMatrixStructureReset()">
-                            <option value="origin" selected>오리지널 (순서대로)</option>
-                            <option value="random">무작위 (랜덤 정렬)</option>
+                        <select id="arraySortMode" class="mac-select" onchange="changeMatrixStructureSilent()">
+                            <option value="origin" selected>오리지널 (순서)</option>
+                            <option value="random">무작위 (랜덤)</option>
                         </select>
                     </div>
                 </div>
@@ -239,7 +242,7 @@
                 <div class="control-system-row">
                     <div class="form-row" id="turnIndicatorRow">
                         <span class="form-label">현재 선택된 마킹 팀</span>
-                        <span id="currentTurnText" style="font-size: 13px; font-weight: 700; color: var(--mac-blue);">선택 대기</span>
+                        <span id="currentTurnText" style="font-size: 12px; font-weight: 700; color: var(--mac-blue);">선택 대기</span>
                     </div>
                     <div class="form-row">
                         <span class="form-label">목표 빙고 수</span>
@@ -255,7 +258,8 @@
                 </div>
             </div>
 
-            <div class="setup-box" style="flex: 1;">
+            <!-- 🛠️ 높이 고정 및 내부 스크롤 스펙 적용 완료 -->
+            <div class="setup-box team-manager-box">
                 <div class="team-manager-zone">
                     <span class="zone-title">참여 팀 선택 (칠할 팀 클릭)</span>
                     <div class="team-list-container" id="teamListContainer"></div>
@@ -307,30 +311,6 @@
     let activeTurnIndex = 0;
     let localWinTriggered = false;
 
-    function openMacAlert(title, subText, type, onConfirm) {
-        const overlay = document.getElementById("macAlertOverlay");
-        document.getElementById("macAlertTitle").innerText = title;
-        document.getElementById("macAlertSub").innerText = subText;
-        const btnBox = document.getElementById("macAlertBtnBox");
-        btnBox.innerHTML = "";
-
-        if (type === "confirm") {
-            const cancelBtn = document.createElement("button");
-            cancelBtn.className = "mac-alert-btn cancel"; cancelBtn.innerText = "취소";
-            cancelBtn.onclick = () => { overlay.style.display = "none"; };
-            const confirmBtn = document.createElement("button");
-            confirmBtn.className = "mac-alert-btn confirm"; confirmBtn.innerText = "확인";
-            confirmBtn.onclick = () => { overlay.style.display = "none"; if(onConfirm) onConfirm(); };
-            btnBox.appendChild(cancelBtn); btnBox.appendChild(confirmBtn);
-        } else {
-            const alertBtn = document.createElement("button");
-            alertBtn.className = "mac-alert-btn confirm"; alertBtn.innerText = "확인";
-            alertBtn.onclick = () => { overlay.style.display = "none"; };
-            btnBox.appendChild(alertBtn);
-        }
-        overlay.style.display = "flex";
-    }
-
     function updateTargetBingoOptions() {
         const size = parseInt(document.getElementById("boardSize").value);
         const targetSelect = document.getElementById("targetBingo");
@@ -359,73 +339,54 @@
         });
     }
 
-    // 🛠️ 배열 방식 대응 커스텀 셔플 유틸리티 함수
     function shuffleArray(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[arr[j] ? j : i]] = [arr[j], arr[i]];
+            [arr[i], arr[j]] = [arr[j], arr[i]];
         }
         return arr;
     }
 
-    // 🛠️ 내용물 및 정렬 모드 결합 동적 패키지
-    function changeMatrixStructureReset() {
+    // 🛠️ 대변혁: 매번 뜨던 알림창(Confirm) 레이어를 완전히 걷어내고 백그라운드 자동 갱신 체계로 가공
+    function changeMatrixStructureSilent() {
         const size = parseInt(document.getElementById("boardSize").value);
-        const cType = document.getElementById("contentType").value;
+        let cType = document.getElementById("contentType").value;
         const sMode = document.getElementById("arraySortMode").value;
 
+        // 알파벳 전용 선택 시 크기 예외 인터셉트 조건은 살려두되 에러 알림 처리만 스무스하게 진행
         if (size >= 8 && cType === "alpha") {
-            openMacAlert("설정 불가", "알파벳 전용 모드는 26글자 제한으로 인해\n5x5 이하 크기의 빙고판에서만 선택할 수 있습니다.", "alert");
-            db.child("config/contentType").once("value", (snap) => {
-                document.getElementById("contentType").value = snap.val() || "num";
-            });
-            return;
+            openMacAlert("알파벳 모드 제한", "알파벳 전용 모드는 26글자 고정 한계로 인해\n5x5 이하 크기의 빙고판에서만 실행됩니다. 숫자로 자동 전환됩니다.", "alert");
+            document.getElementById("contentType").value = "num";
+            cType = "num";
         }
 
-        openMacAlert("구조 변경 안내", "형식을 변경하면 동기화를 위해 현재 판의 칸 점령 데이터가 리셋됩니다.", "confirm", () => {
-            const totalCells = size * size;
-            let matrixMap = {};
-            let tempPool = [];
-            const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            
-            // 1단계: 원본 풀 데이터 바인딩
-            if (cType === "alpha") {
-                for(let i=0; i<totalCells; i++) tempPool.push(alphas[i % alphas.length]);
-            } else {
-                for(let i=1; i<=totalCells; i++) tempPool.push(String(i));
-            }
+        const totalCells = size * size;
+        let matrixMap = {};
+        let tempPool = [];
+        const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        
+        if (cType === "alpha") {
+            for(let i=0; i<totalCells; i++) tempPool.push(alphas[i % alphas.length]);
+        } else {
+            for(let i=1; i<=totalCells; i++) tempPool.push(String(i));
+        }
 
-            // 2단계: 랜덤 셔플 적용 가부 판단
-            if (sMode === "random") {
-                tempPool = shuffleArray(tempPool);
-            }
+        if (sMode === "random") {
+            tempPool = shuffleArray(tempPool);
+        }
 
-            // 3단계: 매트릭스 인덱스 사상
-            for(let i=0; i<totalCells; i++) {
-                matrixMap[i] = tempPool[i];
-            }
-            
-            localWinTriggered = false;
-            db.update({
-                "config/contentType": cType,
-                "config/arraySortMode": sMode,
-                "config/boardSize": size,
-                "matrixSeed": matrixMap,
-                "cells": null
-            });
+        for(let i=0; i<totalCells; i++) {
+            matrixMap[i] = tempPool[i];
+        }
+        
+        localWinTriggered = false;
+        db.update({
+            "config/contentType": cType,
+            "config/arraySortMode": sMode,
+            "config/boardSize": size,
+            "matrixSeed": matrixMap,
+            "cells": null
         });
-    }
-
-    function changeBoardSizeReset() {
-        const size = parseInt(document.getElementById("boardSize").value);
-        const cType = document.getElementById("contentType").value;
-
-        if (size >= 8 && cType === "alpha") {
-            document.getElementById("contentType").value = "num"; 
-        }
-
-        db.child("config/boardSize").set(size);
-        setTimeout(() => { changeMatrixStructureReset(); }, 100);
     }
 
     db.on("value", (snapshot) => {
@@ -458,8 +419,8 @@
         if (serverTeams[activeTurnIndex]) {
             indicator.innerText = serverTeams[activeTurnIndex].name;
             indicator.style.color = serverTeams[activeTurnIndex].color;
-            indicatorRow.style.background = `${serverTeams[activeTurnIndex].color}15`;
-            indicatorRow.style.borderColor = `${serverTeams[activeTurnIndex].color}35`;
+            indicatorRow.style.background = `${serverTeams[activeTurnIndex].color}12`;
+            indicatorRow.style.borderColor = `${serverTeams[activeTurnIndex].color}25`;
         } else {
             indicator.innerText = "선택 대기";
             indicator.style.color = "var(--mac-blue)";
@@ -692,8 +653,6 @@
             `;
             scoreboard.appendChild(card);
 
-            let winCondition = isAllBingoMode ? (occupied === totalCellsCount) : (bingoLines >= targetBingo);
-
             if (winCondition && !localWinTriggered) {
                 localWinTriggered = true;
                 let msg = isAllBingoMode ? `판의 모든 칸(${totalCellsCount}칸)을 전부 점령하여 승리했습니다!` : `${targetBingo}줄 빙고를 먼저 완성하여 승리했습니다!`;
@@ -705,22 +664,18 @@
         });
     }
 
-    // 🛠️ 핵심 반영: 초기화 진행 시 'teams' 노드까지 초기 프리셋 상태로 리셋
     function askBingoReset() {
         openMacAlert("전체 초기화", "칸 점령 기록과 스코어뿐만 아니라\n참여 팀 목록도 기본값(A팀, B팀)으로 완벽히 초기화하시겠습니까?", "confirm", () => {
             localWinTriggered = false;
-            
             let defaultTeams = [
                 { id: 0, name: "A팀 (블루)", color: sysColors[0].hex, chickens: 0 },
                 { id: 1, name: "B팀 (레드)", color: sysColors[1].hex, chickens: 0 }
             ];
-
             db.update({
                 cells: null,
                 teams: defaultTeams,
                 activeTurnIndex: 0
             });
-            
             if (localChickenChanceActive) toggleChickenChance();
         });
     }
