@@ -782,13 +782,14 @@
             let correctSlotIndex = currentCandidates.indexOf(finalSelectedMap);
 
             currentCandidates.forEach((mapName, idx) => {
-                let card = document.createElement("div");
+            let mapIndex = mapPool.indexOf(mapName) + 1;
+            let card = document.createElement("div");
                 card.className = "cinema-slot-box";
                 card.id = `c-slot-${idx}`;
                 card.innerHTML = `
                     <div class="cinema-view-frame">
                         <div class="cinema-confirm-tag" id="c-tag-${idx}">확정</div>
-                        <div class="map-mock-img" style="background: rgba(255,255,255,0.03);"></div>
+                        <div class="map-mock-img" style="background-image: url('map/${mapIndex}.png');"></div>
                     </div>
                     <div class="cinema-name-plate">${mapName}</div>
                 `;
