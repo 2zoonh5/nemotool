@@ -374,7 +374,6 @@
         const cType = document.getElementById("contentType").value;
         const sMode = document.getElementById("arraySortMode").value;
 
-        // 알파벳 전용 선택 시 크기 예외 규칙 감시
         if (size >= 8 && cType === "alpha") {
             openMacAlert("설정 불가", "알파벳 전용 모드는 26글자 제한으로 인해\n5x5 이하 크기의 빙고판에서만 선택할 수 있습니다.", "alert");
             db.child("config/contentType").once("value", (snap) => {
