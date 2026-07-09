@@ -139,15 +139,12 @@
         .bingo-board-wrapper {
             width: 100%; display: flex; align-items: center; justify-content: center; padding: 10px 0;
         }
-        
-        /* 🛠️ 수정 핵심: 가로 너비를 650px로 완전히 고정하고 그리드가 자동으로 정사각형 비율을 이루도록 설정 */
         .bingo-grid {
             display: grid; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); 
             padding: 16px; border-radius: 20px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
             width: 650px; box-sizing: border-box;
         }
         
-        /* 🛠️ 수정 핵심: Grid의 자식 아이템들이 종횡비 1/1을 유지하도록 제어하여 무조건 정사각형으로 고정 */
         .bingo-cell {
             background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
@@ -210,7 +207,7 @@
                     </div>
                     <div class="form-row">
                         <span class="form-label">빙고 칸 수</span>
-                        <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions(); pushConfigToFirebase();">
+                        <select id="boardSize" class="mac-select" onchange="updateTargetBingoOptions(); changeBoardSizeReset();">
                             <option value="3">3 x 3</option>
                             <option value="4">4 x 4</option>
                             <option value="5">5 x 5</option>
@@ -223,10 +220,10 @@
                 <div class="control-system-row">
                     <div class="form-row">
                         <span class="form-label">내용물 설정</span>
-                        <select id="contentType" class="mac-select" onchange="pushConfigToFirebase()">
+                        <select id="contentType" class="mac-select" onchange="changeContentTypeReset()">
                             <option value="num" selected>숫자 (1~100)</option>
-                            <option value="mix">숫자 + 알파벳</option>
-                            <option value="alpha">알파벳 전용</option>
+                            <option value="mix">숫자 + 알파벳 (랜덤)</option>
+                            <option value="alpha">알파벳 전용 (A-Z)</option>
                         </select>
                     </div>
                     <div class="form-row" id="turnIndicatorRow">
@@ -300,6 +297,7 @@
     let serverTeams = [];
     let serverCells = {};
     let activeTurnIndex = 0;
+    let localWinTriggered = false;
 
     function openMacAlert(title, subText, type, onConfirm) {
         const overlay = document.getElementById("macAlertOverlay");
@@ -342,19 +340,6 @@
     }
     updateTargetBingoOptions();
 
-    function generateMatrixContent(type, index) {
-        const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if (type === "alpha") {
-            let first = alphas[Math.floor((index - 1) / 26) % 26];
-            let second = alphas[(index - 1) % 26];
-            return index <= 26 ? second : first + second;
-        } else if (type === "mix") {
-            if (index % 2 === 0) return alphas[Math.floor(index / 2) % 26] + (index % 10);
-            return String(index);
-        }
-        return String(index);
-    }
-
     function pushConfigToFirebase() {
         if (isOperating) return;
         db.child("config").update({
@@ -363,6 +348,67 @@
             contentType: document.getElementById("contentType").value,
             targetBingo: parseInt(document.getElementById("targetBingo").value)
         });
+    }
+
+    // 🛠️ 핵심 변경 로직: 8x8, 10x10 크기에서는 알파벳 전용 선택 불가 인터셉터 추가
+    function changeContentTypeReset() {
+        const size = parseInt(document.getElementById("boardSize").value);
+        const cType = document.getElementById("contentType").value;
+
+        if (size >= 8 && cType === "alpha") {
+            openMacAlert("설정 불가", "알파벳 전용 모드는 26글자 제한으로 인해\n5x5 이하 크기의 빙고판에서만 선택할 수 있습니다.", "alert");
+            // 기존 서버 세팅 타입으로 드롭다운 롤백 복구
+            db.child("config/contentType").once("value", (snap) => {
+                document.getElementById("contentType").value = snap.val() || "num";
+            });
+            return;
+        }
+
+        openMacAlert("내용물 변경 안내", "내용물 형식을 변경하면 동기화를 위해 현재 판의 칸 점령 데이터가 리셋됩니다.", "confirm", () => {
+            const totalCells = size * size;
+            let matrixMap = {};
+            const alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            
+            if (cType === "mix") {
+                let pool = [];
+                for(let i=1; i<=100; i++) pool.push(String(i));
+                for(let i=0; i<alphas.length; i++) pool.push(alphas[i]);
+                
+                for(let i=0; i<totalCells; i++) {
+                    let randIdx = Math.floor(Math.random() * pool.length);
+                    matrixMap[i] = pool[randIdx];
+                }
+            } else if (cType === "alpha") {
+                for(let i=0; i<totalCells; i++) {
+                    matrixMap[i] = alphas[i % alphas.length];
+                }
+            } else {
+                for(let i=0; i<totalCells; i++) {
+                    matrixMap[i] = String(i + 1);
+                }
+            }
+            
+            localWinTriggered = false;
+            db.update({
+                "config/contentType": cType,
+                "config/boardSize": size,
+                "matrixSeed": matrixMap,
+                "cells": null
+            });
+        });
+    }
+
+    function changeBoardSizeReset() {
+        const size = parseInt(document.getElementById("boardSize").value);
+        const cType = document.getElementById("contentType").value;
+
+        // 크기를 키웠는데 마침 기존 선택이 알파벳이었던 상황 대응 예외처리
+        if (size >= 8 && cType === "alpha") {
+            document.getElementById("contentType").value = "num"; // 기본 숫자로 강제 변환 유도
+        }
+
+        db.child("config/boardSize").set(size);
+        setTimeout(() => { changeContentTypeReset(); }, 100);
     }
 
     db.on("value", (snapshot) => {
@@ -387,6 +433,7 @@
         serverTeams = data.teams || [];
         serverCells = data.cells || {};
         activeTurnIndex = data.activeTurnIndex || 0;
+        let currentMatrixSeed = data.matrixSeed || {};
 
         const indicator = document.getElementById("currentTurnText");
         const indicatorRow = document.getElementById("turnIndicatorRow");
@@ -401,7 +448,7 @@
         }
 
         renderTeamManagerUI();
-        renderBingoGridUI(data.config?.boardSize || 10, data.config?.contentType || "num");
+        renderBingoGridUI(data.config?.boardSize || 10, currentMatrixSeed);
         calculateAndRenderScores(data.config?.boardSize || 10, data.config?.targetBingo || 3);
 
         isOperating = false;
@@ -412,10 +459,15 @@
             { id: 0, name: "A팀 (블루)", color: sysColors[0].hex, chickens: 0 },
             { id: 1, name: "B팀 (레드)", color: sysColors[1].hex, chickens: 0 }
         ];
+        
+        let matrixMap = {};
+        for(let i=0; i<100; i++) matrixMap[i] = String(i + 1);
+
         db.set({
             config: { gameMode: "bingo", boardSize: 10, contentType: "num", targetBingo: 3 },
             teams: initialTeams,
             activeTurnIndex: 0,
+            matrixSeed: matrixMap,
             cells: {}
         });
     }
@@ -492,25 +544,26 @@
         toggleBtn.innerText = localChickenChanceActive ? "ON" : "OFF";
     }
 
-    function renderBingoGridUI(size, type) {
+    function renderBingoGridUI(size, currentMatrixSeed) {
         const grid = document.getElementById("bingoGridContainer");
         grid.innerHTML = "";
         grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         
-        let fSize = "16px";
-        if (size >= 8) fSize = "11px";
-        else if (size >= 5) fSize = "13px";
+        let fSize = "20px";
+        if (size >= 10) fSize = "15px";
+        else if (size >= 8) fSize = "17px";
 
         for (let r = 0; r < size; r++) {
             for (let c = 0; c < size; c++) {
                 let cellId = `cell_${r}_${c}`;
                 let cellData = serverCells[cellId];
-                let cellIndex = (r * size) + c + 1;
+                let cellIndex = (r * size) + c;
                 
                 let box = document.createElement("div");
                 box.className = "bingo-cell";
                 box.style.fontSize = fSize;
-                box.innerText = generateMatrixContent(type, cellIndex);
+                box.style.letterSpacing = "-0.5px";
+                box.innerText = currentMatrixSeed[cellIndex] || String(cellIndex + 1);
 
                 if (cellData) {
                     box.style.backgroundColor = cellData.color;
@@ -525,16 +578,13 @@
         }
     }
 
-    // 🛠️ 수정 핵심: 내 팀이 이미 점유한 칸을 다시 클릭하면 취소(지우기)되도록 로직 업데이트
     function handleCellClick(cellId) {
         if (serverTeams.length === 0) return;
         const currentTeam = serverTeams[activeTurnIndex];
         const mode = document.getElementById("gameMode").value;
         const targetCell = serverCells[cellId];
 
-        // 1. 치킨 고정(방어막) 칸 예외 처리
         if (targetCell && targetCell.shield) {
-            // 예외: 만약 방어막 상태에서 내 팀이 다시 취소하고 싶은 경우 치킨을 1개 돌려주고 해제 처리
             if (targetCell.color === currentTeam.color) {
                 db.child(`cells/${cellId}`).set(null);
                 adjustChicken(activeTurnIndex, 1);
@@ -544,19 +594,16 @@
             return;
         }
 
-        // 2. 🌟 토글(지우기) 기능: 내 팀이 이미 일반 점령한 칸을 내가 다시 클릭하면 초기화(삭제)
         if (targetCell && targetCell.color === currentTeam.color) {
             db.child(`cells/${cellId}`).set(null);
             return;
         }
 
-        // 3. 일반 빙고 모드인데 다른 팀 주인이 이미 선점한 경우 타임어택 종료 처리
         if (targetCell && targetCell.color !== currentTeam.color && mode === "bingo") {
             openMacAlert("선점 완료 칸", "일반 빙고 모드에서는 타 팀이 이미 칠한 칸을 빼앗을 수 없습니다.", "alert");
             return;
         }
 
-        // 4. 빈 칸이거나 땅따먹기 룰에서 상대방 영역인 경우 칠하기 진행
         if (localChickenChanceActive) {
             db.child(`cells/${cellId}`).set({
                 color: currentTeam.color,
@@ -629,16 +676,20 @@
 
             let winCondition = isAllBingoMode ? (occupied === totalCellsCount) : (bingoLines >= targetBingo);
 
-            if (winCondition && !isOperating) {
-                isOperating = true;
+            if (winCondition && !localWinTriggered) {
+                localWinTriggered = true;
                 let msg = isAllBingoMode ? `판의 모든 칸(${totalCellsCount}칸)을 전부 점령하여 승리했습니다!` : `${targetBingo}줄 빙고를 먼저 완성하여 승리했습니다!`;
-                openMacAlert("🏆 목표 달성 완료", `축하합니다!\n${team.name}이(가) ${msg}`, "alert");
+                
+                setTimeout(() => {
+                    openMacAlert("🏆 목표 달성 완료", `축하합니다!\n${team.name}이(가) ${msg}`, "alert");
+                }, 100);
             }
         });
     }
 
     function askBingoReset() {
         openMacAlert("판 초기화", "현재 채워진 모든 빙고 칸 정보를 초기화하고 완전히 새로 시작하시겠습니까?", "confirm", () => {
+            localWinTriggered = false;
             db.child("cells").set(null);
             serverTeams.forEach(t => t.chickens = 0);
             db.child("teams").set(serverTeams);
